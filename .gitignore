@@ -1,0 +1,11 @@
+### Default Ignore ###
+target/
+
+### Application Configurations ###
+src/main/resources/application.yml
+
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
