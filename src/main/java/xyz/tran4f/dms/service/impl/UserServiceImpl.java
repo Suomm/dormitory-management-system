@@ -1,10 +1,26 @@
+/*
+ * Copyright 2020 Wang Shuai
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package xyz.tran4f.dms.service.impl;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import xyz.tran4f.dms.domain.User;
 import xyz.tran4f.dms.mapper.UserMapper;
+import xyz.tran4f.dms.pojo.User;
 import xyz.tran4f.dms.service.UserService;
 
 /**
@@ -12,28 +28,17 @@ import xyz.tran4f.dms.service.UserService;
  * @since 1.0
  */
 @Service
-public class UserServiceImpl implements UserService {
-
-    private final UserMapper userMapper;
-
-    public UserServiceImpl(UserMapper userMapper) {
-        this.userMapper = userMapper;
-    }
+public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements UserService {
 
     @Override
     @Transactional
     public void transfer(Integer s, Integer t, Integer money) {
-        User source = userMapper.findById(s);
-        User target = userMapper.findById(t);
+        User source = baseMapper.selectById(s);
+        User target = baseMapper.selectById(t);
         source.setMoney(source.getMoney() - money);
         target.setMoney(target.getMoney() + money);
-        userMapper.updateUser(source);
-        userMapper.updateUser(target);
+        baseMapper.updateById(source);
+        baseMapper.updateById(target);
     }
 
-    @Override
-    public User login(String username, String password) {
-        // 校验
-        return userMapper.findByName(username);
-    }
 }

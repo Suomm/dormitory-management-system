@@ -18,13 +18,21 @@
 <html lang="zh" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>主页</title>
-    <link th:href="@{webjars/bootstrap/4.5.3/css/bootstrap.min.css}" rel="stylesheet"/>
-    <script th:src="@{webjars/jquery/3.5.1/jquery.min.js}" type="text/javascript"></script>
-    <script th:src="@{webjars/bootstrap/4.5.3/js/bootstrap.min.js}"></script>
+    <title>登录</title>
 </head>
 <body>
-    <a th:href="@{user/login.html}">登录</a>
-    <a th:href="@{user/register.html}">注册</a>
+    <form th:action="@{/user/login}" method="post">
+        <div th:if="${param.error}" th:text="${session?.SPRING_SECURITY_LAST_EXCEPTION?.message}"></div>
+        <label for="username">用户名：</label>
+        <input id="username" type="text" name="username" />
+        <br />
+        <label for="password">密码：</label>
+        <input id="password" type="password" name="password" />
+        <br />
+        <input id="rememberMe" type="checkbox" name="remember-me" value="true"/>
+        <label for="rememberMe">记住我两小时</label>
+        <br />
+        <input type="submit" />
+    </form>
 </body>
 </html>

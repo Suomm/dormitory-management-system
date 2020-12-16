@@ -14,17 +14,21 @@
  * limitations under the License.
  */
 
-package xyz.tran4f.dms.service;
+package xyz.tran4f.dms.controller;
 
-import com.baomidou.mybatisplus.extension.service.IService;
-import xyz.tran4f.dms.pojo.User;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
 
 /**
  * @author 王帅
  * @since 1.0
  */
-public interface UserService extends IService<User> {
+@Controller
+public class IndexController {
 
-    void transfer(Integer s, Integer t, Integer money);
+    @GetMapping({"/", "index.html"})
+    public String toIndex() {
+        return "index";
+    }
 
 }

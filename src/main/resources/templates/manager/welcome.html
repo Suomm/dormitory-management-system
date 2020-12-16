@@ -15,16 +15,19 @@
   -->
 
 <!DOCTYPE html>
-<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<html lang="zh" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
-    <title>主页</title>
-    <link th:href="@{webjars/bootstrap/4.5.3/css/bootstrap.min.css}" rel="stylesheet"/>
-    <script th:src="@{webjars/jquery/3.5.1/jquery.min.js}" type="text/javascript"></script>
-    <script th:src="@{webjars/bootstrap/4.5.3/js/bootstrap.min.js}"></script>
+    <title>管理界面</title>
 </head>
 <body>
-    <a th:href="@{user/login.html}">登录</a>
-    <a th:href="@{user/register.html}">注册</a>
+    <h1>欢迎登陆，以下是您的信息！</h1>
+    <h2>姓名: <th:block sec:authentication="principal.username" /></h2>
+    <h2>权限: <th:block sec:authentication="principal.authorities" /></h2>
+    <form th:action="@{/user/logout}" method="post">
+        <input type="submit" value="注销"/>
+    </form>
+<!--    <h1><a th:href="@{/user/logout}">退出</a></h1>-->
 </body>
 </html>

@@ -14,17 +14,24 @@
  * limitations under the License.
  */
 
-package xyz.tran4f.dms.service;
+package xyz.tran4f.dms.config;
 
-import com.baomidou.mybatisplus.extension.service.IService;
-import xyz.tran4f.dms.pojo.User;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 
 /**
  * @author 王帅
  * @since 1.0
  */
-public interface UserService extends IService<User> {
+@Configuration
+public class ReloadMessageConfig {
 
-    void transfer(Integer s, Integer t, Integer money);
+    @Bean //加载中文认证提示信息
+    public ReloadableResourceBundleMessageSource messageSource(){
+        ReloadableResourceBundleMessageSource messageSource = new ReloadableResourceBundleMessageSource();
+        messageSource.setBasename("classpath:/consumer_zh_CN");
+        return messageSource;
+    }
 
 }

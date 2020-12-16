@@ -18,13 +18,9 @@
 <html lang="zh" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>主页</title>
-    <link th:href="@{webjars/bootstrap/4.5.3/css/bootstrap.min.css}" rel="stylesheet"/>
-    <script th:src="@{webjars/jquery/3.5.1/jquery.min.js}" type="text/javascript"></script>
-    <script th:src="@{webjars/bootstrap/4.5.3/js/bootstrap.min.js}"></script>
+    <title>Title</title>
 </head>
 <body>
-    <a th:href="@{user/login.html}">登录</a>
-    <a th:href="@{user/register.html}">注册</a>
+没有权限访问 <a th:href="@{/user/login.html}">点我返回</a>
 </body>
 </html>

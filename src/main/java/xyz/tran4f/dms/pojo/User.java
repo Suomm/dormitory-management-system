@@ -14,17 +14,28 @@
  * limitations under the License.
  */
 
-package xyz.tran4f.dms.service;
+package xyz.tran4f.dms.pojo;
 
-import com.baomidou.mybatisplus.extension.service.IService;
-import xyz.tran4f.dms.pojo.User;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.io.Serializable;
 
 /**
  * @author 王帅
  * @since 1.0
  */
-public interface UserService extends IService<User> {
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class User implements Serializable {
 
-    void transfer(Integer s, Integer t, Integer money);
+    private static final long serialVersionUID = -5246550721989479832L;
+
+    private Integer id;
+    private String username;
+    private String password;
+    private Integer money;
 
 }
