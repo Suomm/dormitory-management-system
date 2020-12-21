@@ -74,8 +74,14 @@ public class UserController {
             map.addAttribute("error", message);
             return "user/register";
         }
-        if (!emailCode.equals(map.getAttribute("code"))) {
-            map.addAttribute("error", "验证码不对哦");
+        VerificationCode code = (VerificationCode) map.getAttribute("code");
+        assert code != null;
+        if (code.getOutDate() <= System.currentTimeMillis()) {
+            map.addAttribute("error", "验证码过期了");
+            return "user/register";
+        }
+        if (!code.getCode().equals(emailCode)) {
+            map.addAttribute("error", "验证码不对");
             return "user/register";
         }
         if (!"123456".equals(user.getValidateCode())) {
@@ -140,7 +146,7 @@ public class UserController {
         VerificationCode code = VerificationCodeUtils.getVerificationCode(6, 10 * 60 * 1000);
         String emailContent = "您的验证码为" + code.getCode() + "\t有效期为十分钟";
         userService.sendEmail(emailContent);
-        map.addAttribute("code", code.getCode());
+        map.addAttribute("code", code);
         /*WebApplicationContext context = ContextLoader.getCurrentWebApplicationContext();
         assert context != null;
         ServletContext servletContext = context.getServletContext();
