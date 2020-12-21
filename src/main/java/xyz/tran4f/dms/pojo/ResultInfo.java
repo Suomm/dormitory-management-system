@@ -14,26 +14,37 @@
  * limitations under the License.
  */
 
-package xyz.tran4f.dms.config;
+package xyz.tran4f.dms.pojo;
 
-import com.baomidou.mybatisplus.annotation.DbType;
-import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
-import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.io.Serializable;
 
 /**
+ * 结果集的封装。
+ *
+ *
  * @author 王帅
  * @since 1.0
  */
-@Configuration
-public class MybatisPlusConfig {
+@Data
+@NoArgsConstructor
+public final class ResultInfo<T> implements Serializable {
 
-    @Bean
-    public MybatisPlusInterceptor mybatisPlusInterceptor() {
-        MybatisPlusInterceptor interceptor = new MybatisPlusInterceptor();
-        interceptor.addInnerInterceptor(new PaginationInnerInterceptor(DbType.H2));
-        return interceptor;
+    private static final long serialVersionUID = 7614867811983901144L;
+    private T result;
+    private String message;
+    private boolean complete;
+
+    public ResultInfo(String message) {
+        this.message  = message;
+        this.complete = false;
+    }
+
+    public ResultInfo(T result) {
+        this.result   = result;
+        this.complete = true;
     }
 
 }

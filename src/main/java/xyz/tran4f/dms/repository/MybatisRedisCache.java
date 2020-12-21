@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Wang Shuai
+ * Copyright (C) 2020 Wang Shuai (suomm.macher@foxmail.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@ import org.apache.ibatis.cache.Cache;
 import org.springframework.data.redis.connection.RedisServerCommands;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.util.CollectionUtils;
-import xyz.tran4f.dms.utils.SpringUtil;
+import xyz.tran4f.dms.utils.SpringUtils;
 
 import java.util.Set;
 import java.util.concurrent.locks.ReadWriteLock;
@@ -46,7 +46,7 @@ public class MybatisRedisCache implements Cache {
     @SuppressWarnings("unchecked")
     private void initialize() {
         if (this.redisTemplate == null) {
-            this.redisTemplate = SpringUtil.getBean("redisTemplate", RedisTemplate.class);
+            this.redisTemplate = SpringUtils.getBean("redisTemplate", RedisTemplate.class);
         }
     }
 

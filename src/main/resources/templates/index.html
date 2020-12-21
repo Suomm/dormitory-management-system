@@ -1,5 +1,5 @@
 <!--
-  ~ Copyright 2020 Wang Shuai
+  ~ Copyright (C) 2020 Wang Shuai (suomm.macher@foxmail.com)
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -16,12 +16,8 @@
 
 <!DOCTYPE html>
 <html lang="zh" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
+<head th:replace="common/mould :: header(~{::title}, ~{}, ~{})">
     <title>主页</title>
-    <link th:href="@{webjars/bootstrap/4.5.3/css/bootstrap.min.css}" rel="stylesheet"/>
-    <script th:src="@{webjars/jquery/3.5.1/jquery.min.js}" type="text/javascript"></script>
-    <script th:src="@{webjars/bootstrap/4.5.3/js/bootstrap.min.js}"></script>
 </head>
 <body>
     <a th:href="@{user/login.html}">登录</a>

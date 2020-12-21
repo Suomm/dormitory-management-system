@@ -15,12 +15,14 @@
   -->
 
 <!DOCTYPE html>
-<html lang="zh">
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>成功</title>
 </head>
 <body>
-    <h1>网页走丢了</h1>
+<h1>无论你在做什么，当你看到这个页面的时候，欢呼吧！你成功了！</h1>
+<h3>以下消息您应该在邮箱里看到：</h3>
+<th:block th:utext="${emailContent}"/>
 </body>
 </html>

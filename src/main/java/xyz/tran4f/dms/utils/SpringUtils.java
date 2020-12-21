@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Wang Shuai
+ * Copyright (C) 2020 Wang Shuai (suomm.macher@foxmail.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,13 +22,13 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Component;
 
 @Component
-public class SpringUtil implements ApplicationContextAware {
+public class SpringUtils implements ApplicationContextAware {
 
     private static ApplicationContext applicationContext;
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        SpringUtil.applicationContext = applicationContext;
+        SpringUtils.applicationContext = applicationContext;
     }
 
     public static Object getBean(String name){

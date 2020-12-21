@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Wang Shuai
+ * Copyright (C) 2020 Wang Shuai (suomm.macher@foxmail.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,18 +16,14 @@
 
 package xyz.tran4f.dms.service.impl;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import xyz.tran4f.dms.mapper.UserMapper;
+import xyz.tran4f.dms.pojo.SecurityUser;
 import xyz.tran4f.dms.pojo.User;
-
-import java.util.List;
 
 /**
  * @author 王帅
@@ -44,12 +40,10 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
-        User user = userMapper.selectOne(queryWrapper.lambda().eq(User::getUsername, username));
+        User user = userMapper.selectById(username);
         if (user == null) {
             throw new UsernameNotFoundException("用户名不存在");
         }
-        List<GrantedAuthority> authorities = AuthorityUtils.commaSeparatedStringToAuthorityList("ROOT");
-        return new org.springframework.security.core.userdetails.User(username, user.getPassword(), authorities);
+        return new SecurityUser(user, AuthorityUtils.createAuthorityList(user.getRole()));
     }
 }

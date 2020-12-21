@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Wang Shuai
+ * Copyright (C) 2020 Wang Shuai (suomm.macher@foxmail.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.

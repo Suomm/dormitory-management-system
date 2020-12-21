@@ -1,5 +1,5 @@
 <!--
-  ~ Copyright 2020 Wang Shuai
+  ~ Copyright (C) 2020 Wang Shuai (suomm.macher@foxmail.com)
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -23,6 +23,7 @@
 </head>
 <body>
     <h1>欢迎登陆，以下是您的信息！</h1>
+    <h2>学号: <th:block sec:authentication="principal.user.id" /></h2>
     <h2>姓名: <th:block sec:authentication="principal.username" /></h2>
     <h2>权限: <th:block sec:authentication="principal.authorities" /></h2>
     <form th:action="@{/user/logout}" method="post">

@@ -1,5 +1,5 @@
 <!--
-  ~ Copyright 2020 Wang Shuai
+  ~ Copyright (C) 2020 Wang Shuai (suomm.macher@foxmail.com)
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -16,26 +16,68 @@
 
 <!DOCTYPE html>
 <html lang="zh" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
+<head th:replace="common/mould :: header(~{::title}, ~{}, ~{})">
     <title>注册</title>
 </head>
 <body>
-    <form th:action="@{/user/register}" method="post">
-<!--        <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />-->
-        <label for="username">用户名：</label>
-        <input id="username" type="text" name="username" />
-        <br />
-        <label for="password">密码：</label>
-        <input id="password" type="password" name="password" />
-        <br />
-        <label for="confirm">确认密码：</label>
-        <input id="confirm" type="password" name="confirm" />
-        <br />
-        <label for="money">金额：</label>
-        <input id="money" type="text" name="money" />
-        <br />
-        <input type="submit" />
-    </form>
+<form th:action="@{/user/register.html}" method="post">
+    <!--        <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />-->
+    <div th:text="${#request.getAttribute('error')}"></div>
+    <label for="id">学号：</label>
+    <input id="id" type="text" name="id" th:value="${user?.id}"/>
+    <br/>
+    <label for="username">姓名：</label>
+    <input id="username" type="text" name="username" th:value="${user?.username}"/>
+    <br/>
+    <label for="password">密码：</label>
+    <input id="password" type="password" name="password" th:value="${user?.password}"/>
+    <br/>
+    <label for="confirm">确认密码：</label>
+    <input id="confirm" type="password" name="confirm"/>
+    <br/>
+    <label for="email">邮箱：</label>
+    <input id="email" type="email" name="email" th:value="${user?.email}"/>
+    <br/>
+    性别：
+    <input id="man" type="radio" checked="checked" name="gender" value="1"/>
+    <label for="man">男</label>
+    <input id="woman" type="radio" name="gender" value="0"/>
+    <label for="woman">女</label>
+    <br/>
+    <label for="emailCode">验证码：</label>
+    <input id="emailCode" type="text" name="emailCode"/>
+    <button type="button" class="fetchBtn">获取验证码</button>
+    <br/>
+    <label for="validateCode">邀请码：</label>
+    <input id="validateCode" type="text" name="validateCode" th:value="${user?.validateCode}"/>
+    <br/>
+    <input type="submit"/>
+</form>
+<script th:inline="javascript" type="text/javascript">
+    let ctxPath = [[${#httpServletRequest.getContextPath()}]];
+    let btn = $('.fetchBtn');
+    btn.click(function () {
+        $.post(ctxPath + "/user/pushVerificationCode");
+        let count = 60;
+        const countDown = setInterval(() => {
+            if (count === 0) {
+                btn.text('重新发送').removeAttr('disabled');
+                btn.css({
+                    background: '#ff9400',
+                    color: '#fff',
+                });
+                clearInterval(countDown);
+            } else {
+                btn.attr('disabled', true);
+                btn.css({
+                    background: '#d8d8d8',
+                    color: '#707070',
+                });
+                btn.text(count + '秒后可重新获取');
+            }
+            count--;
+        }, 1000);
+    });
+</script>
 </body>
 </html>

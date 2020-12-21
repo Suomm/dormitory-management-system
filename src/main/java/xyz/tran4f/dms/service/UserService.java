@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Wang Shuai
+ * Copyright (C) 2020 Wang Shuai (suomm.macher@foxmail.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@
 package xyz.tran4f.dms.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import xyz.tran4f.dms.pojo.ResultInfo;
 import xyz.tran4f.dms.pojo.User;
 
 /**
@@ -25,6 +26,14 @@ import xyz.tran4f.dms.pojo.User;
  */
 public interface UserService extends IService<User> {
 
-    void transfer(Integer s, Integer t, Integer money);
+    ResultInfo<User> register(User user);
+
+    String digitalSignature(User user);
+
+    void sendEmail(String content);
+
+    String checkUser(String sid, String id);
+
+    boolean resetPassword(User user, String password);
 
 }

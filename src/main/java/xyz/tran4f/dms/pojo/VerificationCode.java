@@ -14,26 +14,24 @@
  * limitations under the License.
  */
 
-package xyz.tran4f.dms.config;
+package xyz.tran4f.dms.pojo;
 
-import com.baomidou.mybatisplus.annotation.DbType;
-import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
-import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
+ *
+ *
  * @author 王帅
  * @since 1.0
  */
-@Configuration
-public class MybatisPlusConfig {
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class VerificationCode {
 
-    @Bean
-    public MybatisPlusInterceptor mybatisPlusInterceptor() {
-        MybatisPlusInterceptor interceptor = new MybatisPlusInterceptor();
-        interceptor.addInnerInterceptor(new PaginationInnerInterceptor(DbType.H2));
-        return interceptor;
-    }
+    private String code;
+    private long outDate;
 
 }

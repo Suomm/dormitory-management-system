@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Wang Shuai
+ * Copyright (C) 2020 Wang Shuai (suomm.macher@foxmail.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,8 +28,6 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
-
-import java.util.Collections;
 
 /**
  * @author 王帅
@@ -68,7 +66,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     public void configure(WebSecurity web) {
-        web.ignoring().antMatchers("/", "/index.html", "/webjars/**");
+        // 前端资源过滤
+        web.ignoring().antMatchers( "/favicon.ico", "/webjars/**", "/js/**", "/css/**", "/img/**");
     }
 
     @Override
@@ -96,11 +95,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .deleteCookies("JSESSIONID")
                 .invalidateHttpSession(true);
         http.authorizeRequests()
-                .antMatchers("/user/register", "/user/login.html", "/user/register.html")
+                .antMatchers("/", "/index.html", "/user/register", "/user/login.html", "/user/register.html",
+                        "/user/forget_password.html", "/user/reset_password",
+                        "/user/pushVerificationCode")
                 .permitAll()
                 .anyRequest().authenticated();
-        // TODO 解决csrf防护问题
-//        http.csrf().disable();
+//        http.csrf().csrfTokenRepository()
     }
 
 }

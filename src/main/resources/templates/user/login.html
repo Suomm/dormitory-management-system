@@ -1,5 +1,5 @@
 <!--
-  ~ Copyright 2020 Wang Shuai
+  ~ Copyright (C) 2020 Wang Shuai (suomm.macher@foxmail.com)
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -14,25 +14,28 @@
   ~ limitations under the License.
   -->
 
-<!DOCTYPE html>
+<!doctype html>
 <html lang="zh" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
+<head th:replace="common/mould :: header(~{::title}, ~{::link}, ~{})">
     <title>登录</title>
+    <link th:href="@{/css/signin.css}" rel="stylesheet" type="text/css">
 </head>
-<body>
-    <form th:action="@{/user/login}" method="post">
-        <div th:if="${param.error}" th:text="${session?.SPRING_SECURITY_LAST_EXCEPTION?.message}"></div>
-        <label for="username">用户名：</label>
-        <input id="username" type="text" name="username" />
-        <br />
-        <label for="password">密码：</label>
-        <input id="password" type="password" name="password" />
-        <br />
-        <input id="rememberMe" type="checkbox" name="remember-me" value="true"/>
-        <label for="rememberMe">记住我两小时</label>
-        <br />
-        <input type="submit" />
-    </form>
+<body class="text-center">
+<form class="form-signin" th:action="@{/user/login}" method="post">
+    <img class="mb-4" th:src="@{/img/bootstrap-solid.svg}" alt="" width="72" height="72"/>
+    <h1 class="h3 mb-3 font-weight-normal">请登录</h1>
+    <div th:if="${param.error}" th:text="${session?.SPRING_SECURITY_LAST_EXCEPTION?.message}"></div>
+    <label for="inputEmail" class="sr-only">用户名</label>
+    <input id="inputEmail" name="username" class="form-control" placeholder="学号或手机号或邮箱" required autofocus>
+    <label for="inputPassword" class="sr-only">密&nbsp;&nbsp;码</label>
+    <input type="password" id="inputPassword" name="password" class="form-control" placeholder="请输入密码" required>
+    <div class="checkbox mb-3">
+        <label>
+            <input type="checkbox" name="remember-me"> 十四天内免登录
+        </label>
+        <a th:href="@{/user/forget_password.html}">忘记密码</a>
+    </div>
+    <button class="btn btn-lg btn-primary btn-block" type="submit">登录</button>
+</form>
 </body>
 </html>

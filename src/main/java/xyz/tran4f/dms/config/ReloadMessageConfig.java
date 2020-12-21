@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 Wang Shuai
+ * Copyright (C) 2020 Wang Shuai (suomm.macher@foxmail.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,7 +30,7 @@ public class ReloadMessageConfig {
     @Bean //加载中文认证提示信息
     public ReloadableResourceBundleMessageSource messageSource(){
         ReloadableResourceBundleMessageSource messageSource = new ReloadableResourceBundleMessageSource();
-        messageSource.setBasename("classpath:/consumer_zh_CN");
+        messageSource.setBasename("classpath:/custom_zh_CN");
         return messageSource;
     }
 

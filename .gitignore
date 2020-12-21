@@ -6,7 +6,7 @@ src/main/resources/application.yml
 src/main/resources/application-dev.yml
 src/main/resources/application-prod.yml
 src/main/resources/datasource.properties
-src/main/resources/consumer_zh_CN.properties
+src/main/resources/custom_zh_CN.properties
 
 ### IntelliJ IDEA ###
 .idea
