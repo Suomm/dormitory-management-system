@@ -141,7 +141,6 @@ public class UserController {
         String emailContent = "您的验证码为" + code.getCode() + "\t有效期为十分钟";
         userService.sendEmail(emailContent);
         map.addAttribute("code", code.getCode());
-        System.out.println("===============================");
         /*WebApplicationContext context = ContextLoader.getCurrentWebApplicationContext();
         assert context != null;
         ServletContext servletContext = context.getServletContext();
