@@ -26,16 +26,18 @@
     <h1 class="h3 mb-3 font-weight-normal">请登录</h1>
     <div th:if="${param.error}" th:text="${session?.SPRING_SECURITY_LAST_EXCEPTION?.message}"></div>
     <label for="inputEmail" class="sr-only">用户名</label>
-    <input id="inputEmail" name="username" class="form-control" placeholder="学号或手机号或邮箱" required autofocus>
+    <input id="inputEmail" name="username" class="form-control" required autofocus th:placeholder="#{login.username}">
     <label for="inputPassword" class="sr-only">密&nbsp;&nbsp;码</label>
     <input type="password" id="inputPassword" name="password" class="form-control" placeholder="请输入密码" required>
     <div class="checkbox mb-3">
         <label>
             <input type="checkbox" name="remember-me"> 十四天内免登录
         </label>
-        <a th:href="@{/user/forget_password.html}">忘记密码</a>
+        <a th:href="@{/user/forget_password.html}">忘记密码？</a>
     </div>
     <button class="btn btn-lg btn-primary btn-block" type="submit">登录</button>
+    <a th:href="@{/user/login.html(locale=zh_CN)}">中文</a>
+    <a th:href="@{/user/login.html(locale=en_US)}">English</a>
 </form>
 </body>
 </html>
