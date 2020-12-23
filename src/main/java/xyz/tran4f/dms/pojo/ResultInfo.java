@@ -38,13 +38,15 @@ public final class ResultInfo<T> implements Serializable {
     private boolean complete;
 
     public ResultInfo(String message) {
-        this.message  = message;
-        this.complete = false;
+        this.message = message;
     }
 
     public ResultInfo(T result) {
-        this.result   = result;
-        this.complete = true;
+        this.result = result;
+    }
+
+    public boolean isComplete() {
+        return result != null;
     }
 
 }

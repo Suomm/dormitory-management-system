@@ -47,19 +47,22 @@ public class User implements Serializable {
              message = "您不是化学学院的学生")
     @TableId(value = "id", type = IdType.INPUT)
     private String id;
+
     @NotBlank(message = "用户名不能为空")
     private String username;
+
     @NotNull(message = "密码不能为空")
     @Pattern(regexp  = "^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z\\W]{6,18}$",
              message = "密码必须包含数字和字母，且在6-18位之间")
     private String password;
+
     @Email
     @NotBlank(message = "邮箱不能为空")
     private String email;
 
+    private String  role;
     private Integer gender;
     private Integer credit;
-    private String role;
 
     @TableField(updateStrategy = FieldStrategy.IGNORED)
     private String validateCode;

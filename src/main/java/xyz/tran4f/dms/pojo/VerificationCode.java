@@ -21,7 +21,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- *
+ * 验证码
  *
  * @author 王帅
  * @since 1.0
