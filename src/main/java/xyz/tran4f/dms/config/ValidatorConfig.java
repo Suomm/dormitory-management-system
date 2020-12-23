@@ -23,7 +23,7 @@ import org.springframework.context.annotation.Configuration;
 import javax.validation.Validation;
 import javax.validation.Validator;
 
-@Configuration
+@Configuration(proxyBeanMethods = false)
 public class ValidatorConfig {
 
     /**
@@ -35,6 +35,7 @@ public class ValidatorConfig {
     public Validator validator() {
         return Validation.byProvider(HibernateValidator.class)
                 .configure()
+                // 为提高性能，一检测到错误就停止检测。
                 .failFast(true)
                 .buildValidatorFactory()
                 .getValidator();
