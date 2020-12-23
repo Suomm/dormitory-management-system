@@ -57,7 +57,9 @@
     let ctxPath = [[${#httpServletRequest.getContextPath()}]];
     let btn = $('.fetchBtn');
     btn.click(function () {
-        $.post(ctxPath + "/user/pushVerificationCode");
+        $.post(ctxPath + "/user/pushVerificationCode", {
+            "id": $('#id').val()
+        });
         let count = 60;
         const countDown = setInterval(() => {
             if (count === 0) {

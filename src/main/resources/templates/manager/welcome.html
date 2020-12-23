@@ -29,6 +29,8 @@
     <form th:action="@{/user/logout}" method="post">
         <input type="submit" value="注销"/>
     </form>
+    <h1>i18n 测试</h1>
+    <h3 th:text="#{dashboard.welcome}"></h3>
 <!--    <h1><a th:href="@{/user/logout}">退出</a></h1>-->
 </body>
 </html>
