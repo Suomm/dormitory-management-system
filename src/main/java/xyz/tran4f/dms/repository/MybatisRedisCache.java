@@ -26,6 +26,12 @@ import java.util.Set;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
+/**
+ *
+ *
+ * @author 王帅
+ * @since 1.0
+ */
 public class MybatisRedisCache implements Cache {
 
     // 读写锁
