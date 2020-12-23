@@ -38,6 +38,13 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         this.userMapper = userMapper;
     }
 
+    /**
+     *
+     *
+     * @param username 实际应为学号
+     * @return 带有用户信息的{@code UserDetails}对象
+     * @throws UsernameNotFoundException 如果ID不存在抛出此异常
+     */
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userMapper.selectById(username);
