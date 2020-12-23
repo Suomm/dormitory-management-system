@@ -63,4 +63,27 @@ public final class SecurityUser implements UserDetails {
         return user.getUsername();
     }
 
+    /**
+     * Returns true if the supplied object is a User instance with the same username value.
+     * In other words, the objects are equal if they have the same username, representing the same principal.
+     *
+     * @param obj 类型
+     * @return true 相同用户名
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof SecurityUser) {
+            return getUsername().equals(((SecurityUser) obj).getUsername());
+        }
+        return false;
+    }
+
+    /**
+     * Returns the hashcode of the {@code username}.
+     */
+    @Override
+    public int hashCode() {
+        return getUsername().hashCode();
+    }
+
 }
