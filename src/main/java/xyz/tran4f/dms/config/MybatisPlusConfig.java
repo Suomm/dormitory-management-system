@@ -23,10 +23,13 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
+ * 提高加载性能。
+ *
+ *
  * @author 王帅
  * @since 1.0
  */
-@Configuration
+@Configuration(proxyBeanMethods = false)
 public class MybatisPlusConfig {
 
     @Bean
