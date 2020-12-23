@@ -41,9 +41,9 @@ public class DataSourceConfig {
     }
 
     @Bean
-    public PersistentTokenRepository persistentTokenRepository(DataSource dataSource) {
+    public PersistentTokenRepository persistentTokenRepository() {
         JdbcTokenRepositoryImpl jdbcTokenRepositoryImpl = new JdbcTokenRepositoryImpl();
-        jdbcTokenRepositoryImpl.setDataSource(dataSource);
+        jdbcTokenRepositoryImpl.setDataSource(dataSource());
         //启动时创建一张表，这个参数到第二次启动时必须注释掉，因为已经创建了一张表
 //        jdbcTokenRepositoryImpl.setCreateTableOnStartup(true);
         return jdbcTokenRepositoryImpl;
