@@ -21,6 +21,8 @@ import xyz.tran4f.dms.pojo.VerificationCode;
 import java.util.Random;
 
 /**
+ * 验证码生成器。
+ *
  * @author 王帅
  * @since 1.0
  */
