@@ -27,6 +27,6 @@ import xyz.tran4f.dms.repository.MybatisRedisCache;
  * @since 1.0
  */
 @Repository
-@CacheNamespace(implementation = MybatisRedisCache.class, eviction = MybatisRedisCache.class)
+@CacheNamespace(implementation = MybatisRedisCache.class)
 public interface UserMapper extends BaseMapper<User> {
 }
