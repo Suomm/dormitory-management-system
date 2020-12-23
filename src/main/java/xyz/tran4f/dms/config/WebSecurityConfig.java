@@ -18,6 +18,9 @@ package xyz.tran4f.dms.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.access.expression.SecurityExpressionHandler;
+import org.springframework.security.access.hierarchicalroles.RoleHierarchy;
+import org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -27,6 +30,8 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.FilterInvocation;
+import org.springframework.security.web.access.expression.DefaultWebSecurityExpressionHandler;
 import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
 
 /**
@@ -43,6 +48,14 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                              PersistentTokenRepository persistentTokenRepository) {
         this.userDetailsService = userDetailsService;
         this.persistentTokenRepository = persistentTokenRepository;
+    }
+
+
+    @Bean
+    public RoleHierarchy roleHierarchy(){
+        RoleHierarchyImpl roleHierarchy = new RoleHierarchyImpl();
+        roleHierarchy.setHierarchy("ROOT > MANAGER > USER");
+        return roleHierarchy;
     }
 
     @Bean
@@ -67,7 +80,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     public void configure(WebSecurity web) {
         // 前端资源过滤
-        web.ignoring().antMatchers( "/favicon.ico", "/webjars/**", "/js/**", "/css/**", "/img/**");
+        web.ignoring().antMatchers( "/favicon.ico", "/webjars/**", "/js/**", "/css/**", "/img/**", "/font/**");
     }
 
     @Override
@@ -95,7 +108,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .deleteCookies("JSESSIONID")
                 .invalidateHttpSession(true);
         http.authorizeRequests()
-                .antMatchers("/", "/index.html", "/user/register", "/user/login.html", "/user/register.html",
+                .antMatchers("/", "/index.html", "/user/register", "/user/login.html", /*"/user/register.html",*/
                         "/user/forget_password.html", "/user/reset_password",
                         "/user/pushVerificationCode")
                 .permitAll()
