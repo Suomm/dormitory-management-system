@@ -72,12 +72,13 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
     @Async
     @Override
-    public void sendEmail(String content) {
+    public void sendEmail(String id, String content) {
         try {
             Thread.sleep(3000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+        System.out.println(id);
         System.err.println(content);
     }
 

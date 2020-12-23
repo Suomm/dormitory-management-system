@@ -30,7 +30,7 @@ public interface UserService extends IService<User> {
 
     String digitalSignature(User user);
 
-    void sendEmail(String content);
+    void sendEmail(String id, String content);
 
     String checkUser(String sid, String id);
 
