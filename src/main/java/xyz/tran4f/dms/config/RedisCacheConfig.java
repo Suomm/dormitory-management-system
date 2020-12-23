@@ -32,7 +32,7 @@ import org.springframework.data.redis.serializer.RedisSerializer;
  * @author 王帅
  * @since 1.0
  */
-@Configuration
+@Configuration(proxyBeanMethods = false)
 public class RedisCacheConfig {
 
 	@Bean
@@ -50,11 +50,11 @@ public class RedisCacheConfig {
 
 	@Bean
 	public CacheManager cacheManager(RedisConnectionFactory factory) {
-		// 配置序列化
 		RedisCacheConfiguration config = RedisCacheConfiguration.defaultCacheConfig();
 		RedisCacheConfiguration redisCacheConfiguration = config
 				.serializeKeysWith(RedisSerializationContext.SerializationPair.fromSerializer(RedisSerializer.string()))
 				.serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(RedisSerializer.json()));
 		return RedisCacheManager.builder(factory).cacheDefaults(redisCacheConfiguration).build();
 	}
+
 }
