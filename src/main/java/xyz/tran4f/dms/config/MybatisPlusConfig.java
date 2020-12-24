@@ -17,14 +17,16 @@
 package xyz.tran4f.dms.config;
 
 import com.baomidou.mybatisplus.annotation.DbType;
+import com.baomidou.mybatisplus.autoconfigure.ConfigurationCustomizer;
 import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
- * 提高加载性能。
- *
+ * <p>
+ * MyBatis-Plus 的配置类。
+ * <p/>
  *
  * @author 王帅
  * @since 1.0
@@ -32,9 +34,17 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class MybatisPlusConfig {
 
+    /**
+     * <p>
+     * 添加MyBatis-Plus的分页插件。
+     * </p>
+     *
+     * @return MyBatis-Plus 的分页插件
+     */
     @Bean
     public MybatisPlusInterceptor mybatisPlusInterceptor() {
         MybatisPlusInterceptor interceptor = new MybatisPlusInterceptor();
+        // 手动指定数据库类型：Maria DB
         interceptor.addInnerInterceptor(new PaginationInnerInterceptor(DbType.MARIADB));
         return interceptor;
     }

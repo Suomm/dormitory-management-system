@@ -27,13 +27,17 @@ import org.springframework.data.redis.serializer.RedisSerializationContext;
 import org.springframework.data.redis.serializer.RedisSerializer;
 
 /**
- *
+ * <p>
+ * Redis 缓存的配置类。
+ * </p>
  *
  * @author 王帅
  * @since 1.0
  */
 @Configuration(proxyBeanMethods = false)
 public class RedisCacheConfig {
+
+	// Redis 缓存数据的序列化设置，统一使用JSON格式。
 
 	@Bean
 	public RedisTemplate<String, String> redisTemplate(RedisConnectionFactory factory) {
@@ -43,7 +47,7 @@ public class RedisCacheConfig {
 		template.setKeySerializer(RedisSerializer.string());
 		// value序列化
 		template.setValueSerializer(RedisSerializer.json());
-		// value hashmap序列化
+		// hash value序列化
 		template.setHashValueSerializer(RedisSerializer.json());
 		return template;
 	}

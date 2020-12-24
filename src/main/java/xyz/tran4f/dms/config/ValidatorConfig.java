@@ -23,19 +23,27 @@ import org.springframework.context.annotation.Configuration;
 import javax.validation.Validation;
 import javax.validation.Validator;
 
+/**
+ * <p>
+ * javax.validation 的数据校验配置类。
+ * </p>
+ *
+ * @author 王帅
+ * @since 1.0
+ */
 @Configuration(proxyBeanMethods = false)
 public class ValidatorConfig {
 
     /**
-     * 默认会校验完所有属性，然后将错误信息一起返回，但很多时候不需要这样，一个校验失败了，其它就不必校验了
-     *
-     * @return Validator
+     * <p>
+     * 默认会校验完所有属性，然后将错误信息一起返回，但很多时候不需要这样，一个校验失败了，其它就不必校验了。
+     * </p>
      */
     @Bean
     public Validator validator() {
         return Validation.byProvider(HibernateValidator.class)
                 .configure()
-                // 为提高性能，一检测到错误就停止检测。
+                // 为提高性能，一检测到错误就停止校验。
                 .failFast(true)
                 .buildValidatorFactory()
                 .getValidator();

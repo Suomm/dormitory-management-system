@@ -31,7 +31,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl;
 import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
-import xyz.tran4f.dms.repository.SaveUserAuthenticationSuccessHandler;
+import xyz.tran4f.dms.handler.SaveUserAuthenticationSuccessHandler;
 
 import javax.sql.DataSource;
 
@@ -114,7 +114,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .loginProcessingUrl("/user/login")
                 .loginPage("/user/login.html")
                 .successHandler(authenticationSuccessHandler())
-//                .defaultSuccessUrl("/manager/welcome.html", true)
                 .failureUrl("/user/login.html?error=true");
         http.rememberMe()
                 .tokenRepository(persistentTokenRepository())
