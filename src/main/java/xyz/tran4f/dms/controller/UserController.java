@@ -19,12 +19,10 @@ package xyz.tran4f.dms.controller;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 import xyz.tran4f.dms.pojo.ResultInfo;
 import xyz.tran4f.dms.pojo.User;
 import xyz.tran4f.dms.pojo.VerificationCode;
@@ -32,9 +30,6 @@ import xyz.tran4f.dms.service.UserService;
 import xyz.tran4f.dms.utils.VerificationCodeUtils;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.File;
-import java.io.IOException;
-import java.util.Date;
 
 /**
  * @author 王帅

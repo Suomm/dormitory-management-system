@@ -17,6 +17,8 @@
 package xyz.tran4f.dms.pojo;
 
 import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -27,16 +29,18 @@ import java.util.Collection;
  * @since 1.0
  */
 @Getter
+@Setter
+@ToString
 public final class SecurityUser implements UserDetails {
 
     private static final long serialVersionUID = 9106013382537960231L;
 
-    private final User user;
-    private final Collection<GrantedAuthority> authorities;
-    private final boolean accountNonExpired;
-    private final boolean accountNonLocked;
-    private final boolean credentialsNonExpired;
-    private final boolean enabled;
+    private User user;
+    private Collection<GrantedAuthority> authorities;
+    private boolean accountNonExpired;
+    private boolean accountNonLocked;
+    private boolean credentialsNonExpired;
+    private boolean enabled;
 
     public SecurityUser(User user, Collection<GrantedAuthority> authorities) {
         this(user, true, true, true, true, authorities);

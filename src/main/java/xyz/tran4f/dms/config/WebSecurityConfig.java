@@ -18,7 +18,6 @@ package xyz.tran4f.dms.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.access.expression.SecurityExpressionHandler;
 import org.springframework.security.access.hierarchicalroles.RoleHierarchy;
 import org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -30,9 +29,11 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.FilterInvocation;
-import org.springframework.security.web.access.expression.DefaultWebSecurityExpressionHandler;
+import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl;
 import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
+import xyz.tran4f.dms.repository.SaveUserAuthenticationSuccessHandler;
+
+import javax.sql.DataSource;
 
 /**
  * @author 王帅
@@ -41,13 +42,21 @@ import org.springframework.security.web.authentication.rememberme.PersistentToke
 @Configuration
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
+    private final DataSource dataSource;
     private final UserDetailsService userDetailsService;
-    private final PersistentTokenRepository persistentTokenRepository;
 
-    public WebSecurityConfig(UserDetailsService userDetailsService,
-                             PersistentTokenRepository persistentTokenRepository) {
+    public WebSecurityConfig(DataSource dataSource, UserDetailsService userDetailsService) {
+        this.dataSource = dataSource;
         this.userDetailsService = userDetailsService;
-        this.persistentTokenRepository = persistentTokenRepository;
+    }
+
+    @Bean
+    public PersistentTokenRepository persistentTokenRepository() {
+        JdbcTokenRepositoryImpl jdbcTokenRepository = new JdbcTokenRepositoryImpl();
+        jdbcTokenRepository.setDataSource(dataSource);
+        // 启动时创建一张表，这个参数到第二次启动时必须注释掉，因为已经创建了一张表
+        // jdbcTokenRepositoryImpl.setCreateTableOnStartup(true);
+        return jdbcTokenRepository;
     }
 
 
@@ -61,6 +70,14 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    public SaveUserAuthenticationSuccessHandler authenticationSuccessHandler() {
+        SaveUserAuthenticationSuccessHandler handler = new SaveUserAuthenticationSuccessHandler();
+        handler.setDefaultTargetUrl("/manager/welcome.html");
+        handler.setAlwaysUseDefaultTargetUrl(true);
+        return handler;
     }
 
     /**
@@ -80,7 +97,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     public void configure(WebSecurity web) {
         // 前端资源过滤
-        web.ignoring().antMatchers( "/favicon.ico", "/webjars/**", "/js/**", "/css/**", "/img/**", "/font/**");
+        web.ignoring().antMatchers("/favicon.ico", "/webjars/**", "/js/**", "/css/**", "/img/**", "/font/**");
     }
 
     @Override
@@ -96,19 +113,20 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http.formLogin()
                 .loginProcessingUrl("/user/login")
                 .loginPage("/user/login.html")
-                .defaultSuccessUrl("/manager/welcome.html", true)
+                .successHandler(authenticationSuccessHandler())
+//                .defaultSuccessUrl("/manager/welcome.html", true)
                 .failureUrl("/user/login.html?error=true");
         http.rememberMe()
-                .tokenRepository(persistentTokenRepository)
+                .tokenRepository(persistentTokenRepository())
                 .tokenValiditySeconds(60 * 60)
                 .userDetailsService(userDetailsService);
         http.logout()
                 .logoutUrl("/user/logout")
-                .logoutSuccessUrl("/")
+                .logoutSuccessUrl("/user/login.html")
                 .deleteCookies("JSESSIONID")
                 .invalidateHttpSession(true);
         http.authorizeRequests()
-                .antMatchers("/", "/index.html", "/user/register", "/user/login.html", /*"/user/register.html",*/
+                .antMatchers("/", "/index.html", "/user/register", "/user/login.html", "/user/register.html",
                         "/user/forget_password.html", "/user/reset_password",
                         "/user/pushVerificationCode")
                 .permitAll()

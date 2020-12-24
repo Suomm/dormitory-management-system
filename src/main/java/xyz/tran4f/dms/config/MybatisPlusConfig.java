@@ -29,13 +29,13 @@ import org.springframework.context.annotation.Configuration;
  * @author 王帅
  * @since 1.0
  */
-@Configuration(proxyBeanMethods = false)
+@Configuration
 public class MybatisPlusConfig {
 
     @Bean
     public MybatisPlusInterceptor mybatisPlusInterceptor() {
         MybatisPlusInterceptor interceptor = new MybatisPlusInterceptor();
-        interceptor.addInnerInterceptor(new PaginationInnerInterceptor(DbType.H2));
+        interceptor.addInnerInterceptor(new PaginationInnerInterceptor(DbType.MARIADB));
         return interceptor;
     }
 

@@ -28,8 +28,6 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 
-import java.util.Locale;
-
 /**
  *
  *
@@ -52,6 +50,8 @@ public class WebApplicationConfig implements WebMvcConfigurer {
         return srb;
     }
 
+    // 国际化的配置
+
     @Bean
     public LocaleResolver localeResolver() {
         return new SessionLocaleResolver();
@@ -67,6 +67,11 @@ public class WebApplicationConfig implements WebMvcConfigurer {
         registry.addInterceptor(localeChangeInterceptor());
     }
 
+    /**
+     * webjars 取消版本号的配置
+     *
+     * @param registry 注册器
+     */
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         //配置映射关系，即：/webjars/** 映射到 classpath:/META-INF/resources/webjars/
