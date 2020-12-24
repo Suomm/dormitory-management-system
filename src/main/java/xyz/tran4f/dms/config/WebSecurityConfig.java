@@ -76,7 +76,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     public SaveUserAuthenticationSuccessHandler authenticationSuccessHandler() {
         SaveUserAuthenticationSuccessHandler handler = new SaveUserAuthenticationSuccessHandler();
         handler.setDefaultTargetUrl("/manager/welcome.html");
-        handler.setAlwaysUseDefaultTargetUrl(true);
+        // handler.setAlwaysUseDefaultTargetUrl(true);
         return handler;
     }
 
@@ -126,8 +126,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .invalidateHttpSession(true);
         http.authorizeRequests()
                 .antMatchers("/", "/index.html", "/user/register", "/user/login.html", "/user/register.html",
-                        "/user/forget_password.html", "/user/reset_password",
-                        "/user/pushVerificationCode")
+                        "/user/forget_password.html", "/user/forget_password", "/user/reset_password",
+                        "/user/getVerificationCode")
                 .permitAll()
                 .anyRequest().authenticated();
 //        http.csrf().csrfTokenRepository()

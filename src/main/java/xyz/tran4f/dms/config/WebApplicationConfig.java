@@ -100,10 +100,14 @@ public class WebApplicationConfig implements WebMvcConfigurer {
 
     @Override
     public void addViewControllers(ViewControllerRegistry registry) {
+        // 主页的视图解析
         registry.addViewController("/index.html").setViewName("/index");
+        // 用户模块的视图解析
         registry.addViewController("/user/login.html").setViewName("/user/login");
         registry.addViewController("/user/success.html").setViewName("/user/success");
         registry.addViewController("/user/register.html").setViewName("/user/register");
+        registry.addViewController("/user/forget_password.html").setViewName("/user/forget_password");
+        // 管理员模块的视图解析
         registry.addViewController("/manager/welcome.html").setViewName("/manager/welcome");
     }
 
