@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package xyz.tran4f.dms.repository;
+package xyz.tran4f.dms.handler;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
@@ -23,9 +23,14 @@ import xyz.tran4f.dms.pojo.SecurityUser;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
 /**
+ * <p>
+ * 授权成功后将用户信息保存到 Session 域中。
+ * </p>
+ *
  * @author 王帅
  * @since 1.0
  */
@@ -34,8 +39,11 @@ public class SaveUserAuthenticationSuccessHandler extends SavedRequestAwareAuthe
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
             Authentication authentication) throws IOException, ServletException {
+        // 获取 SecurityUser 对象，里面有封装好的 User 对象
         SecurityUser principal = (SecurityUser) authentication.getPrincipal();
+        // 将 User 对象存入 Session 域中，命名为 user
         request.getSession().setAttribute("user", principal.getUser());
+        // 调用父类的方法实现页面跳转
         super.onAuthenticationSuccess(request, response, authentication);
     }
 
