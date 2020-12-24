@@ -41,6 +41,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         this.passwordEncoder = passwordEncoder;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ResultInfo<User> register(User user) {
         // 检查数据库中是否有该用户
@@ -49,7 +52,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         }
         // 密码加密和用户角色设置
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-//        user.setRole("ROLE_USER");
         // 插入用户信息失败
         if (baseMapper.insert(user) != 1) {
             return new ResultInfo<>("注册失败");
@@ -57,6 +59,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         return new ResultInfo<>(user);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String digitalSignature(User user) {
         String secretKey = UUID.randomUUID().toString(); //密钥
@@ -66,22 +71,26 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         if (baseMapper.updateById(user) != 1) {
             return null;
         }
-        String key = user.getId()+"$"+outDate.getTime()/1000*1000+"$"+secretKey;
+        // 更新完之后查询出来，用于更新缓存
+        User u = baseMapper.selectById(user.getId());
+        user.setEmail(u.getEmail());
+        String key = user.getId() + "$" + outDate.getTime() / 1000 * 1000 + "$" + secretKey;
         return passwordEncoder.encode(key);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Async
     @Override
-    public void sendEmail(String id, String content) {
-        try {
-            Thread.sleep(3000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        System.out.println(id);
+    public void sendEmail(String email, String content) {
+        System.out.println(email);
         System.err.println(content);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String checkUser(String sid, String id) {
         if ("".equals(sid) || "".equals(id)) {
@@ -102,6 +111,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         return null;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean resetPassword(User user, String password) {
         user.setPassword(passwordEncoder.encode(password));
