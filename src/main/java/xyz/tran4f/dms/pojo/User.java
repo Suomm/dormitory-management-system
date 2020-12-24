@@ -69,4 +69,8 @@ public class User implements Serializable {
     @TableField(updateStrategy = FieldStrategy.IGNORED)
     private Timestamp registerDate;
 
+    public User(String id) {
+        this.id = id;
+    }
+
 }
