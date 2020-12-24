@@ -78,7 +78,7 @@ public class UserServiceImplTest {
         //邮件内容
         helper.setText(emailContent, true);
 
-        javaMailSender.send(message);
+//        javaMailSender.send(message);
     }
 
 
