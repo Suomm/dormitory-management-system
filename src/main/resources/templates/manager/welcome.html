@@ -22,10 +22,14 @@
     <title>管理界面</title>
 </head>
 <body>
+    <div th:object="${#session.getAttribute('user')}">
     <h1>欢迎登陆，以下是您的信息！</h1>
-    <h2>学号: <th:block sec:authentication="principal.user.id" /></h2>
-    <h2>姓名: <th:block sec:authentication="principal.username" /></h2>
-    <h2>权限: <th:block sec:authentication="principal.authorities" /></h2>
+<!--    <h2 sec:authentication="hasRole('USER')">普通用户可见</h2>-->
+    <h2>学号：[[*{id}]]</h2>
+    <h2>邮箱：[[*{email}]]</h2>
+    <h2>姓名：<th:block sec:authentication="principal.username" /></h2>
+    <h2>权限：<th:block sec:authentication="principal.authorities" /></h2>
+    </div>
     <form th:action="@{/user/logout}" method="post">
         <input type="submit" value="注销"/>
     </form>
