@@ -20,7 +20,7 @@
     <title>注册</title>
 </head>
 <body>
-<form th:action="@{/user/register.html}" method="post">
+<form th:action="@{/user/register}" method="post">
     <!--        <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />-->
     <div th:text="${#request.getAttribute('error')}"></div>
     <label for="id">学号：</label>
@@ -57,8 +57,8 @@
     let ctxPath = [[${#httpServletRequest.getContextPath()}]];
     let btn = $('.fetchBtn');
     btn.click(function () {
-        $.post(ctxPath + "/user/pushVerificationCode", {
-            "id": $('#id').val()
+        $.post(ctxPath + "/user/getVerificationCode", {
+            "id": $('#email').val()
         });
         let count = 60;
         const countDown = setInterval(() => {
