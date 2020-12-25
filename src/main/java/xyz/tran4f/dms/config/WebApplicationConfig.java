@@ -25,6 +25,8 @@ import org.springframework.web.servlet.config.annotation.*;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 
+import java.util.Locale;
+
 /**
  * <p>
  * Spring MVC 的主配置类。
@@ -58,7 +60,9 @@ public class WebApplicationConfig implements WebMvcConfigurer {
      */
     @Bean
     public LocaleResolver localeResolver() {
-        return new SessionLocaleResolver();
+        SessionLocaleResolver slr = new SessionLocaleResolver();
+        slr.setDefaultLocale(Locale.SIMPLIFIED_CHINESE);
+        return slr;
     }
 
     /**
