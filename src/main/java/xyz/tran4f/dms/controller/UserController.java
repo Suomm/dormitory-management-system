@@ -19,15 +19,17 @@ package xyz.tran4f.dms.controller;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import xyz.tran4f.dms.pojo.ResultInfo;
+import xyz.tran4f.dms.exception.CheckFailedException;
+import xyz.tran4f.dms.exception.RedirectException;
 import xyz.tran4f.dms.pojo.User;
-import xyz.tran4f.dms.pojo.VerificationCode;
+import xyz.tran4f.dms.pojo.Captcha;
 import xyz.tran4f.dms.service.UserService;
-import xyz.tran4f.dms.utils.VerificationCodeUtils;
+import xyz.tran4f.dms.utils.CaptchaUtils;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -68,8 +70,8 @@ public class UserController {
      */
     @PostMapping("register")
     public String register(@Validated User user, String emailCode,
-                           BindingResult result, Model model,
-                           @SessionAttribute VerificationCode code) {
+                           BindingResult result, ModelMap model,
+                           @SessionAttribute Captcha code) {
         // 添加用户注册信息到session域中用于数据回显
         model.addAttribute("user", user);
         // 数据校验出现错误
@@ -80,27 +82,15 @@ public class UserController {
             model.addAttribute("error", message);
             return "user/register";
         }
-        // 比对验证码过期时间
-        if (code.getOutDate() <= System.currentTimeMillis()) {
-            model.addAttribute("error", "验证码过期了");
-            return "user/register";
-        }
-        // 比对验证码是否正确
-        if (!code.getCode().equals(emailCode)) {
-            model.addAttribute("error", "验证码不对");
-            return "user/register";
-        }
+        // 校验邮箱验证码
+        CaptchaUtils.checkCaptcha(code, Captcha.defaultCaptcha(emailCode));
         // 比对部门的邀请码是否正确
         if (!"123456".equals(user.getValidateCode())) {
             model.addAttribute("error", "邀请码不对哦");
             return "user/register";
         }
         // 调用 Service 层的方法注册用户，写入数据库
-        ResultInfo<User> info = userService.register(user);
-        if (!info.isComplete()) {
-            model.addAttribute("error", info.getMessage());
-            return "user/register";
-        }
+        userService.register(user);
         // 注册成功，重定向到登陆页面进行登录
         return "redirect:/user/login.html";
     }
@@ -114,11 +104,6 @@ public class UserController {
     public String forgetPassword(User user, Model model, HttpServletRequest request) {
         // 通过 Service 层获取数字签名，并将UUID和过期时间写入数据库
         String digitalSignature = userService.digitalSignature(user);
-        // 获取不到数字签名证明该用户不在数据库中，即：该用户没有注册
-        if (digitalSignature == null) {
-            model.addAttribute("error", "该用户没有注册");
-            return "user/forget_password";
-        }
         // 通过 request 拼接而成的请求路径
         String basePath = request.getScheme() + "://" + request.getServerName() + ":" +
                 request.getServerPort() + request.getContextPath() + "/";
@@ -128,7 +113,7 @@ public class UserController {
                 " target='_BLANK'>点击我重新设置密码</a>" +
                 "<br/>tips:本邮件超过10分钟,链接将会失效，需要重新申请'找回密码'\t" + digitalSignature;
         // 发送找回密码的邮件
-        userService.sendEmail(user.getEmail(), emailContent);
+        userService.sendEmail(user.getEmail(), "", emailContent);
         // 用于在网页上展示邮件内容，可删除
         model.addAttribute("emailContent", emailContent);
         return "user/success";
@@ -142,10 +127,10 @@ public class UserController {
     @GetMapping("reset_password")
     public String checkResetPassword(String sid, String id, Model model) {
         // 检查加密的数字密匙是否正确
-        String s = userService.checkUser(sid, id);
-        if (s != null) {
-            model.addAttribute("error", s);
-            return "redirect:/user/forget_password.html";
+        try {
+            userService.checkUser(sid, id);
+        } catch (CheckFailedException e) {
+            throw new RedirectException("/user/forget_password.html", e);
         }
         // 将用户 ID 放入 session 域中
         User user = new User(id);
@@ -180,9 +165,9 @@ public class UserController {
     @ResponseBody
     @PostMapping("getVerificationCode")
     public void getVerificationCode(String email, Model model) {
-        VerificationCode code = VerificationCodeUtils.getVerificationCode(6, 10 * 60 * 1000);
+        Captcha code = CaptchaUtils.getCaptcha(6, 10 * 60 * 1000);
         String emailContent = "您的验证码为" + code.getCode() + "\t有效期为十分钟";
-        userService.sendEmail(email, emailContent);
+        userService.sendEmail(email, "", emailContent);
         model.addAttribute("code", code);
     }
 

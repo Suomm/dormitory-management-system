@@ -19,6 +19,7 @@ package xyz.tran4f.dms.pojo;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.jetbrains.annotations.Contract;
 
 /**
  * 验证码
@@ -29,9 +30,29 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class VerificationCode {
+public class Captcha {
 
+    /**
+     * 验证码内容
+     */
     private String code;
+
+    /**
+     * 过期时间
+     */
     private long outDate;
+
+    /**
+     * <p>
+     * 根据所给的验证码内容，生成一个
+     * </p>
+     *
+     * @param code 验证码
+     * @return 标记当前时间的验证码
+     */
+    @Contract(pure = true)
+    public static Captcha defaultCaptcha(String code) {
+        return new Captcha(code, System.currentTimeMillis());
+    }
 
 }

@@ -17,7 +17,10 @@
 package xyz.tran4f.dms.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import xyz.tran4f.dms.pojo.ResultInfo;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import xyz.tran4f.dms.exception.CheckFailedException;
+import xyz.tran4f.dms.exception.RegisterException;
 import xyz.tran4f.dms.pojo.User;
 
 /**
@@ -32,9 +35,9 @@ public interface UserService extends IService<User> {
      * </p>
      *
      * @param user 封装好的数据对象
-     * @return 带有信息的结果集
+     * @exception RegisterException 注册失败抛出此异常
      */
-    ResultInfo<User> register(User user);
+    void register(User user) throws RegisterException;
 
     /**
      * <p>
@@ -44,6 +47,7 @@ public interface UserService extends IService<User> {
      * @param user 封装有ID的对象
      * @return {@code null} 说明生成数字签名失败
      */
+    @NotNull
     String digitalSignature(User user);
 
     /**
@@ -54,7 +58,7 @@ public interface UserService extends IService<User> {
      * @param email 用户邮箱地址
      * @param content 邮件内容
      */
-    void sendEmail(String email, String content);
+    void sendEmail(String email, String subject, String content);
 
     /**
      * <p>
@@ -63,9 +67,8 @@ public interface UserService extends IService<User> {
      *
      * @param sid 要检查的密匙
      * @param id 用户的学号
-     * @return 检查的错误信息说明，检查通过则返回 {@code null}
      */
-    String checkUser(String sid, String id);
+    void checkUser(String sid, String id) throws CheckFailedException;
 
     /**
      * <p>
