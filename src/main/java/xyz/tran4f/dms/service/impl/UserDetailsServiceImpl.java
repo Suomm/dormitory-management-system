@@ -39,7 +39,9 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     }
 
     /**
-     *
+     * <p>
+     * 从数据库中查找对象。
+     * </p>
      *
      * @param username 实际应为学号
      * @return 带有用户信息的{@code UserDetails}对象

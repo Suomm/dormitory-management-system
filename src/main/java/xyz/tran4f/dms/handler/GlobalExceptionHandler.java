@@ -21,8 +21,8 @@ import org.springframework.context.NoSuchMessageException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import xyz.tran4f.dms.attribute.WebAttribute;
-import xyz.tran4f.dms.exception.RuntimeMessageEchoSource;
 import xyz.tran4f.dms.exception.RedirectException;
+import xyz.tran4f.dms.exception.RuntimeMessageException;
 import xyz.tran4f.dms.utils.I18nUtils;
 
 import javax.servlet.http.HttpServletRequest;
@@ -50,7 +50,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(RedirectException.class)
     public String sendRedirect(HttpSession session, RedirectException e) {
-        session.setAttribute(WebAttribute.WEB_DEFAULT_ERROR, getMessage(e));
+        session.setAttribute(WebAttribute.WEB_LAST_EXCEPTION, getMessage(e));
         return "redirect:" + e.getRedirectUrl();
     }
 
@@ -59,23 +59,23 @@ public class GlobalExceptionHandler {
      * 处理自定义异常中，将异常的详细信息回显到前端界面。
      * </p>
      *
-     * @see RuntimeMessageEchoSource
-     * @see WebAttribute#WEB_DEFAULT_ERROR
+     * @see RuntimeMessageException
+     * @see WebAttribute#WEB_LAST_EXCEPTION
      */
-    @ExceptionHandler(RuntimeMessageEchoSource.class)
-    public String sendMessage(HttpServletRequest request, RuntimeMessageEchoSource source) {
+    @ExceptionHandler(RuntimeMessageException.class)
+    public String sendMessage(HttpServletRequest request, RuntimeMessageException source) {
         String message = getMessage(source);
         // 将消息放入 request 域中用于回显
-        request.getSession().setAttribute(WebAttribute.WEB_DEFAULT_ERROR, message);
+        request.getSession().setAttribute(WebAttribute.WEB_LAST_EXCEPTION, message);
         // 解析请求路径作为视图解析器返回
         String result = request.getServletPath();
         // 由于 GET/POST 请求都指向同一个 HTML 地址，所以要对路径做裁剪
-//        result = result.substring(1, result.length() - 5);
-        log.info("处理异常 {} 返回路径 {}", source.getClass().getName(), result);
+        result = result.substring(1, result.length() - 5);
+        log.info("处理异常 {} 解析路径 {}", source.getClass().getName(), result);
         return result;
     }
 
-    private String getMessage(RuntimeMessageEchoSource source) {
+    private String getMessage(RuntimeMessageException source) {
         try {
             // 默认去本地查找 i18n 国际化消息
             return i18nUtils.getMessage(source.getMessage(), source.getArgs());

@@ -32,15 +32,22 @@ import xyz.tran4f.dms.service.UserService;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 import java.sql.Timestamp;
-import java.util.List;
 import java.util.UUID;
 
 /**
+ * <p>
+ * 用户操作服务类的实现。
+ * </p>
+ *
  * @author 王帅
  * @since 1.0
  */
 @Service
 public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements UserService {
+
+    private static final String DELIMITER = "$";
+
+    // 所需依赖的注入：邮件发送，密码加密
 
     private final JavaMailSender  javaMailSender;
     private final PasswordEncoder passwordEncoder;
@@ -48,6 +55,15 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     public UserServiceImpl(JavaMailSender javaMailSender, PasswordEncoder passwordEncoder) {
         this.javaMailSender  = javaMailSender;
         this.passwordEncoder = passwordEncoder;
+    }
+
+    /**
+     * <p>
+     * 忽略时间的毫秒值，减少进出数据库的误差。
+     * </p>
+     */
+    private long ignore(Timestamp stamp) {
+        return stamp.getTime() / 1000 * 1000;
     }
 
     /**
@@ -63,7 +79,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         // 插入用户信息失败
         if (baseMapper.insert(user) != 1) {
-            throw new RegisterException(ExceptionAttribute.USER_REGISTER_FAIL_INSERT);
+            throw new DatabaseException(ExceptionAttribute.USER_REGISTER_FAIL_INSERT);
         }
     }
 
@@ -73,8 +89,11 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     @NotNull
     @Override
     public String digitalSignature(User user) {
-        String secretKey = UUID.randomUUID().toString(); //密钥
-        Timestamp outDate = new Timestamp(System.currentTimeMillis() + 10 * 60 * 1000);//30分钟后过期
+        // 生成唯一密匙
+        String secretKey = UUID.randomUUID().toString();
+        // 设置过期时间：十分钟后过期
+        Timestamp outDate = new Timestamp(System.currentTimeMillis() + 10 * 60 * 1000);
+        // 保存在用户实体中
         user.setValidateCode(secretKey);
         user.setRegisterDate(outDate);
         // 该用户不在数据库中，即：该用户没有注册
@@ -84,7 +103,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         // 更新完之后查询出来，用于更新缓存
         User u = baseMapper.selectById(user.getId());
         user.setEmail(u.getEmail());
-        String key = user.getId() + "$" + outDate.getTime() / 1000 * 1000 + "$" + secretKey;
+        // 生成密匙键 ID$TIME$UUID
+        String key = user.getId() + DELIMITER + ignore(outDate) + DELIMITER + secretKey;
         return passwordEncoder.encode(key);
     }
 
@@ -102,7 +122,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             helper.setSubject(subject);
             helper.setText(content, true);
         } catch (MessagingException e) {
-            throw new EmailSendException("", e);
+            throw new EmailSendException(ExceptionAttribute.USER_EMAIL_FAIL, e);
         }
 //        javaMailSender.send(message);
         System.out.println(email);
@@ -114,20 +134,24 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
      */
     @Override
     public void checkUser(String sid, String id) throws CheckFailedException {
-        if ("".equals(sid) || "".equals(id)) {
-            throw new CheckFailedException("链接不完整，请重新生成");
+        // 没有生成的密匙
+        if ("".equals(sid)) {
+            throw new CheckFailedException(ExceptionAttribute.USER_CHECK_MISSING_SID);
         }
         User user = baseMapper.selectById(id);
+        // 无法找到匹配的用户
         if (user == null) {
-            throw new CheckFailedException("链接错误，无法找到匹配用户，请重新申请找回密码。");
+            throw new CheckFailedException(ExceptionAttribute.USER_NOT_FOUND);
         }
         Timestamp outDate = user.getRegisterDate();
+        // 连接过期了
         if (outDate.getTime() <= System.currentTimeMillis()) {
-            throw new CheckFailedException("链接已经过期，请重新申请找回密码.");
+            throw new CheckFailedException(ExceptionAttribute.USER_CHECK_EXPIRE);
         }
-        String digitalSignature = user.getId() + "$" + outDate.getTime() / 1000 * 1000 + "$" + user.getValidateCode();   //数字签名
+        String digitalSignature = user.getId() + DELIMITER + ignore(outDate) + DELIMITER + user.getValidateCode();   //数字签名
+        // 密匙不完整
         if (!passwordEncoder.matches(digitalSignature, sid)) {
-            throw new CheckFailedException("链接不正确，是否已经过期了？重新申请吧");
+            throw new CheckFailedException(ExceptionAttribute.USER_CHECK_INCOMPLETE);
         }
     }
 

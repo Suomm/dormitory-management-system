@@ -18,12 +18,15 @@ package xyz.tran4f.dms.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import xyz.tran4f.dms.exception.CheckFailedException;
 import xyz.tran4f.dms.exception.RegisterException;
 import xyz.tran4f.dms.pojo.User;
 
 /**
+ * <p>
+ * 用户操作的服务类。
+ * </p>
+ *
  * @author 王帅
  * @since 1.0
  */

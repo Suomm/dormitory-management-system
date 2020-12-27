@@ -18,12 +18,12 @@ package xyz.tran4f.dms.handler;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
+import xyz.tran4f.dms.attribute.WebAttribute;
 import xyz.tran4f.dms.pojo.SecurityUser;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
 /**
@@ -42,7 +42,7 @@ public class SaveUserAuthenticationSuccessHandler extends SavedRequestAwareAuthe
         // 获取 SecurityUser 对象，里面有封装好的 User 对象
         SecurityUser principal = (SecurityUser) authentication.getPrincipal();
         // 将 User 对象存入 Session 域中，命名为 user
-        request.getSession().setAttribute("user", principal.getUser());
+        request.getSession().setAttribute(WebAttribute.WEB_SESSION_USER, principal.getUser());
         // 调用父类的方法实现页面跳转
         super.onAuthenticationSuccess(request, response, authentication);
     }

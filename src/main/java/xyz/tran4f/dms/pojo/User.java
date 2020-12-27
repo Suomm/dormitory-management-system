@@ -42,22 +42,20 @@ public class User implements Serializable {
 
     private static final long serialVersionUID = -5246550721989479832L;
 
-    @NotNull(message = "学号不能为空")
-    @Pattern(regexp  = "203007\\d{4}",
-             message = "您不是化学学院的学生")
+    @NotNull()
+    @Pattern(regexp  = "203007\\d{4}")
     @TableId(value = "id", type = IdType.INPUT)
     private String id;
 
-    @NotBlank(message = "用户名不能为空")
+    @NotBlank()
     private String username;
 
-    @NotNull(message = "密码不能为空")
-    @Pattern(regexp  = "^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z\\W]{6,18}$",
-             message = "密码必须包含数字和字母，且在6-18位之间")
+    @NotBlank
+    @Pattern(regexp  = "^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z\\W]{6,18}$")
     private String password;
 
     @Email
-    @NotBlank(message = "邮箱不能为空")
+    @NotBlank()
     private String email;
 
     private String  role;
