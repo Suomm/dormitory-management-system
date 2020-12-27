@@ -35,11 +35,12 @@ public final class ExceptionAttribute {
     public static final String USER_NOT_FOUND = "exception.user.notFound";
     public static final String USER_REGISTER_REPEAT = "exception.user.register.repeat";
     public static final String USER_REGISTER_FAIL_INSERT = "exception.user.register.failInsert";
+    public static final String USER_REGISTER_CAPTCHA_EXIST = "exception.user.register.captchaExist";
     public static final String USER_EMAIL_FAIL = "exception.user.email.fail";
     public static final String USER_MISSING_CAPTCHA = "exception.user.missingCaptcha";
     public static final String USER_RESET_PASSWORD_FAIL_UPDATE = "exception.user.resetPassword.failUpdate";
-    public static final String USER_CHECK_MISSING_SID = "exception.user.check.missingSID";
-    public static final String USER_CHECK_EXPIRE = "exception.user.check.expire";
-    public static final String USER_CHECK_INCOMPLETE = "exception.user.check.incomplete";
+    public static final String USER_RESET_PASSWORD_MISSING_ARGUMENT = "exception.user.resetPassword.missingArgument";
+    public static final String USER_RESET_PASSWORD_EXPIRE = "exception.user.resetPassword.expire";
+    public static final String USER_RESET_PASSWORD_INCOMPLETE = "exception.user.resetPassword.incomplete";
 
 }
