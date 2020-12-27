@@ -17,6 +17,10 @@
 package xyz.tran4f.dms.attribute;
 
 /**
+ * <p>
+ * 管理 WEB 程序域中的属性。
+ * </p>
+ *
  * @author 王帅
  * @since 1.0
  */
@@ -25,6 +29,8 @@ public final class WebAttribute {
     private WebAttribute() {
     }
 
-    public static final String WEB_DEFAULT_ERROR = "error";
+    public static final String WEB_LAST_EXCEPTION = "WEB_LAST_EXCEPTION";
+    public static final String WEB_SESSION_USER = "WEB_SESSION_USER";
+    public static final String WEB_SESSION_CAPTCHA = "WEB_SESSION_CAPTCHA";
 
 }

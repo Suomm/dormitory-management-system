@@ -17,6 +17,10 @@
 package xyz.tran4f.dms.attribute;
 
 /**
+ * <p>
+ * 异常详细消息国际化，属性对应国际化配置文件的键值。
+ * </p>
+ *
  * @author 王帅
  * @since 1.0
  */
@@ -25,8 +29,17 @@ public final class ExceptionAttribute {
     private ExceptionAttribute() {
     }
 
+    public static final String MESSAGE_BAD_REQUEST = "exception.message.badRequest";
+    public static final String MESSAGE_MISSING_ATTRIBUTE = "exception.message.missingAttribute";
+
     public static final String USER_NOT_FOUND = "exception.user.notFound";
     public static final String USER_REGISTER_REPEAT = "exception.user.register.repeat";
     public static final String USER_REGISTER_FAIL_INSERT = "exception.user.register.failInsert";
+    public static final String USER_EMAIL_FAIL = "exception.user.email.fail";
+    public static final String USER_MISSING_CAPTCHA = "exception.user.missingCaptcha";
+    public static final String USER_RESET_PASSWORD_FAIL_UPDATE = "exception.user.resetPassword.failUpdate";
+    public static final String USER_CHECK_MISSING_SID = "exception.user.check.missingSID";
+    public static final String USER_CHECK_EXPIRE = "exception.user.check.expire";
+    public static final String USER_CHECK_INCOMPLETE = "exception.user.check.incomplete";
 
 }
