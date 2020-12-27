@@ -20,23 +20,22 @@
     <title>注册</title>
 </head>
 <body>
-<form th:action="@{/user/register}" method="post">
-    <!--        <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />-->
-    <div th:text="${#request.getAttribute('error')}"></div>
+<form th:action="@{/user/register.html}" method="post">
+    <div th:text="${session?.WEB_LAST_EXCEPTION}"></div>
     <label for="id">学号：</label>
-    <input id="id" type="text" name="id" th:value="${user?.id}"/>
+    <input id="id" type="text" name="id" th:value="${WEB_SESSION_USER?.id}"/>
     <br/>
     <label for="username">姓名：</label>
-    <input id="username" type="text" name="username" th:value="${user?.username}"/>
+    <input id="username" type="text" name="username" th:value="${WEB_SESSION_USER?.username}"/>
     <br/>
     <label for="password">密码：</label>
-    <input id="password" type="password" name="password" th:value="${user?.password}"/>
+    <input id="password" type="password" name="password" th:value="${WEB_SESSION_USER?.password}"/>
     <br/>
     <label for="confirm">确认密码：</label>
     <input id="confirm" type="password" name="confirm"/>
     <br/>
     <label for="email">邮箱：</label>
-    <input id="email" type="email" name="email" th:value="${user?.email}"/>
+    <input id="email" type="email" name="email" th:value="${WEB_SESSION_USER?.email}"/>
     <br/>
     性别：
     <input id="man" type="radio" checked="checked" name="gender" value="1"/>
@@ -49,7 +48,7 @@
     <button type="button" class="fetchBtn">获取验证码</button>
     <br/>
     <label for="validateCode">邀请码：</label>
-    <input id="validateCode" type="text" name="validateCode" th:value="${user?.validateCode}"/>
+    <input id="validateCode" type="text" name="validateCode" th:value="${WEB_SESSION_USER?.validateCode}"/>
     <br/>
     <input type="submit"/>
 </form>
@@ -57,7 +56,7 @@
     let ctxPath = [[${#httpServletRequest.getContextPath()}]];
     let btn = $('.fetchBtn');
     btn.click(function () {
-        $.post(ctxPath + "/user/getVerificationCode", {
+        $.post(ctxPath + "/user/getCaptcha", {
             "id": $('#email').val()
         });
         let count = 60;
