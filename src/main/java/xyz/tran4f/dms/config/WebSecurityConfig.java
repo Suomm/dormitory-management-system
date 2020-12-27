@@ -75,15 +75,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Bean
     public SaveUserAuthenticationSuccessHandler authenticationSuccessHandler() {
         SaveUserAuthenticationSuccessHandler handler = new SaveUserAuthenticationSuccessHandler();
-        handler.setDefaultTargetUrl("/manager/welcome.html");
+        handler.setDefaultTargetUrl("/manager/dashboard.html");
         // handler.setAlwaysUseDefaultTargetUrl(true);
         return handler;
     }
 
     /**
-     * 解决UsernameNotFoundException不显示问题
-     *
-     * @return authenticationProvider
+     * 解决 UsernameNotFoundException 不显示问题
      */
     @Bean
     public AuthenticationProvider authenticationProvider() {
@@ -97,7 +95,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     public void configure(WebSecurity web) {
         // 前端资源过滤
-        web.ignoring().antMatchers("/favicon.ico", "/webjars/**", "/js/**", "/css/**", "/img/**", "/font/**");
+        web.ignoring().antMatchers("/favicon.ico", "/webjars/**",
+                "/js/**", "/css/**", "/img/**", "/font/**");
     }
 
     @Override
@@ -125,9 +124,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .deleteCookies("JSESSIONID")
                 .invalidateHttpSession(true);
         http.authorizeRequests()
-                .antMatchers("/", "/index.html", "/user/register", "/user/login.html", "/user/register.html",
-                        "/user/forget_password.html", "/user/forget_password", "/user/reset_password",
-                        "/user/getVerificationCode")
+                .antMatchers("/", "/index.html", "/user/login.html", "/user/register.html",
+                        "/user/forget_password.html", "/user/reset_password.html", "/user/getCaptcha")
                 .permitAll()
                 .anyRequest().authenticated();
 //        http.csrf().csrfTokenRepository()

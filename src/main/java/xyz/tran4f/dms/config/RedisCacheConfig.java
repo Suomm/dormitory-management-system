@@ -34,7 +34,7 @@ import org.springframework.data.redis.serializer.RedisSerializer;
  * @author 王帅
  * @since 1.0
  */
-@Configuration(proxyBeanMethods = false)
+@Configuration
 public class RedisCacheConfig {
 
 	// Redis 缓存数据的序列化设置，统一使用JSON格式。

@@ -21,7 +21,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.web.session.HttpSessionEventPublisher;
 import org.springframework.web.servlet.LocaleResolver;
-import org.springframework.web.servlet.config.annotation.*;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 
@@ -97,26 +99,6 @@ public class WebApplicationConfig implements WebMvcConfigurer {
                 // 不加这个配置，设置了 webjars-locator 不生效
                 // 生产时建议开启缓存（只是缓存了资源路径而不是资源内容）,开发是可以设置为false
                 .resourceChain(true);
-    }
-
-    /**
-     * <p>
-     * 注册视图解析器，切记：{@link ViewControllerRegistry#addViewController(String)} 参数一定要以 {@code /} 开头，
-     * {@link ViewControllerRegistration#setViewName(String)} 一定不能以 {@code /} 开头。不然打成 JAR 文件后运行，
-     * 报 {@link org.thymeleaf.exceptions.TemplateInputException} 异常！
-     * </p>
-     */
-    @Override
-    public void addViewControllers(ViewControllerRegistry registry) {
-        // 主页的视图解析
-        registry.addViewController("/index.html").setViewName("index");
-        // 用户模块的视图解析
-        registry.addViewController("/user/login.html").setViewName("user/login");
-        registry.addViewController("/user/success.html").setViewName("user/success");
-        registry.addViewController("/user/register.html").setViewName("user/register");
-        registry.addViewController("/user/forget_password.html").setViewName("user/forget_password");
-        // 管理员模块的视图解析
-        registry.addViewController("/manager/welcome.html").setViewName("manager/welcome");
     }
 
 }
