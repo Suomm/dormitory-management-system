@@ -23,6 +23,10 @@ import xyz.tran4f.dms.pojo.User;
 import xyz.tran4f.dms.repository.MybatisRedisCache;
 
 /**
+ * <p>
+ * 对数据库进行操作的 Mapper 接口。
+ * </p>
+ *
  * @author 王帅
  * @since 1.0
  */
