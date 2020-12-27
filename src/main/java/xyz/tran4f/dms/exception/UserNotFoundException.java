@@ -27,7 +27,7 @@ import xyz.tran4f.dms.attribute.ExceptionAttribute;
  * @author 王帅
  * @since 1.0
  */
-public class UserNotFoundException extends RuntimeMessageException {
+public class UserNotFoundException extends MessageException {
 
     private static final long serialVersionUID = -8639444066340783164L;
 

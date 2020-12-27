@@ -26,7 +26,7 @@ import org.jetbrains.annotations.Contract;
  * @author 王帅
  * @since 1.0
  */
-public class RegisterException extends RuntimeMessageException {
+public class RegisterException extends MessageException {
 
     private static final long serialVersionUID = 6354950372852467340L;
 

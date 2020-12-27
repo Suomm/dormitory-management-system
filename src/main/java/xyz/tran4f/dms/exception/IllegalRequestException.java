@@ -27,7 +27,7 @@ import xyz.tran4f.dms.attribute.ExceptionAttribute;
  * @author 王帅
  * @since 1.0
  */
-public class IllegalRequestException extends RuntimeMessageException {
+public class IllegalRequestException extends MessageException {
 
     private static final long serialVersionUID = 6723413299262506626L;
 

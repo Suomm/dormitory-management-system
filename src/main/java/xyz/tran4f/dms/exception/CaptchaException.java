@@ -28,7 +28,7 @@ import org.jetbrains.annotations.Contract;
  * @see xyz.tran4f.dms.pojo.Captcha
  * @see xyz.tran4f.dms.utils.CaptchaUtils
  */
-public class CaptchaException extends RuntimeMessageException {
+public class CaptchaException extends MessageException {
 
     private static final long serialVersionUID = 5422567440119072978L;
 

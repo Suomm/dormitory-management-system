@@ -30,15 +30,15 @@ import org.jetbrains.annotations.Contract;
  */
 @Getter
 @Setter
-public class RedirectException extends RuntimeMessageException {
+public class RedirectException extends MessageException {
 
     private static final long serialVersionUID = -36415506607708975L;
 
     private String redirectUrl;
 
     @Contract(pure = true)
-    public RedirectException(String redirectUrl, MessageException cause) {
-        super(cause.getMessage(), cause, cause.getArgs());
+    public RedirectException(String redirectUrl, String message) {
+        super(message);
         setRedirectUrl(redirectUrl);
     }
 

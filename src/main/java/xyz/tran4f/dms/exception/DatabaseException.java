@@ -26,7 +26,7 @@ import org.jetbrains.annotations.Contract;
  * @author 王帅
  * @since 1.0
  */
-public class DatabaseException extends RuntimeMessageException {
+public class DatabaseException extends MessageException {
 
     private static final long serialVersionUID = -9134621069235358217L;
 

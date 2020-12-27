@@ -26,7 +26,7 @@ import org.jetbrains.annotations.Contract;
  * @author 王帅
  * @since 1.0
  */
-public class EmailSendException extends RuntimeMessageException {
+public class EmailSendException extends MessageException {
 
     private static final long serialVersionUID = -7074622825786549829L;
 

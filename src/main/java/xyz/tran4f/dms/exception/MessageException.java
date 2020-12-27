@@ -22,20 +22,9 @@ import org.jetbrains.annotations.Contract;
 
 /**
  * <p>
- * 异常的消息信息回显，是所有需要回显给用户的异常信息的父类。如需使用 i18n 国际化消息，详细消息可使用
- * 国际化信息配置文件中的键值，可用的键值请参见 {@link xyz.tran4f.dms.attribute.ExceptionAttribute}
- * </p>
- * <p>
- * 该类异常不会被全局异常解析器解析，所以不会进行页面的跳转，返回出现异常之前的界面。建议出现该异常之后
- * 使用 {@link RedirectException} 进行页面的重定向操作，可以在其他页面进行详细消息回显。
- * <blockquote><pre>
- * try {
- *     // 会抛出该异常的逻辑代码
- * } catch (MessageException e) {
- *     throw new RedirectException("[URL 地址]", e);
- * }
- * </pre></blockquote>
- * 以上代码用于处理抛出异常后重定向到一个页面，而不是返回到原先请求的页面。
+ * 运行时异常的消息回显，是所有需要回显给用户的异常信息的父类。该异常会被全局异常解析器解析，
+ * 返回出错的界面并回显错误的详细信息。如需使用 i18n 国际化消息，详细消息可使用国际化信息配
+ * 置文件中的键值，可用的键值请参见 {@link xyz.tran4f.dms.attribute.ExceptionAttribute}
  * </p>
  *
  * @author 王帅
@@ -43,7 +32,7 @@ import org.jetbrains.annotations.Contract;
  */
 @Setter
 @Getter
-public class MessageException extends Exception {
+public class MessageException extends RuntimeException {
 
     private static final long serialVersionUID = 8747711960406241674L;
 
@@ -51,7 +40,7 @@ public class MessageException extends Exception {
 
     /**
      * <p>
-     * 用指定的详细消息构造一个新的异常。其中的详细消息用于回显到前端界面，
+     * 用指定的详细消息构造一个新的运行时异常。其中的详细消息用于回显到前端界面，
      * 详细消息的内容不应该为 {@code null}。
      * </p>
      *
@@ -61,6 +50,22 @@ public class MessageException extends Exception {
     @Contract(pure = true)
     public MessageException(String message, Object... args) {
         super(message);
+        setArgs(args);
+    }
+
+    /**
+     * <p>
+     * 用指定的详细消息和原因构造一个新的运行时异常。其中的详细消息用于回显到前端界面，
+     * 详细消息的内容不应该为 {@code null}。
+     * </p>
+     *
+     * @param message 需要回显的消息信息
+     * @param cause 触发该异常的原因
+     * @param args 使用国际化消息时可设定的参数
+     */
+    @Contract(pure = true)
+    public MessageException(String message, Throwable cause, Object... args) {
+        super(message, cause);
         setArgs(args);
     }
 
