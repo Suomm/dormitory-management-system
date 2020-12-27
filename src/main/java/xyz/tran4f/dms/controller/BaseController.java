@@ -19,6 +19,7 @@ package xyz.tran4f.dms.controller;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import xyz.tran4f.dms.attribute.WebAttribute;
+import xyz.tran4f.dms.utils.RedisUtil;
 
 /**
  * <p>
@@ -37,8 +38,11 @@ public abstract class BaseController<S> {
      */
     protected S service;
 
-    protected BaseController(S service) {
+    protected RedisUtil redisUtil;
+
+    protected BaseController(S service, RedisUtil redisUtil) {
         this.service = service;
+        this.redisUtil = redisUtil;
     }
 
     /**

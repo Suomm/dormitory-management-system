@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import xyz.tran4f.dms.attribute.WebAttribute;
 import xyz.tran4f.dms.exception.RedirectException;
-import xyz.tran4f.dms.exception.RuntimeMessageException;
+import xyz.tran4f.dms.exception.MessageException;
 import xyz.tran4f.dms.utils.I18nUtils;
 
 import javax.servlet.http.HttpServletRequest;
@@ -59,11 +59,11 @@ public class GlobalExceptionHandler {
      * 处理自定义异常中，将异常的详细信息回显到前端界面。
      * </p>
      *
-     * @see RuntimeMessageException
+     * @see MessageException
      * @see WebAttribute#WEB_LAST_EXCEPTION
      */
-    @ExceptionHandler(RuntimeMessageException.class)
-    public String sendMessage(HttpServletRequest request, RuntimeMessageException source) {
+    @ExceptionHandler(MessageException.class)
+    public String sendMessage(HttpServletRequest request, MessageException source) {
         String message = getMessage(source);
         // 将消息放入 request 域中用于回显
         request.getSession().setAttribute(WebAttribute.WEB_LAST_EXCEPTION, message);
@@ -75,7 +75,7 @@ public class GlobalExceptionHandler {
         return result;
     }
 
-    private String getMessage(RuntimeMessageException source) {
+    private String getMessage(MessageException source) {
         try {
             // 默认去本地查找 i18n 国际化消息
             return i18nUtils.getMessage(source.getMessage(), source.getArgs());

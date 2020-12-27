@@ -17,8 +17,6 @@
 package xyz.tran4f.dms.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import org.jetbrains.annotations.NotNull;
-import xyz.tran4f.dms.exception.CheckFailedException;
 import xyz.tran4f.dms.exception.RegisterException;
 import xyz.tran4f.dms.pojo.User;
 
@@ -44,17 +42,6 @@ public interface UserService extends IService<User> {
 
     /**
      * <p>
-     * 获取对象的数字签名用于找回密码校验。
-     * </p>
-     *
-     * @param user 封装有ID的对象
-     * @return {@code null} 说明生成数字签名失败
-     */
-    @NotNull
-    String digitalSignature(User user);
-
-    /**
-     * <p>
      * 发送邮件到指定用户邮箱。
      * </p>
      *
@@ -62,16 +49,6 @@ public interface UserService extends IService<User> {
      * @param content 邮件内容
      */
     void sendEmail(String email, String subject, String content);
-
-    /**
-     * <p>
-     * 找回密码时，过期时间与密匙的检查。
-     * </p>
-     *
-     * @param sid 要检查的密匙
-     * @param id 用户的学号
-     */
-    void checkUser(String sid, String id) throws CheckFailedException;
 
     /**
      * <p>

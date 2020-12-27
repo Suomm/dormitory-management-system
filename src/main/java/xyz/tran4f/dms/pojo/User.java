@@ -23,6 +23,7 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.jetbrains.annotations.Contract;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
@@ -32,6 +33,10 @@ import java.io.Serializable;
 import java.sql.Timestamp;
 
 /**
+ * <p>
+ * 用户实体类，保存用户有关的信息。
+ * </p>
+ *
  * @author 王帅
  * @since 1.0
  */
@@ -43,30 +48,26 @@ public class User implements Serializable {
     private static final long serialVersionUID = -5246550721989479832L;
 
     @NotNull()
-    @Pattern(regexp  = "203007\\d{4}")
+    @Pattern(regexp  = "\\d{2}3007\\d{4}")
     @TableId(value = "id", type = IdType.INPUT)
-    private String id;
+    private String id; // 学号
 
     @NotBlank()
-    private String username;
+    private String username; // 姓名
 
     @NotBlank
     @Pattern(regexp  = "^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z\\W]{6,18}$")
-    private String password;
+    private String password; // 密码
 
     @Email
     @NotBlank()
-    private String email;
+    private String email; // 邮箱地址
 
-    private String  role;
-    private Integer gender;
-    private Integer credit;
+    private String  role; // 角色信息
+    private Integer gender; // 性别
+    private Integer credit; // 学分
 
-    @TableField(updateStrategy = FieldStrategy.IGNORED)
-    private String validateCode;
-    @TableField(updateStrategy = FieldStrategy.IGNORED)
-    private Timestamp registerDate;
-
+    @Contract(pure = true)
     public User(String id) {
         this.id = id;
     }

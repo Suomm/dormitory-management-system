@@ -25,6 +25,10 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Collection;
 
 /**
+ * <p>
+ * 安全用户对象，创建出来后有 Spring Security 管理，封装有 User 实体。
+ * </p>
+ *
  * @author 王帅
  * @since 1.0
  */
@@ -68,11 +72,13 @@ public final class SecurityUser implements UserDetails {
     }
 
     /**
-     * Returns true if the supplied object is a User instance with the same username value.
-     * In other words, the objects are equal if they have the same username, representing the same principal.
+     * <p>
+     * 如果提供的对象是具有相同用户名的用户实例，则返回 {@code true} 值。换句话说，
+     * 如果对象具有相同的用户名，表示相同的主体，那么它们是相等的。
+     * </p>
      *
-     * @param obj 类型
-     * @return true 相同用户名
+     * @param obj 比较的类型
+     * @return {@code true} 具有相同用户名，{@code false} 不是同一个对象
      */
     @Override
     public boolean equals(Object obj) {
@@ -83,7 +89,9 @@ public final class SecurityUser implements UserDetails {
     }
 
     /**
-     * Returns the hashcode of the {@code username}.
+     * <p>
+     * 返回 {@code username} 的哈希值。
+     * </p>
      */
     @Override
     public int hashCode() {

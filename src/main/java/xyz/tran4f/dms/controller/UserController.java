@@ -29,8 +29,12 @@ import xyz.tran4f.dms.pojo.Captcha;
 import xyz.tran4f.dms.pojo.User;
 import xyz.tran4f.dms.service.UserService;
 import xyz.tran4f.dms.utils.CaptchaUtils;
+import xyz.tran4f.dms.utils.MD5Utils;
+import xyz.tran4f.dms.utils.RedisUtil;
+import xyz.tran4f.dms.utils.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.UUID;
 
 /**
  * <p>
@@ -43,12 +47,14 @@ import javax.servlet.http.HttpServletRequest;
 @Controller
 @EnableAsync // 实现异步发送邮件
 @RequestMapping("/user")
-@SessionAttributes({WebAttribute.WEB_SESSION_USER, WebAttribute.WEB_SESSION_CAPTCHA})
+@SessionAttributes(WebAttribute.WEB_SESSION_USER)
 public class UserController extends BaseController<UserService> {
 
+    private static final String DELIMITER = "$";
+
     // 通过构造器注入依赖
-    public UserController(UserService userService) {
-        super(userService);
+    public UserController(UserService userService, RedisUtil redisUtil) {
+        super(userService, redisUtil);
     }
 
     // 请求处理方法
@@ -57,35 +63,37 @@ public class UserController extends BaseController<UserService> {
      * <p>
      * 处理用户注册请求。
      * </p>
-     *
-     * @param user 通过表单封装的对象，会经过校验
-     * @param emailCode 邮箱验证码
+     *  @param user 通过表单封装的对象，会经过校验
      * @param result 校验错误信息封装
+     * @param emailCode 邮箱验证码
      * @param model 数据模型用于返回数据
+     * @param validateCode 邀请码
      */
     @PostMapping("register.html")
-    public String register(@Validated User user, String emailCode,
-                           BindingResult result, Model model) {
+    public String register(@Validated User user, BindingResult result,
+                           String emailCode, String validateCode, Model model) {
         // 添加用户注册信息到Session域中用于数据回显
         model.addAttribute(WebAttribute.WEB_SESSION_USER, user);
         // 数据校验出现错误
         if (result.hasErrors()) {
             throw new IllegalRequestException();
         }
-        Captcha captcha = (Captcha) model.getAttribute("captcha");
-        // 获取不到 Session 域中的对象
+        Captcha captcha = redisUtil.get(user.getId(), Captcha.class);
+        // 获取不到 Redis 缓存中的对象
         if (captcha == null) {
             throw new MissingAttributeException(ExceptionAttribute.USER_MISSING_CAPTCHA);
         }
         // 校验邮箱验证码
         CaptchaUtils.checkCaptcha(captcha, Captcha.defaultCaptcha(emailCode));
         // 比对部门的邀请码是否正确
-        if (!"123456".equals(user.getValidateCode())) {
+        if (!"123456".equals(validateCode)) {
             model.addAttribute(WebAttribute.WEB_LAST_EXCEPTION, "邀请码不对哦");
             return "user/register";
         }
         // 调用 Service 层的方法注册用户，写入数据库
         service.register(user);
+        // 注册成功之后删除验证码
+        redisUtil.remove(user.getId());
         // 删除 Session 域中的错误信息
         removeErrorMessage();
         // 注册成功，重定向到登陆页面进行登录
@@ -98,9 +106,22 @@ public class UserController extends BaseController<UserService> {
      * </p>
      */
     @PostMapping("forget_password.html")
-    public String forgetPassword(User user, HttpServletRequest request) {
-        // 通过 Service 层获取数字签名，并将UUID和过期时间写入数据库
-        String digitalSignature = service.digitalSignature(user);
+    public String forgetPassword(String id, HttpServletRequest request) {
+        User user = service.getById(id);
+        // 查询不到要找回密码的用户
+        if (user == null) {
+            throw new UserNotFoundException();
+        }
+        // 生成唯一密匙
+        String secretKey = UUID.randomUUID().toString();
+        // 设置过期时间：十分钟后过期
+        long outDate = System.currentTimeMillis() + 10 * 60 * 1000;
+        // 生成密匙键 ID$TIME$UUID
+        String key = user.getId() + DELIMITER + outDate + DELIMITER + secretKey;
+        // 生成数字签名
+        String digitalSignature = MD5Utils.encode(key);
+        // 存入 Redis 缓存
+        redisUtil.set(DELIMITER + user.getId(), new Captcha(secretKey, outDate));
         // 通过 request 拼接而成的请求路径
         String basePath = request.getScheme() + "://" + request.getServerName() + ":" +
                 request.getServerPort() + request.getContextPath() + "/";
@@ -126,19 +147,27 @@ public class UserController extends BaseController<UserService> {
      */
     @GetMapping("reset_password.html")
     public String checkSID(String sid, String id, Model model) {
-        try {
-            // 检查加密的数字密匙是否正确
-            service.checkUser(sid, id);
-        } catch (CheckFailedException e) {
-            // 加密的密匙不正确，进行页面的重定向
-            throw new RedirectException("/user/forget_password.html", e);
-        }
+        // 没有生成的密匙
+        redirectIf(StringUtils.isEmpty(sid, id), ExceptionAttribute.USER_RESET_PASSWORD_MISSING_ARGUMENT);
+        Captcha captcha = redisUtil.get(DELIMITER + id, Captcha.class);
+        // 无法找到匹配的用户
+        redirectIf(captcha == null, ExceptionAttribute.USER_RESET_PASSWORD_EXPIRE);
+        // 连接过期了
+        redirectIf(captcha.getOutDate() <= System.currentTimeMillis(), ExceptionAttribute.USER_RESET_PASSWORD_EXPIRE);
+        String digitalSignature = id + DELIMITER + captcha.getOutDate() + DELIMITER + captcha.getCode();
+        // 密匙不完整
+        redirectIf(!MD5Utils.matches(digitalSignature, sid), ExceptionAttribute.USER_RESET_PASSWORD_INCOMPLETE);
         // 将用户 ID 放入 session 域中
-        User user = new User(id);
-        model.addAttribute(WebAttribute.WEB_SESSION_USER, user);
+        model.addAttribute(WebAttribute.WEB_SESSION_USER, new User(id));
         // 删除 Session 域中的错误信息
         removeErrorMessage();
         return "user/reset_password";
+    }
+
+    private static void redirectIf(boolean test, String message) {
+        if (test) {
+            throw new RedirectException("/user/forget_password.html", message);
+        }
     }
 
     /**
@@ -171,15 +200,18 @@ public class UserController extends BaseController<UserService> {
      */
     @ResponseBody
     @PostMapping("getCaptcha")
-    public void getCaptcha(String email, Model model) {
+    public void getCaptcha(String id, String email) {
+        if (redisUtil.hasKey(id)) {
+            throw new CaptchaException(ExceptionAttribute.USER_REGISTER_CAPTCHA_EXIST);
+        }
         // 生成六位、十分钟后过期的验证码
         Captcha code = CaptchaUtils.getCaptcha(6, 10 * 60 * 1000);
         // 编辑要发送的邮件内容
         String emailContent = "您的验证码为" + code.getCode() + "\t有效期为十分钟";
         // 调用 Service 发送邮件
         service.sendEmail(email, "验证码", emailContent);
-        // 将验证码内容存入 Session 域中
-        model.addAttribute(WebAttribute.WEB_SESSION_CAPTCHA, code);
+        // 将验证码内容存入 Redis 缓存中
+        redisUtil.set(id, code);
     }
 
 }
