@@ -18,13 +18,13 @@ package xyz.tran4f.dms.exception;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Contract;
 
 /**
  * <p>
- * 消息回显时的数据源，是所有需要回显给用户的异常信息的父类。如需使用 i18n 国际化消息，
- * 详细消息可使用国际化信息配置文件中的键值，可用的键值请参见
- * {@link xyz.tran4f.dms.attribute.ExceptionAttribute}
+ * 运行时异常的消息回显，是所有需要回显给用户的异常信息的父类。该异常会被全局异常解析器解析，
+ * 返回出错的界面并回显错误的详细信息。如需使用 i18n 国际化消息，详细消息可使用国际化信息配
+ * 置文件中的键值，可用的键值请参见 {@link xyz.tran4f.dms.attribute.ExceptionAttribute}
  * </p>
  *
  * @author 王帅
@@ -32,7 +32,7 @@ import org.jetbrains.annotations.NotNull;
  */
 @Setter
 @Getter
-public class MessageEchoSource extends Exception {
+public class RuntimeMessageException extends RuntimeException {
 
     private static final long serialVersionUID = 8747711960406241674L;
 
@@ -47,7 +47,8 @@ public class MessageEchoSource extends Exception {
      * @param message 需要回显的消息信息
      * @param args 使用国际化消息时可设定的参数
      */
-    public MessageEchoSource(@NotNull String message, Object... args) {
+    @Contract(pure = true)
+    public RuntimeMessageException(String message, Object... args) {
         super(message);
         setArgs(args);
     }
@@ -62,7 +63,8 @@ public class MessageEchoSource extends Exception {
      * @param cause 触发该异常的原因
      * @param args 使用国际化消息时可设定的参数
      */
-    public MessageEchoSource(@NotNull String message, Throwable cause, Object... args) {
+    @Contract(pure = true)
+    public RuntimeMessageException(String message, Throwable cause, Object... args) {
         super(message, cause);
         setArgs(args);
     }

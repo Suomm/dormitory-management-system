@@ -16,17 +16,22 @@
 
 package xyz.tran4f.dms.exception;
 
-import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Contract;
 
 /**
+ * <p>
+ * 检查失败异常。
+ * </p>
+ *
  * @author 王帅
  * @since 1.0
  */
-public class CheckFailedException extends MessageEchoSource {
+public class CheckFailedException extends MessageException {
 
     private static final long serialVersionUID = 3460599482881992367L;
 
-    public CheckFailedException(@NotNull String message, Object... args) {
+    @Contract(pure = true)
+    public CheckFailedException(String message, Object... args) {
         super(message, args);
     }
 }

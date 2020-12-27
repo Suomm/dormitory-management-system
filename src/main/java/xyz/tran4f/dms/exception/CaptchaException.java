@@ -16,11 +16,11 @@
 
 package xyz.tran4f.dms.exception;
 
-import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Contract;
 
 /**
  * <p>
- * 验证码异常。
+ * 验证码比对失败异常。
  * </p>
  *
  * @author 王帅
@@ -28,11 +28,12 @@ import org.jetbrains.annotations.NotNull;
  * @see xyz.tran4f.dms.pojo.Captcha
  * @see xyz.tran4f.dms.utils.CaptchaUtils
  */
-public class CaptchaException extends RuntimeMessageEchoSource {
+public class CaptchaException extends RuntimeMessageException {
 
     private static final long serialVersionUID = 5422567440119072978L;
 
-    public CaptchaException(@NotNull String message) {
+    @Contract(pure = true)
+    public CaptchaException(String message) {
         super(message);
     }
 

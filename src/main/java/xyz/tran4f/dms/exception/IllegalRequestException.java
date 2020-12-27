@@ -17,22 +17,23 @@
 package xyz.tran4f.dms.exception;
 
 import org.jetbrains.annotations.Contract;
+import xyz.tran4f.dms.attribute.ExceptionAttribute;
 
 /**
  * <p>
- * 邮件发送失败回显数据异常。
+ * 恶意绕过前端校验时，抛出此异常。
  * </p>
  *
  * @author 王帅
  * @since 1.0
  */
-public class EmailSendException extends RuntimeMessageException {
+public class IllegalRequestException extends RuntimeMessageException {
 
-    private static final long serialVersionUID = -7074622825786549829L;
+    private static final long serialVersionUID = 6723413299262506626L;
 
     @Contract(pure = true)
-    public EmailSendException(String message, Throwable cause) {
-        super(message, cause);
+    public IllegalRequestException() {
+        super(ExceptionAttribute.MESSAGE_BAD_REQUEST);
     }
 
 }

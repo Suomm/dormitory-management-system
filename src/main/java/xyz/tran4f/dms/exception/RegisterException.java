@@ -16,7 +16,7 @@
 
 package xyz.tran4f.dms.exception;
 
-import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Contract;
 
 /**
  * <p>
@@ -26,11 +26,12 @@ import org.jetbrains.annotations.NotNull;
  * @author 王帅
  * @since 1.0
  */
-public class RegisterException extends RuntimeMessageEchoSource {
+public class RegisterException extends RuntimeMessageException {
 
     private static final long serialVersionUID = 6354950372852467340L;
 
-    public RegisterException(@NotNull String message) {
+    @Contract(pure = true)
+    public RegisterException(String message) {
         super(message);
     }
 

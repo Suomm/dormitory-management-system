@@ -18,6 +18,7 @@ package xyz.tran4f.dms.exception;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.jetbrains.annotations.Contract;
 
 /**
  * <p>
@@ -29,13 +30,14 @@ import lombok.Setter;
  */
 @Getter
 @Setter
-public class RedirectException extends RuntimeMessageEchoSource {
+public class RedirectException extends RuntimeMessageException {
 
     private static final long serialVersionUID = -36415506607708975L;
 
     private String redirectUrl;
 
-    public RedirectException(String redirectUrl, MessageEchoSource cause) {
+    @Contract(pure = true)
+    public RedirectException(String redirectUrl, MessageException cause) {
         super(cause.getMessage(), cause, cause.getArgs());
         setRedirectUrl(redirectUrl);
     }

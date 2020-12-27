@@ -20,19 +20,19 @@ import org.jetbrains.annotations.Contract;
 
 /**
  * <p>
- * 邮件发送失败回显数据异常。
+ * 操作数据库出现的异常。
  * </p>
  *
  * @author 王帅
  * @since 1.0
  */
-public class EmailSendException extends RuntimeMessageException {
+public class DatabaseException extends RuntimeMessageException {
 
-    private static final long serialVersionUID = -7074622825786549829L;
+    private static final long serialVersionUID = -9134621069235358217L;
 
     @Contract(pure = true)
-    public EmailSendException(String message, Throwable cause) {
-        super(message, cause);
+    public DatabaseException(String message, Object... args) {
+        super(message, args);
     }
 
 }
