@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Wang Shuai (suomm.macher@foxmail.com)
+ * Copyright (C) 2020-2021 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,8 +21,12 @@ import xyz.tran4f.dms.pojo.Captcha;
 
 import java.util.Random;
 
+import static xyz.tran4f.dms.attribute.ExceptionAttribute.*;
+
 /**
- * 验证码生成器。
+ * <p>
+ * 验证码相关操作的工具类，包括生成和校验验证码。
+ * </p>
  *
  * @author 王帅
  * @since 1.0
@@ -87,21 +91,17 @@ public final class CaptchaUtils {
      * @exception CaptchaException 检查失败抛出此异常
      */
     public static void checkCaptcha(Captcha before, Captcha after) throws CaptchaException {
-        // 验证码未获取
-        if (before == null) {
-            throw new CaptchaException("请输入验证码");
-        }
         // 验证码未输入
-        if ("".equals(after.getCode())) {
-            throw new CaptchaException("请输入验证码");
+        if (StringUtils.notBlank(after.getCode())) {
+            throw new CaptchaException(USER_CAPTCHA_BLANK);
         }
         // 比对验证码过期时间
         if (before.getOutDate() <= after.getOutDate()) {
-            throw new CaptchaException("验证码过期了");
+            throw new CaptchaException(USER_CAPTCHA_OVERDUE);
         }
         // 比对验证码是否正确
         if (!before.getCode().equals(after.getCode())) {
-            throw new CaptchaException("验证码不对");
+            throw new CaptchaException(USER_CAPTCHA_WRONG);
         }
     }
 

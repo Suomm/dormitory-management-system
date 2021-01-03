@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Wang Shuai (suomm.macher@foxmail.com)
+ * Copyright (C) 2020-2021 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,9 @@
 
 package xyz.tran4f.dms.utils;
 
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.springframework.context.MessageSource;
 import org.springframework.context.NoSuchMessageException;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -53,7 +55,8 @@ public class I18nUtils {
      * @exception NoSuchMessageException 当配置文件中找不到对应的消息时抛出此异常
      */
     @NotNull
-    public String getMessage(String key, Object... args) throws NoSuchMessageException {
+    @Contract(value = "null,_ -> fail", pure = true)
+    public String getMessage(String key, @Nullable Object... args) throws NoSuchMessageException {
         return messageSource.getMessage(key, args, LocaleContextHolder.getLocale());
     }
 
