@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Wang Shuai (suomm.macher@foxmail.com)
+ * Copyright (C) 2020-2021 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,15 +18,21 @@ package xyz.tran4f.dms.handler;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.NoSuchMessageException;
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import xyz.tran4f.dms.attribute.WebAttribute;
-import xyz.tran4f.dms.exception.RedirectException;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import xyz.tran4f.dms.exception.MessageException;
+import xyz.tran4f.dms.exception.RedirectException;
 import xyz.tran4f.dms.utils.I18nUtils;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
+import javax.validation.ConstraintViolationException;
+
+import static xyz.tran4f.dms.attribute.ExceptionAttribute.MESSAGE_BAD_REQUEST;
+import static xyz.tran4f.dms.attribute.WebAttribute.WEB_LAST_EXCEPTION;
 
 /**
  * <p>
@@ -49,8 +55,10 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(RedirectException.class)
-    public String sendRedirect(HttpSession session, RedirectException e) {
-        session.setAttribute(WebAttribute.WEB_LAST_EXCEPTION, getMessage(e));
+    public String sendRedirect(RedirectAttributes attr, RedirectException e) {
+        String message = getMessage(e);
+        attr.addFlashAttribute(WEB_LAST_EXCEPTION, message);
+        log.info("处理异常 {} 重定向路径 {}", e.getClass().getName(), e.getRedirectUrl());
         return "redirect:" + e.getRedirectUrl();
     }
 
@@ -60,29 +68,47 @@ public class GlobalExceptionHandler {
      * </p>
      *
      * @see MessageException
-     * @see WebAttribute#WEB_LAST_EXCEPTION
      */
+    @ResponseBody
     @ExceptionHandler(MessageException.class)
-    public String sendMessage(HttpServletRequest request, MessageException source) {
-        String message = getMessage(source);
-        // 将消息放入 request 域中用于回显
-        request.getSession().setAttribute(WebAttribute.WEB_LAST_EXCEPTION, message);
-        // 解析请求路径作为视图解析器返回
-        String result = request.getServletPath();
-        // 由于 GET/POST 请求都指向同一个 HTML 地址，所以要对路径做裁剪
-        result = result.substring(1, result.length() - 5);
-        log.info("处理异常 {} 解析路径 {}", source.getClass().getName(), result);
-        return result;
+    public ResponseEntity<String> sendMessage(MessageException exception) {
+        // 获取异常键值指定的国际化消息
+        String message = getMessage(exception);
+        log.info("处理异常：{} 产生原因：{}", exception.getClass().getName(), message);
+        return ResponseEntity.accepted().body(message);
     }
 
-    private String getMessage(MessageException source) {
+    /**
+     * <p>
+     * 获取消息的国际化内容。
+     * </p>
+     *
+     * @param exception 需要回显的详细信息的异常
+     * @return 国际化消息
+     */
+    private String getMessage(MessageException exception) {
         try {
             // 默认去本地查找 i18n 国际化消息
-            return i18nUtils.getMessage(source.getMessage(), source.getArgs());
-        } catch (NoSuchMessageException exception) {
+            return i18nUtils.getMessage(exception.getMessage(), exception.getArgs());
+        } catch (NoSuchMessageException e) {
             // 本地没有匹配的国际化消息使用原始的消息
-            return source.getMessage();
+            return exception.getMessage();
         }
+    }
+
+    /**
+     * <p>
+     * 通过某种方法绕过了前端的校验，处理校验失败异常。
+     * </p>
+     */
+    @ResponseBody
+    @ExceptionHandler({
+            BindException.class,
+            ConstraintViolationException.class,
+            MethodArgumentNotValidException.class
+    })
+    public ResponseEntity<String> validExceptionHandler() {
+        return ResponseEntity.badRequest().body(i18nUtils.getMessage(MESSAGE_BAD_REQUEST));
     }
 
 }
