@@ -18,18 +18,20 @@ package xyz.tran4f.dms.attribute;
 
 /**
  * <p>
- * 管理 WEB 程序域中的属性。
+ * Redis 缓存键的前缀。
  * </p>
  *
  * @author 王帅
  * @since 1.0
  */
-public final class WebAttribute {
+public final class RedisAttribute {
 
-    private WebAttribute() {
+    private RedisAttribute() {
     }
 
-    public static final String WEB_SESSION_USER = "WEB_SESSION_USER";
-    public static final String WEB_LAST_EXCEPTION = "WEB_LAST_EXCEPTION";
+    public static final String PREFIX_USER_LOCKED = "USER_LOCKED_";
+    public static final String PREFIX_USER_CAPTCHA = "USER_LOCKED_";
+    public static final String PREFIX_RESET_PASSWORD_ID = "RESET_PASSWORD_ID_";
+    public static final String PREFIX_RESET_PASSWORD_KEY = "RESET_PASSWORD_KEY_";
 
 }

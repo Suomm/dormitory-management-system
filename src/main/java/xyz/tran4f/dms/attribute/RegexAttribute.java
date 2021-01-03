@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Wang Shuai (suomm.macher@foxmail.com)
+ * Copyright (C) 2020-2021 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,25 +14,22 @@
  * limitations under the License.
  */
 
-package xyz.tran4f.dms.exception;
-
-import org.jetbrains.annotations.Contract;
+package xyz.tran4f.dms.attribute;
 
 /**
  * <p>
- * 邮件发送失败回显数据异常。
+ * 用于数据校验的正则表达式属性。
  * </p>
  *
  * @author 王帅
  * @since 1.0
  */
-public class EmailSendException extends MessageException {
+public final class RegexAttribute {
 
-    private static final long serialVersionUID = -7074622825786549829L;
-
-    @Contract(pure = true)
-    public EmailSendException(String message, Throwable cause) {
-        super(message, cause);
+    private RegexAttribute() {
     }
+
+    public static final String ID = "\\d{2}3007\\d{4}";
+    public static final String PASSWORD = "^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z\\W]{6,18}$";
 
 }
