@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Wang Shuai (suomm.macher@foxmail.com)
+ * Copyright (C) 2020-2021 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,10 +16,12 @@
 
 package xyz.tran4f.dms.controller;
 
-import org.springframework.web.context.request.RequestAttributes;
-import org.springframework.web.context.request.RequestContextHolder;
-import xyz.tran4f.dms.attribute.WebAttribute;
-import xyz.tran4f.dms.utils.RedisUtil;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.beans.factory.annotation.Autowired;
+import xyz.tran4f.dms.pojo.Email;
+import xyz.tran4f.dms.utils.RedisUtils;
+
+import static xyz.tran4f.dms.attribute.RabbitAttribute.QUEUE_EMAIL;
 
 /**
  * <p>
@@ -33,26 +35,26 @@ import xyz.tran4f.dms.utils.RedisUtil;
  */
 public abstract class BaseController<S> {
 
-    /**
-     * 当前控制器所引用的 Service 对象。
-     */
+    @Autowired
     protected S service;
 
-    protected RedisUtil redisUtil;
+    @Autowired
+    protected RedisUtils redisUtils;
 
-    protected BaseController(S service, RedisUtil redisUtil) {
-        this.service = service;
-        this.redisUtil = redisUtil;
-    }
+    @Autowired
+    protected RabbitTemplate rabbitTemplate;
 
     /**
      * <p>
-     * 用于移除 Session 域中保存的上次错误信息。
+     * 通过消息队列实现异步发送邮件功能。
      * </p>
+     *
+     * @param subject   主题
+     * @param text      内容
+     * @param to        收件人
      */
-    protected void removeErrorMessage() {
-        RequestAttributes attributes = RequestContextHolder.currentRequestAttributes();
-        attributes.removeAttribute(WebAttribute.WEB_LAST_EXCEPTION, RequestAttributes.SCOPE_SESSION);
+    protected void sendEmail(String subject, String text, String to) {
+        rabbitTemplate.convertAndSend(QUEUE_EMAIL, new Email(subject, text, to));
     }
 
 }
