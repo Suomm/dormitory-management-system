@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Wang Shuai (suomm.macher@foxmail.com)
+ * Copyright (C) 2020-2021 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,21 +16,23 @@
 
 package xyz.tran4f.dms.pojo;
 
-import com.baomidou.mybatisplus.annotation.FieldStrategy;
 import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.Accessors;
 import org.jetbrains.annotations.Contract;
+import xyz.tran4f.dms.validation.constraints.Gender;
+import xyz.tran4f.dms.validation.constraints.Id;
+import xyz.tran4f.dms.validation.constraints.Password;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
 import java.io.Serializable;
-import java.sql.Timestamp;
 
 /**
  * <p>
@@ -41,31 +43,43 @@ import java.sql.Timestamp;
  * @since 1.0
  */
 @Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Accessors(chain = true)
+@ApiModel(value = "用户实体类", description = "封装学号、姓名、性别、密码、邮箱等用户信息")
 public class User implements Serializable {
 
     private static final long serialVersionUID = -5246550721989479832L;
 
-    @NotNull()
-    @Pattern(regexp  = "\\d{2}3007\\d{4}")
+    @Id
     @TableId(value = "id", type = IdType.INPUT)
+    @ApiModelProperty(value = "学号", required = true)
     private String id; // 学号
 
-    @NotBlank()
+    @NotBlank
+    @ApiModelProperty(value = "姓名", required = true)
     private String username; // 姓名
 
-    @NotBlank
-    @Pattern(regexp  = "^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z\\W]{6,18}$")
+    @Password
+    @ApiModelProperty(value = "密码", required = true)
     private String password; // 密码
 
     @Email
-    @NotBlank()
-    private String email; // 邮箱地址
+    @NotBlank
+    @ApiModelProperty(value = "邮箱", required = true)
+    private String email; // 邮箱
 
-    private String  role; // 角色信息
+    @Gender
+    @ApiModelProperty(value = "性别", required = true, example = "0")
     private Integer gender; // 性别
+
+    @ApiModelProperty(hidden = true)
+    private String  role; // 角色
+    @ApiModelProperty(hidden = true)
     private Integer credit; // 学分
+    @ApiModelProperty(hidden = true)
+    private Boolean locked; // 锁定
 
     @Contract(pure = true)
     public User(String id) {

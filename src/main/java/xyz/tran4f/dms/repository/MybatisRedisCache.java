@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Wang Shuai (suomm.macher@foxmail.com)
+ * Copyright (C) 2020-2021 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,7 +27,9 @@ import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 /**
- *
+ * <p>
+ * 配置 MyBatis-Plus 使用 Redis 作为二级缓存。
+ * </p>
  *
  * @author 王帅
  * @since 1.0
@@ -108,4 +110,5 @@ public class MybatisRedisCache implements Cache {
     public ReadWriteLock getReadWriteLock() {
         return this.readWriteLock;
     }
+
 }

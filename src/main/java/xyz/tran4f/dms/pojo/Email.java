@@ -19,12 +19,11 @@ package xyz.tran4f.dms.pojo;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.jetbrains.annotations.Contract;
 
 /**
  * <p>
- * 验证码实体类。
- * </p>
+ * 封装发送邮件相关信息的实体类。
+ * <p/>
  *
  * @author 王帅
  * @since 1.0
@@ -32,29 +31,12 @@ import org.jetbrains.annotations.Contract;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Captcha {
+public class Email {
 
-    /**
-     * 验证码内容
-     */
-    private String code;
+    private static final long serialVersionUID = 1247475962205104603L;
 
-    /**
-     * 过期时间
-     */
-    private long outDate;
-
-    /**
-     * <p>
-     * 根据所给的验证码内容，生成一个当前时间的验证码。
-     * </p>
-     *
-     * @param code 验证码
-     * @return 标记当前时间的验证码
-     */
-    @Contract(pure = true)
-    public static Captcha defaultCaptcha(String code) {
-        return new Captcha(code, System.currentTimeMillis());
-    }
+    private String subject; // 主题
+    private String text;    // 内容
+    private String to;      // 收件人
 
 }

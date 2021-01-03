@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Wang Shuai (suomm.macher@foxmail.com)
+ * Copyright (C) 2020-2021 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,27 +14,31 @@
  * limitations under the License.
  */
 
-package xyz.tran4f.dms.service.impl;
+package xyz.tran4f.dms.repository;
 
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.stereotype.Service;
 import xyz.tran4f.dms.mapper.UserMapper;
 import xyz.tran4f.dms.pojo.SecurityUser;
 import xyz.tran4f.dms.pojo.User;
 
 /**
+ * <p>
+ * Spring Security 框架 UserDetailsManager 接口的实现类，实现有关用户的相关操作。
+ * </p>
+ *
  * @author 王帅
  * @since 1.0
  */
-@Service("userDetailsService")
-public class UserDetailsServiceImpl implements UserDetailsService {
+@Service("userManager")
+public class UserDetailsManagerImpl implements UserDetailsManager {
 
     private final UserMapper userMapper;
 
-    public UserDetailsServiceImpl(UserMapper userMapper) {
+    public UserDetailsManagerImpl(UserMapper userMapper) {
         this.userMapper = userMapper;
     }
 
@@ -43,7 +47,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
      * 从数据库中查找对象。
      * </p>
      *
-     * @param username 实际应为学号
+     * @param username 用户名（学号）
      * @return 带有用户信息的{@code UserDetails}对象
      * @throws UsernameNotFoundException 如果ID不存在抛出此异常
      */
@@ -55,4 +59,29 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         }
         return new SecurityUser(user, AuthorityUtils.createAuthorityList(user.getRole()));
     }
+
+    @Override
+    public void createUser(UserDetails user) {
+    }
+
+    @Override
+    public void updateUser(UserDetails user) {
+        User u = new User(user.getUsername());
+        u.setLocked(!user.isAccountNonLocked());
+        userMapper.updateById(u);
+    }
+
+    @Override
+    public void deleteUser(String username) {
+    }
+
+    @Override
+    public void changePassword(String oldPassword, String newPassword) {
+    }
+
+    @Override
+    public boolean userExists(String username) {
+        return userMapper.selectById(username) != null;
+    }
+
 }

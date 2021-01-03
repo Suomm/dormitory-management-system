@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Wang Shuai (suomm.macher@foxmail.com)
+ * Copyright (C) 2020-2021 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -47,7 +47,7 @@ public final class SecurityUser implements UserDetails {
     private boolean enabled;
 
     public SecurityUser(User user, Collection<GrantedAuthority> authorities) {
-        this(user, true, true, true, true, authorities);
+        this(user, true, true, true, !user.getLocked(), authorities);
     }
 
     public SecurityUser(User user, boolean enabled, boolean accountNonExpired,
@@ -68,7 +68,7 @@ public final class SecurityUser implements UserDetails {
 
     @Override
     public String getUsername() {
-        return user.getUsername();
+        return user.getId();
     }
 
     /**
