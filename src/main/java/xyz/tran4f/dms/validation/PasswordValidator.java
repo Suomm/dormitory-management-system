@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Wang Shuai (suomm.macher@foxmail.com)
+ * Copyright (C) 2020-2021 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,25 +14,25 @@
  * limitations under the License.
  */
 
-package xyz.tran4f.dms.exception;
+package xyz.tran4f.dms.validation;
 
-import org.jetbrains.annotations.Contract;
+import xyz.tran4f.dms.attribute.RegexAttribute;
+import xyz.tran4f.dms.validation.constraints.Password;
 
 /**
  * <p>
- * 域中缺少所需对象异常。
+ * 用于校验密码是否符合要求。
  * </p>
  *
  * @author 王帅
  * @since 1.0
+ * @see RegexAttribute#PASSWORD
  */
-public class MissingAttributeException extends MessageException {
+public class PasswordValidator extends AbstractPatternConstraintValidator<Password> {
 
-    private static final long serialVersionUID = 5119539187946629143L;
-
-    @Contract(pure = true)
-    public MissingAttributeException(String message, Object... args) {
-        super(message, args);
+    @Override
+    public String regex() {
+        return RegexAttribute.PASSWORD;
     }
 
 }
