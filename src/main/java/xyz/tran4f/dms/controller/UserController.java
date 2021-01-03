@@ -206,7 +206,7 @@ public class UserController extends BaseController<UserService> {
         Captcha code = CaptchaUtils.getCaptcha(6, 10 * 60 * 1000);
         // 编辑要发送的邮件内容
         String emailContent = "您的验证码为" + code.getCode() + "\t有效期为十分钟";
-        // 调用 Service 发送邮件
+        // 发送验证码邮件
         sendEmail("验证码", emailContent, email);
         // 将验证码内容存入 Redis 缓存中，并设置十分钟后过期
         redisUtils.set(PREFIX_USER_CAPTCHA + id, code, 10, TimeUnit.MINUTES);
