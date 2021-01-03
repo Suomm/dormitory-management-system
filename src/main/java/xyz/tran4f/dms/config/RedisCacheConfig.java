@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Wang Shuai (suomm.macher@foxmail.com)
+ * Copyright (C) 2020-2021 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,8 +40,8 @@ public class RedisCacheConfig {
 	// Redis 缓存数据的序列化设置，统一使用JSON格式。
 
 	@Bean
-	public RedisTemplate<String, String> redisTemplate(RedisConnectionFactory factory) {
-		RedisTemplate<String, String> template = new RedisTemplate<>();
+	public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory factory) {
+		RedisTemplate<String, Object> template = new RedisTemplate<>();
 		template.setConnectionFactory(factory);
 		// key序列化方式
 		template.setKeySerializer(RedisSerializer.string());

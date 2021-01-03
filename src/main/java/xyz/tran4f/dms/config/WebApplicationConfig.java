@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Wang Shuai (suomm.macher@foxmail.com)
+ * Copyright (C) 2020-2021 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,6 +23,7 @@ import org.springframework.security.web.session.HttpSessionEventPublisher;
 import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
+import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 import org.springframework.web.servlet.i18n.SessionLocaleResolver;
@@ -42,7 +43,8 @@ public class WebApplicationConfig implements WebMvcConfigurer {
 
     /**
      * <p>
-     * Spring security 中配置 {@link HttpSessionEventPublisher} 防用户重复登录，解决设置最大登录用户数量后注销不了的问题。
+     * Spring security 中配置 {@link HttpSessionEventPublisher} 防用户重复登录，
+     * 解决设置最大登录用户数量后注销不了的问题。
      * </p>
      */
     @Bean
@@ -87,18 +89,36 @@ public class WebApplicationConfig implements WebMvcConfigurer {
 
     /**
      * <p>
-     * 引入webjars取消版本号的相关配置。
+     * 引入 webjars 取消版本号的相关配置。
      * </p>
      */
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        //配置映射关系，即：/webjars/** 映射到 classpath:/META-INF/resources/webjars/
+        // 配置映射关系，即：/webjars/** 映射到 classpath:/META-INF/resources/webjars/
         registry.addResourceHandler("/webjars/**")
                 .addResourceLocations("classpath:/META-INF/resources/webjars/")
                 // 新增 resourceChain 配置即开启缓存配置。
                 // 不加这个配置，设置了 webjars-locator 不生效
-                // 生产时建议开启缓存（只是缓存了资源路径而不是资源内容）,开发是可以设置为false
+                // 生产时建议开启缓存（只是缓存了资源路径而不是资源内容）,开发是可以设置为 false
                 .resourceChain(true);
     }
 
+    /**
+     * <p>
+     * 注册视图解析器，路径参数一定要以 {@code /} 开头，表示绝对路径；视图名被视图解析器解析，
+     * 一定不能以 {@code /} 开头。不然打成 JAR 文件后运行，请求路径后会报
+     * {@link org.thymeleaf.exceptions.TemplateInputException} 异常！
+     * </p>
+     */
+    @Override
+    public void addViewControllers(ViewControllerRegistry registry) {
+        // 注册 index 首页视图解析器
+        registry.addViewController("/index.html").setViewName("index");
+        // 注册 user 模块视图解析器
+        registry.addViewController("/user/login.html").setViewName("user/login");
+        registry.addViewController("/user/register.html").setViewName("user/register");
+        registry.addViewController("/user/forget_password.html").setViewName("user/forget_password");
+        // 注册 manager 模块视图解析器
+        registry.addViewController("/manager/dashboard.html").setViewName("manager/dashboard");
+    }
 }

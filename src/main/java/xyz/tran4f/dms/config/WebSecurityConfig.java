@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Wang Shuai (suomm.macher@foxmail.com)
+ * Copyright (C) 2020-2021 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 
 package xyz.tran4f.dms.config;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.access.hierarchicalroles.RoleHierarchy;
@@ -45,7 +46,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     private final DataSource dataSource;
     private final UserDetailsService userDetailsService;
 
-    public WebSecurityConfig(DataSource dataSource, UserDetailsService userDetailsService) {
+    public WebSecurityConfig(DataSource dataSource,
+                             @Qualifier("userManager") UserDetailsService userDetailsService) {
         this.dataSource = dataSource;
         this.userDetailsService = userDetailsService;
     }
@@ -55,10 +57,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         JdbcTokenRepositoryImpl jdbcTokenRepository = new JdbcTokenRepositoryImpl();
         jdbcTokenRepository.setDataSource(dataSource);
         // 启动时创建一张表，这个参数到第二次启动时必须注释掉，因为已经创建了一张表
-        // jdbcTokenRepositoryImpl.setCreateTableOnStartup(true);
+        // jdbcTokenRepository.setCreateTableOnStartup(true);
         return jdbcTokenRepository;
     }
-
 
     @Bean
     public RoleHierarchy roleHierarchy(){
@@ -81,7 +82,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     /**
-     * 解决 UsernameNotFoundException 不显示问题
+     * 解决异常 UsernameNotFoundException 不显示问题。
      */
     @Bean
     public AuthenticationProvider authenticationProvider() {
@@ -116,7 +117,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .failureUrl("/user/login.html?error=true");
         http.rememberMe()
                 .tokenRepository(persistentTokenRepository())
-                .tokenValiditySeconds(60 * 60)
                 .userDetailsService(userDetailsService);
         http.logout()
                 .logoutUrl("/user/logout")
@@ -124,11 +124,16 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .deleteCookies("JSESSIONID")
                 .invalidateHttpSession(true);
         http.authorizeRequests()
-                .antMatchers("/", "/index.html", "/user/login.html", "/user/register.html",
-                        "/user/forget_password.html", "/user/reset_password.html", "/user/getCaptcha")
+                .antMatchers("/swagger-ui.html", "/v2/api-docs")
+                .hasRole("ROOT")
+                .antMatchers("/user/register.html", "/user/register")
+                .permitAll()
+                .antMatchers("/user/forget_password.html", "/user/forget_password/*")
+                .permitAll()
+                .antMatchers("/", "/index.html", "/user/login.html",
+                        "/user/reset_password/*/*", "/user/get_captcha")
                 .permitAll()
                 .anyRequest().authenticated();
-//        http.csrf().csrfTokenRepository()
     }
 
 }
