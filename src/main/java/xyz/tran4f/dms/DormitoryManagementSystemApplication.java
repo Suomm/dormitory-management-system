@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Wang Shuai (suomm.macher@foxmail.com)
+ * Copyright (C) 2020-2021 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,10 +16,20 @@
 
 package xyz.tran4f.dms;
 
+import com.spring4all.swagger.EnableSwagger2Doc;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+/**
+ * <p>
+ * Spring Boot 应用程序主配置类。
+ * </p>
+ *
+ * @author 王帅
+ * @since 1.0
+ */
+@EnableSwagger2Doc
 @SpringBootApplication
 @MapperScan("xyz.tran4f.dms.mapper")
 public class DormitoryManagementSystemApplication {
