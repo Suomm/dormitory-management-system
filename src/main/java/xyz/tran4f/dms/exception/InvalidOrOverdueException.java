@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Wang Shuai (suomm.macher@foxmail.com)
+ * Copyright (C) 2020-2021 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,24 +16,20 @@
 
 package xyz.tran4f.dms.exception;
 
-import org.jetbrains.annotations.Contract;
-import xyz.tran4f.dms.attribute.ExceptionAttribute;
-
 /**
  * <p>
- * 恶意绕过前端校验时，抛出此异常。
+ * 无效或者逾期异常。
  * </p>
  *
  * @author 王帅
  * @since 1.0
  */
-public class IllegalRequestException extends MessageException {
+public class InvalidOrOverdueException extends MessageException {
 
     private static final long serialVersionUID = 6723413299262506626L;
 
-    @Contract(pure = true)
-    public IllegalRequestException() {
-        super(ExceptionAttribute.MESSAGE_BAD_REQUEST);
+    public InvalidOrOverdueException(String message) {
+        super(message);
     }
 
 }
