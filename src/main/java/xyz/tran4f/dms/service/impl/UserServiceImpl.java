@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Wang Shuai (suomm.macher@foxmail.com)
+ * Copyright (C) 2020-2021 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,22 +17,14 @@
 package xyz.tran4f.dms.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import org.jetbrains.annotations.NotNull;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.MimeMessageHelper;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import xyz.tran4f.dms.attribute.ExceptionAttribute;
-import xyz.tran4f.dms.exception.*;
+import xyz.tran4f.dms.exception.DatabaseException;
+import xyz.tran4f.dms.exception.RegisterException;
 import xyz.tran4f.dms.mapper.UserMapper;
 import xyz.tran4f.dms.pojo.User;
 import xyz.tran4f.dms.service.UserService;
-
-import javax.mail.internet.MimeMessage;
-import java.io.Serializable;
-import java.sql.Timestamp;
-import java.util.UUID;
 
 /**
  * <p>
@@ -45,13 +37,11 @@ import java.util.UUID;
 @Service
 public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements UserService {
 
-    // 所需依赖的注入：邮件发送，密码加密
+    // 所需依赖的注入
 
-    private final JavaMailSender  javaMailSender;
     private final PasswordEncoder passwordEncoder;
 
-    public UserServiceImpl(JavaMailSender javaMailSender, PasswordEncoder passwordEncoder) {
-        this.javaMailSender  = javaMailSender;
+    public UserServiceImpl(PasswordEncoder passwordEncoder) {
         this.passwordEncoder = passwordEncoder;
     }
 
@@ -70,27 +60,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         if (baseMapper.insert(user) != 1) {
             throw new DatabaseException(ExceptionAttribute.USER_REGISTER_FAIL_INSERT);
         }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Async
-    @Override
-    public void sendEmail(String email, String subject, String content) {
-        MimeMessage message = javaMailSender.createMimeMessage();
-        MimeMessageHelper helper = new MimeMessageHelper(message);
-        try {
-            helper.setFrom("suomm.macher@foxmail.com");
-            helper.setTo(email);
-            helper.setSubject(subject);
-            helper.setText(content, true);
-        } catch (Exception e) {
-            throw new EmailSendException(ExceptionAttribute.USER_EMAIL_FAIL, e);
-        }
-//        javaMailSender.send(message);
-        System.out.println(email);
-        System.err.println(content);
     }
 
     /**

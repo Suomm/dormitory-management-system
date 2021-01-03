@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Wang Shuai (suomm.macher@foxmail.com)
+ * Copyright (C) 2020-2021 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,16 +39,6 @@ public interface UserService extends IService<User> {
      * @exception RegisterException 注册失败抛出此异常
      */
     void register(User user) throws RegisterException;
-
-    /**
-     * <p>
-     * 发送邮件到指定用户邮箱。
-     * </p>
-     *
-     * @param email 用户邮箱地址
-     * @param content 邮件内容
-     */
-    void sendEmail(String email, String subject, String content);
 
     /**
      * <p>
