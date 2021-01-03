@@ -193,7 +193,7 @@ public class UserController extends BaseController<UserService> {
 
     /**
      * <p>
-     * 获取邮箱验证码，将数据保存到 session 域中，并发送邮箱通知用户。
+     * 获取邮箱验证码，将数据保存到 Redis 缓存中，并发送邮箱通知用户。
      * </p>
      */
     @ResponseBody
