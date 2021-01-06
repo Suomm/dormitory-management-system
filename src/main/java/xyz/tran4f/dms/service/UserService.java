@@ -16,9 +16,12 @@
 
 package xyz.tran4f.dms.service;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
 import xyz.tran4f.dms.exception.RegisterException;
 import xyz.tran4f.dms.pojo.User;
+
+import java.util.List;
 
 /**
  * <p>
@@ -42,13 +45,89 @@ public interface UserService extends IService<User> {
 
     /**
      * <p>
-     * 重置密码的操作，加密密码存入数据库。
+     * 忘记密码之后重置密码的操作，加密密码存入数据库。
      * </p>
      *
-     * @param user 封装ID的对象
+     * @param id 学号
      * @param password 重置后的密码
      * @return {@code true} 重置密码成功，{@code false} 重置密码失败
      */
-    boolean resetPassword(User user, String password);
+    boolean resetPassword(String id, String password);
+
+    /**
+     * <p>
+     * 实现用户登录成功之后更改密码的操作。
+     * </p>
+     *
+     * @param id 学号
+     * @param oldPassword 旧密码
+     * @param newPassword 新密码
+     * @return {@code true} 更改密码成功，{@code false} 更改密码失败
+     */
+    boolean changePassword(String id, String oldPassword, String newPassword);
+
+    /**
+     * <p>
+     * 实现用户更改邮箱地址的操作。
+     * </p>
+     *
+     * @param id 学号
+     * @param newEmail 新邮箱地址
+     * @return {@code true} 更改邮箱成功，{@code false} 更改邮箱失败
+     */
+    boolean changeEmail(String id, String newEmail);
+
+    /**
+     * <p>
+     * 将用户按年级分组，获取年级信息。
+     * </p>
+     *
+     * @return 包含的年级信息
+     */
+    List<Object> getAllGrades();
+
+    /**
+     * <p>
+     * 按年级查询并作分页操作。
+     * </p>
+     *
+     * @param current 当前页
+     * @param size 每页显示的数量
+     * @param grade 查询的年级
+     * @return 分页对象
+     */
+    IPage<User> pageByGrade(long current, long size, String grade);
+
+    /**
+     * <p>
+     * 流动志愿者信息。
+     * </p>
+     *
+     * @param current 当前页
+     * @param size 每页显示的数量
+     * @return 分页对象
+     */
+    IPage<User> guestPage(long current, long size, String grade);
+
+    /**
+     * <p>
+     * 更新用户成员的学分。
+     * </p>
+     *
+     * @param id 学号
+     * @param credit 学分
+     * @return {@code true} 更改学分成功，{@code false} 更改学分失败
+     */
+    boolean updateCredit(String id, Integer credit);
+
+    /**
+     * <p>
+     * 根据学号删除用户。
+     * </p>
+     *
+     * @param id 学号
+     * @return {@code true} 删除成功，{@code false} 删除失败
+     */
+    boolean deleteUser(String id);
 
 }

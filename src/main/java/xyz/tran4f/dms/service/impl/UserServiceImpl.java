@@ -16,15 +16,22 @@
 
 package xyz.tran4f.dms.service.impl;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import xyz.tran4f.dms.attribute.ExceptionAttribute;
 import xyz.tran4f.dms.exception.DatabaseException;
+import xyz.tran4f.dms.exception.InvalidPasswordException;
 import xyz.tran4f.dms.exception.RegisterException;
+import xyz.tran4f.dms.exception.UserNotFoundException;
 import xyz.tran4f.dms.mapper.UserMapper;
 import xyz.tran4f.dms.pojo.User;
 import xyz.tran4f.dms.service.UserService;
+
+import java.util.List;
 
 /**
  * <p>
@@ -54,21 +61,100 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         if (baseMapper.selectById(user.getId()) != null) {
             throw new RegisterException(ExceptionAttribute.USER_REGISTER_REPEAT);
         }
+        // 设置年级信息
+        String grade = user.getId().substring(0, 2);
+        user.setGrade("20" + grade);
         // 进行密码加密设置
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         // 插入用户信息失败
         if (baseMapper.insert(user) != 1) {
-            throw new DatabaseException(ExceptionAttribute.USER_REGISTER_FAIL_INSERT);
+            throw new DatabaseException();
         }
+    }
+
+    private boolean update(User user) {
+        return baseMapper.updateById(user) == 1;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public boolean resetPassword(User user, String password) {
-        user.setPassword(passwordEncoder.encode(password));
-        return baseMapper.updateById(user) == 1;
+    public boolean resetPassword(String id, String password) {
+        return update(new User(id).setPassword(passwordEncoder.encode(password)));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean changePassword(String id, String oldPassword, String newPassword) {
+        User user = baseMapper.selectById(id);
+        if (!passwordEncoder.matches(oldPassword, user.getPassword())) {
+            throw new InvalidPasswordException();
+        }
+        return update(user.setPassword(passwordEncoder.encode(newPassword)));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean changeEmail(String id, String newEmail) {
+        return update(User.builder().id(id).email(newEmail).build());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<Object> getAllGrades() {
+        return baseMapper.selectObjs(Wrappers.lambdaQuery(User.class)
+                .groupBy(User::getGrade)
+                .select(User::getGrade));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public IPage<User> pageByGrade(long current, long size, String grade) {
+        return page(current, size, grade, "ROLE_USER");
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public IPage<User> guestPage(long current, long size, String grade) {
+        return page(current, size, grade, "ROLE_GUEST");
+    }
+
+    private IPage<User> page(long current, long size, String grade, String role) {
+        return baseMapper.selectPage(new Page<>(current, size), Wrappers.lambdaQuery(User.class)
+                .eq(User::getGrade, grade)
+                .and(wrapper -> wrapper.eq(User::getRole, role))
+                .select(User::getId, User::getUsername, User::getEmail, User::getCredit));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean updateCredit(String id, Integer credit) {
+        User user = baseMapper.selectById(id);
+        if (!"ROLE_USER".equals(user.getRole())) {
+            throw new UserNotFoundException();
+        }
+        return update(new User(id).setCredit(credit));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean deleteUser(String id) {
+        return baseMapper.selectById(id) != null;
     }
 
 }
