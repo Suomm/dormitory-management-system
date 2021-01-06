@@ -16,24 +16,22 @@
 
 package xyz.tran4f.dms.exception;
 
-import org.jetbrains.annotations.Contract;
 import xyz.tran4f.dms.attribute.ExceptionAttribute;
 
 /**
  * <p>
- * 操作数据库出现的异常。
+ * 用户更改密码时，原始密码错误。
  * </p>
  *
  * @author 王帅
  * @since 1.0
  */
-public class DatabaseException extends MessageException {
+public class InvalidPasswordException extends MessageException {
 
-    private static final long serialVersionUID = -9134621069235358217L;
+    private static final long serialVersionUID = -5059082845327377847L;
 
-    @Contract(pure = true)
-    public DatabaseException() {
-        super(ExceptionAttribute.USER_MESSAGE_FAIL_UPDATE);
+    public InvalidPasswordException() {
+        super(ExceptionAttribute.USER_CHANGE_PASSWORD);
     }
 
 }
