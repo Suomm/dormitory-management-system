@@ -64,7 +64,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Bean
     public RoleHierarchy roleHierarchy(){
         RoleHierarchyImpl roleHierarchy = new RoleHierarchyImpl();
-        roleHierarchy.setHierarchy("ROOT > MANAGER > USER");
+        roleHierarchy.setHierarchy("ROOT > MANAGER > USER > GUEST");
         return roleHierarchy;
     }
 
@@ -131,7 +131,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/user/forget_password.html", "/user/forget_password/*")
                 .permitAll()
                 .antMatchers("/", "/index.html", "/user/login.html",
-                        "/user/reset_password/*/*", "/user/get_captcha")
+                        "/user/reset_password/*/*", "/user/getCaptcha")
                 .permitAll()
                 .anyRequest().authenticated();
     }

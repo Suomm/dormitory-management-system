@@ -121,4 +121,5 @@ public class WebApplicationConfig implements WebMvcConfigurer {
         // 注册 manager 模块视图解析器
         registry.addViewController("/manager/dashboard.html").setViewName("manager/dashboard");
     }
+
 }
