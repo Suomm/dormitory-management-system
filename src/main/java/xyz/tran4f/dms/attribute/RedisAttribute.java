@@ -29,6 +29,8 @@ public final class RedisAttribute {
     private RedisAttribute() {
     }
 
+    public static final String KEY_RECORD = "KEY_RECORD";
+
     public static final String PREFIX_USER_LOCKED = "USER_LOCKED_";
     public static final String PREFIX_USER_CAPTCHA = "USER_LOCKED_";
     public static final String PREFIX_RESET_PASSWORD_ID = "RESET_PASSWORD_ID_";

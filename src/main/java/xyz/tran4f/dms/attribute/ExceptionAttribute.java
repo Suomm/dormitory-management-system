@@ -30,17 +30,16 @@ public final class ExceptionAttribute {
     }
 
     public static final String MESSAGE_BAD_REQUEST = "exception.message.badRequest";
+    public static final String USER_MESSAGE_FAIL_UPDATE = "exception.message.failUpdate";
 
     public static final String USER_NOT_FOUND = "exception.user.notFound";
-    public static final String USER_CAPTCHA_BLANK = "exception.user.captcha.blank";
     public static final String USER_CAPTCHA_WRONG = "exception.user.captcha.wrong";
+    public static final String USER_CHANGE_PASSWORD = "exception.user.changePassword";
     public static final String USER_CAPTCHA_OVERDUE = "exception.user.captcha.overdue";
     public static final String USER_CAPTCHA_MISSING = "exception.user.captcha.missing";
     public static final String USER_REGISTER_REPEAT = "exception.user.register.repeat";
-    public static final String USER_REGISTER_FAIL_INSERT = "exception.user.register.failInsert";
     public static final String USER_RESET_PASSWORD_EXPIRE = "exception.user.resetPassword.expire";
     public static final String USER_RESET_PASSWORD_OVERDUE = "exception.user.resetPassword.overdue";
     public static final String USER_RESET_PASSWORD_INCOMPLETE = "exception.user.resetPassword.incomplete";
-    public static final String USER_RESET_PASSWORD_FAIL_UPDATE = "exception.user.resetPassword.failUpdate";
 
 }

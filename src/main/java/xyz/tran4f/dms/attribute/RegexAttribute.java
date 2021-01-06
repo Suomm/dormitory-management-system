@@ -26,10 +26,12 @@ package xyz.tran4f.dms.attribute;
  */
 public final class RegexAttribute {
 
+
     private RegexAttribute() {
     }
 
     public static final String ID = "\\d{2}3007\\d{4}";
+    public static final String GRADE = "\\d{4}";
     public static final String PASSWORD = "^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z\\W]{6,18}$";
 
 }
