@@ -18,11 +18,15 @@ package xyz.tran4f.dms.controller;
 
 import io.swagger.annotations.*;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import xyz.tran4f.dms.attribute.RedisAttribute;
-import xyz.tran4f.dms.exception.*;
+import xyz.tran4f.dms.exception.DatabaseException;
+import xyz.tran4f.dms.exception.InvalidOrOverdueException;
+import xyz.tran4f.dms.exception.RedirectException;
+import xyz.tran4f.dms.exception.UserNotFoundException;
 import xyz.tran4f.dms.pojo.Captcha;
 import xyz.tran4f.dms.pojo.User;
 import xyz.tran4f.dms.service.UserService;
@@ -63,6 +67,8 @@ public class UserController extends BaseController<UserService> {
      */
     private static final String DELIMITER = "$";
 
+    // === 注册用户以及忘记密码之后重置密码请求操作 ===
+
     /**
      * <p>
      * 处理用户注册请求，将新用户信息写入数据库。
@@ -81,10 +87,6 @@ public class UserController extends BaseController<UserService> {
                          @ApiParam(value = "邀请码", required = true) @NotBlank String validateCode) {
         // 获取缓存中的验证码对象
         Captcha captcha = redisUtils.get(PREFIX_USER_CAPTCHA + user.getId());
-        // 验证码为空，用户还未发送验证码
-        if (captcha == null) {
-            throw new CaptchaException(USER_CAPTCHA_MISSING);
-        }
         // 校验邮箱验证码
         CaptchaUtils.checkCaptcha(captcha, Captcha.defaultCaptcha(emailCode));
         // TODO 比对部门的邀请码是否正确
@@ -92,9 +94,9 @@ public class UserController extends BaseController<UserService> {
         // 调用 Service 层的方法注册用户，写入数据库
         service.register(user);
         // 注册成功之后删除验证码
-        redisUtils.remove(user.getId());
+        redisUtils.remove(PREFIX_USER_CAPTCHA + user.getId());
         // 日志记录注册信息
-        log.trace("注册学号为 {} 的用户成功", user.getId());
+        log.info("注册学号为 {} 的用户成功", user.getId());
     }
 
     /**
@@ -184,12 +186,14 @@ public class UserController extends BaseController<UserService> {
             throw new InvalidOrOverdueException(USER_RESET_PASSWORD_OVERDUE);
         }
         // 数据写入数据库失败
-        if (!service.resetPassword(new User(uid), password)) {
-            throw new DatabaseException(USER_RESET_PASSWORD_FAIL_UPDATE);
+        if (!service.resetPassword(uid, password)) {
+            throw new DatabaseException();
         }
         // 日志记录修改密码成功
-        log.trace("学号为 {} 的用户修改密码成功", id);
+        log.info("学号为 {} 的用户修改密码成功", id);
     }
+
+    // === 获取邮箱验证码请求 ===
 
     /**
      * <p>
@@ -197,7 +201,7 @@ public class UserController extends BaseController<UserService> {
      * </p>
      */
     @ResponseBody
-    @PostMapping("get_captcha")
+    @PostMapping("getCaptcha")
     @ApiOperation(value = "获取邮箱验证码", notes = "发送注册验证码到邮箱")
     @ApiResponses(@ApiResponse(code = 200, message = "提示用户验证码已经发送成功"))
     public void getCaptcha(@ApiParam(value = "学号", required = true) @Id String id,
@@ -210,6 +214,59 @@ public class UserController extends BaseController<UserService> {
         sendEmail("验证码", emailContent, email);
         // 将验证码内容存入 Redis 缓存中，并设置十分钟后过期
         redisUtils.set(PREFIX_USER_CAPTCHA + id, code, 10, TimeUnit.MINUTES);
+    }
+
+    // === 用户登陆成功之后更改相关信息操作 ===
+
+    @ResponseBody
+    @Secured({"ROLE_USER", "ROLE_GUEST"})
+    @PutMapping("change_password/{id}")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "id", value = "学号", required = true, defaultValue = "2030070002"),
+            @ApiImplicitParam(name = "oldPassword", value = "旧密码", required = true, paramType = "query"),
+            @ApiImplicitParam(name = "newPassword", value = "新密码", required = true, paramType = "query")
+    })
+    @ApiOperation(value = "更改密码", notes = "输入旧密码和新密码更改密码")
+    @ApiResponses(@ApiResponse(code = 200, message = "提示用户更改密码操作已成功"))
+    public void changePassword(@PathVariable @Id String id,
+                               @Password String oldPassword,
+                               @Password String newPassword) {
+        if (!service.changePassword(id, oldPassword, newPassword)) {
+            throw new DatabaseException();
+        }
+    }
+
+    @ResponseBody
+    @PutMapping("change_email/{id}")
+    @Secured({"ROLE_USER", "ROLE_GUEST"})
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "id", value = "学号", required = true, defaultValue = "2030070002"),
+            @ApiImplicitParam(name = "newEmail", value = "新邮箱", required = true, paramType = "query"),
+            @ApiImplicitParam(name = "emailCode", value = "验证码", required = true, paramType = "query")
+    })
+    @ApiOperation(value = "更改邮箱", notes = "输入新邮箱地址和验证码更改邮箱")
+    @ApiResponses(@ApiResponse(code = 200, message = "提示用户更改邮箱操作已成功"))
+    public void changeEmail(@PathVariable @Id String id,
+                            @NotBlank @Email String newEmail,
+                            @NotBlank String emailCode) {
+        // 获取缓存中的验证码对象
+        Captcha captcha = redisUtils.get(PREFIX_USER_CAPTCHA + id);
+        // 校验邮箱验证码
+        CaptchaUtils.checkCaptcha(captcha, Captcha.defaultCaptcha(emailCode));
+        // 获取数据库中的用户
+        User user = service.getById(id);
+        // 用户为空提示用户未找到
+        if (user == null) {
+            throw new UserNotFoundException();
+        }
+        // 发送邮件到原邮箱提示邮箱地址已改
+        sendEmail("更改邮箱地址", "您的邮箱地址已更改，如非本人操作请联系管理员。", user.getEmail());
+        // 更改邮箱地址
+        if (!service.changeEmail(id, newEmail)) {
+            throw new DatabaseException();
+        }
+        // 更改成功之后删除验证码
+        redisUtils.remove(PREFIX_USER_CAPTCHA + id);
     }
 
 }
