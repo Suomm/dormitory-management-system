@@ -21,6 +21,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.jetbrains.annotations.Contract;
 
+import java.io.Serializable;
+
 /**
  * <p>
  * 验证码实体类。
@@ -32,7 +34,9 @@ import org.jetbrains.annotations.Contract;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Captcha {
+public class Captcha implements Serializable {
+
+    private static final long serialVersionUID = -4483861236935426035L;
 
     /**
      * 验证码内容

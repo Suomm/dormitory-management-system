@@ -20,6 +20,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
+
 /**
  * <p>
  * 封装发送邮件相关信息的实体类。
@@ -31,7 +33,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Email {
+public class Email implements Serializable {
 
     private static final long serialVersionUID = 1247475962205104603L;
 

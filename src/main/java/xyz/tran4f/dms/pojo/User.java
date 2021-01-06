@@ -75,7 +75,9 @@ public class User implements Serializable {
     private Integer gender; // 性别
 
     @ApiModelProperty(hidden = true)
-    private String  role; // 角色
+    private String role; // 角色
+    @ApiModelProperty(hidden = true)
+    private String grade; // 年级
     @ApiModelProperty(hidden = true)
     private Integer credit; // 学分
     @ApiModelProperty(hidden = true)
