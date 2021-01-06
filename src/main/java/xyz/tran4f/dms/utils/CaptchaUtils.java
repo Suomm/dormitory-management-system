@@ -91,9 +91,9 @@ public final class CaptchaUtils {
      * @exception CaptchaException 检查失败抛出此异常
      */
     public static void checkCaptcha(Captcha before, Captcha after) throws CaptchaException {
-        // 验证码未输入
-        if (StringUtils.notBlank(after.getCode())) {
-            throw new CaptchaException(USER_CAPTCHA_BLANK);
+        // 验证码为空，用户还未发送验证码
+        if (before == null) {
+            throw new CaptchaException(USER_CAPTCHA_MISSING);
         }
         // 比对验证码过期时间
         if (before.getOutDate() <= after.getOutDate()) {

@@ -21,6 +21,8 @@ import org.jetbrains.annotations.Nullable;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
+import java.util.Arrays;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -129,6 +131,47 @@ public final class RedisUtils {
     @Contract(value = "null -> fail")
     public Boolean remove(String key) {
         return redisTemplate.delete(key);
+    }
+
+    /**
+     * <p>
+     * 向 Redis Set 集合中插入数据。
+     * </p>
+     *
+     * @param key 键
+     * @param value 值
+     * @return {@code null} 插入失败
+     */
+    @Contract("null,_ -> fail")
+    public Long setAdd(String key, Object value) {
+        return redisTemplate.opsForSet().add(key, value);
+    }
+
+    /**
+     * <p>
+     * 获取 Set 集合中的所有成员。
+     * </p>
+     *
+     * @param key 键
+     * @return 集合中的值
+     */
+    @Contract(value = "null -> fail", pure = true)
+    public Set<Object> setMembers(String key) {
+        return redisTemplate.opsForSet().members(key);
+    }
+
+    /**
+     * <p>
+     * 合并指定键的集合。
+     * </p>
+     *
+     * @param keys 键
+     * @return 合并之后的集合
+     */
+    @Nullable
+    @Contract(pure = true)
+    public Set<Object> setUnion(String... keys) {
+        return redisTemplate.opsForSet().union(Arrays.asList(keys));
     }
 
 }
