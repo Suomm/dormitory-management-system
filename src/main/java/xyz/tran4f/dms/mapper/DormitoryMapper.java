@@ -18,11 +18,11 @@ package xyz.tran4f.dms.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.springframework.stereotype.Repository;
-import xyz.tran4f.dms.pojo.User;
+import xyz.tran4f.dms.pojo.Dormitory;
 
 /**
  * <p>
- * 对数据库进行操作的 Mapper 接口。
+ * 2021/1/5
  * </p>
  *
  * @author 王帅
@@ -30,5 +30,5 @@ import xyz.tran4f.dms.pojo.User;
  */
 @Repository
 //@CacheNamespace(implementation = MybatisRedisCache.class)
-public interface UserMapper extends BaseMapper<User> {
+public interface DormitoryMapper extends BaseMapper<Dormitory> {
 }
