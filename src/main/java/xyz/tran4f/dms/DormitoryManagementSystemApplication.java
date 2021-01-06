@@ -20,10 +20,11 @@ import com.spring4all.swagger.EnableSwagger2Doc;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 
 /**
  * <p>
- * Spring Boot 应用程序主配置类。
+ * Spring Boot 应用程序启动类。
  * </p>
  *
  * @author 王帅
@@ -32,6 +33,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @EnableSwagger2Doc
 @SpringBootApplication
 @MapperScan("xyz.tran4f.dms.mapper")
+@EnableGlobalMethodSecurity(securedEnabled = true)
 public class DormitoryManagementSystemApplication {
 
     public static void main(String[] args) {
