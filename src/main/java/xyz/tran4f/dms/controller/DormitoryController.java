@@ -16,17 +16,16 @@
 
 package xyz.tran4f.dms.controller;
 
-import com.alibaba.excel.EasyExcel;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import io.swagger.annotations.*;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 import xyz.tran4f.dms.attribute.RedisAttribute;
-import xyz.tran4f.dms.handler.ColorCellWriteHandler;
 import xyz.tran4f.dms.pojo.Dormitory;
 import xyz.tran4f.dms.pojo.Note;
 import xyz.tran4f.dms.service.DormitoryService;
+import xyz.tran4f.dms.utils.ExcelUtils;
 
 import java.io.File;
 import java.time.LocalDate;
@@ -145,11 +144,7 @@ public class DormitoryController extends BaseController<DormitoryService> {
             throw new NullPointerException("set is null!");
         }
         String date = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-        EasyExcel.write("./tables/化学学院宿舍卫生检查表" + date + "（本科生）.xlsx", Note.class)
-                .registerWriteHandler(new ColorCellWriteHandler())
-                .withTemplate("./template/化学学院宿舍卫生检查表样表.xlsx")
-                .sheet()
-                .doFill(new TreeSet<>(set));
+        ExcelUtils.writeWithTemplate("./tables/化学学院宿舍卫生检查表" + date + "（本科生）.xlsx", new TreeSet<>(set));
     }
 
     @GetMapping("test")

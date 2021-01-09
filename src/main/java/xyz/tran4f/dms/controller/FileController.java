@@ -39,8 +39,8 @@ import java.io.IOException;
  * @author 王帅
  * @since 1.0
  */
-//@Secured({"ROLE_USER"})
-@RestController("/file")
+@RestController
+//@Secured({"ROLE_MANAGER"})
 @Api(tags = "文件模块的程序接口")
 public class FileController {
 
@@ -56,6 +56,7 @@ public class FileController {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentDisposition(ContentDisposition.builder("attachment")
                 .filename(filename).build());
+        headers.add("content-type", "application/octet-stream");
         headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
         return ResponseEntity.ok().headers(headers).body(new FileSystemResource("./README.md"));
     }
