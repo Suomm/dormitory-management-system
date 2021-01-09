@@ -28,6 +28,8 @@ import org.jetbrains.annotations.Contract;
  */
 public final class StringUtils {
 
+    static final String EMPTY = "";
+
     private StringUtils() {
     }
 
