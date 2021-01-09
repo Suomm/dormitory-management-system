@@ -18,6 +18,7 @@ package xyz.tran4f.dms.handler;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.NoSuchMessageException;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -30,6 +31,7 @@ import xyz.tran4f.dms.exception.RedirectException;
 import xyz.tran4f.dms.utils.I18nUtils;
 
 import javax.validation.ConstraintViolationException;
+import java.io.IOException;
 
 import static xyz.tran4f.dms.attribute.ExceptionAttribute.MESSAGE_BAD_REQUEST;
 import static xyz.tran4f.dms.attribute.WebAttribute.WEB_LAST_EXCEPTION;
@@ -117,6 +119,12 @@ public class GlobalExceptionHandler {
     })
     public ResponseEntity<String> validExceptionHandler() {
         return ResponseEntity.badRequest().body(i18nUtils.getMessage(MESSAGE_BAD_REQUEST));
+    }
+
+    @ResponseBody
+    @ExceptionHandler(IOException.class)
+    public ResponseEntity<String> ioExceptionHandler() {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("生成文件失败");
     }
 
 }
