@@ -28,7 +28,7 @@ import java.io.IOException;
 
 /**
  * <p>
- * 2021/1/8
+ * 提供 Word 2007 级以上版本的相关操作。
  * </p>
  *
  * @author 王帅
@@ -39,9 +39,19 @@ public final class WordUtils {
     private WordUtils() {
     }
 
+    /**
+     * <p>
+     * 生成一个新闻稿文档。
+     * </p>
+     *
+     * @param filename 文件名称
+     * @param title 文档标题
+     * @param paragraphs 文档段落
+     */
     public static void create(String filename, String title, String... paragraphs) throws IOException {
+        // 创建文档
         @Cleanup XWPFDocument document = new XWPFDocument();
-
+        // 创建文档标题
         XWPFParagraph titleParagraph = document.createParagraph();
         titleParagraph.setAlignment(ParagraphAlignment.CENTER);
         XWPFRun titleRun = titleParagraph.createRun();
@@ -49,7 +59,7 @@ public final class WordUtils {
         titleRun.setFontSize(16);
         titleRun.setFontFamily("方正小标宋简体");
         titleRun.addCarriageReturn();
-
+        // 创建文档段落
         for (String text : paragraphs) {
             XWPFParagraph paragraph = document.createParagraph();
             paragraph.setAlignment(ParagraphAlignment.LEFT);
@@ -61,8 +71,7 @@ public final class WordUtils {
             run.setFontSize(14);
             run.setFontFamily("仿宋GB2312");
         }
-
-        // 写出文档
+        // 保存文档
         @Cleanup FileOutputStream fos = new FileOutputStream(filename);
         @Cleanup BufferedOutputStream bos = new BufferedOutputStream(fos);
         document.write(bos);

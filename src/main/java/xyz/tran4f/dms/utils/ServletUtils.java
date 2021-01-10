@@ -38,10 +38,6 @@ public final class ServletUtils {
         return (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
     }
 
-    private static HttpServletRequest getRequest() {
-        return servletRequestAttributes().getRequest();
-    }
-
     /**
      * <p>
      * 获取浏览器地址栏的根目录。满足：{@code http://localhost:8080/dms} 样式。
