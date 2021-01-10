@@ -22,7 +22,7 @@ import xyz.tran4f.dms.pojo.Dormitory;
 
 /**
  * <p>
- * 2021/1/5
+ * 对数据库进行操作的 Mapper 接口。
  * </p>
  *
  * @author 王帅

@@ -21,7 +21,7 @@ import xyz.tran4f.dms.pojo.Dormitory;
 
 /**
  * <p>
- * 2021/1/5
+ * 宿舍操作的服务类。
  * </p>
  *
  * @author 王帅

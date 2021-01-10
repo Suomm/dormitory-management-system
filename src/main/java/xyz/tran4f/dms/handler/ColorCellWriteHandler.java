@@ -31,7 +31,7 @@ import java.util.List;
 
 /**
  * <p>
- * 2021/1/6
+ * 填充成绩模板时，根据分数设置单元格背景色。
  * </p>
  *
  * @author 王帅
@@ -48,19 +48,32 @@ public class ColorCellWriteHandler extends AbstractCellWriteHandler {
                                  Head head,
                                  Integer relativeRowIndex,
                                  Boolean isHead) {
-        if (cell.getColumnIndex() != 4) {
-            return;
-        }
-        int cellValue = Integer.parseInt(cell.getStringCellValue());
-        if (cellValue >= 90) {
-            setFillForegroundColor(writeSheetHolder, cell, IndexedColors.GREEN);
-        } else if (cellValue < 60) {
-            setFillForegroundColor(writeSheetHolder, cell, IndexedColors.RED);
+        // 根据列的索引判断是不是成绩那一列
+        if (cell.getColumnIndex() == 4) {
+            // 获取填入的成绩，并转换为 int 格式
+            int cellValue = Integer.parseInt(cell.getStringCellValue());
+            if (cellValue >= 90) {
+                // 大于等于 90 分设置背景色为绿色
+                setFillForegroundColor(writeSheetHolder, cell, IndexedColors.GREEN);
+            } else if (cellValue < 60) {
+                // 小于 60 设置背景色为红色
+                setFillForegroundColor(writeSheetHolder, cell, IndexedColors.RED);
+            }
         }
     }
 
+    /**
+     * <p>
+     * 设置单元格背景色。
+     * </p>
+     *
+     * @param writeSheetHolder 用于生成单元格样式
+     * @param cell 需要设置样式的单元格
+     * @param color 单元格背景颜色
+     */
     private void setFillForegroundColor(WriteSheetHolder writeSheetHolder, Cell cell, IndexedColors color) {
         CellStyle cellStyle = writeSheetHolder.getSheet().getWorkbook().createCellStyle();
+        // 克隆原来单元格的样式，保证其他样式不变的情况下添加背景色
         cellStyle.cloneStyleFrom(cell.getCellStyle());
         cellStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
         cellStyle.setFillForegroundColor(color.index);
