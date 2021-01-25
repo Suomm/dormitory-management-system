@@ -29,10 +29,17 @@ public final class RedisAttribute {
     private RedisAttribute() {
     }
 
-    public static final String KEY_RECORD = "KEY_RECORD";
+    public static final String KEY_DRAFT = "KEY_DRAFT";
+    public static final String KEY_NOTICE = "KEY_NOTICE";
+    public static final String KEY_BUILDING_LIST = "KEY_RECORD_LIST";
+    public static final String KEY_ACTIVE_TASK = "KEY_ACTIVE_TASK";
+    public static final String KEY_ACTIVE_WEEK = "KEY_ACTIVE_WEEK";
 
+    public static final String PREFIX_DIRTY_SET = "DIRTY_SET_";
+    public static final String PREFIX_CLEAN_SET = "CLEAN_SET_";
+    public static final String PREFIX_TASK_RECORD = "TASK_RECORD_";
     public static final String PREFIX_USER_LOCKED = "USER_LOCKED_";
-    public static final String PREFIX_USER_CAPTCHA = "USER_LOCKED_";
+    public static final String PREFIX_USER_CAPTCHA = "USER_CAPTCHA_";
     public static final String PREFIX_RESET_PASSWORD_ID = "RESET_PASSWORD_ID_";
     public static final String PREFIX_RESET_PASSWORD_KEY = "RESET_PASSWORD_KEY_";
 

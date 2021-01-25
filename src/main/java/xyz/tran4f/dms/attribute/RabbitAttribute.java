@@ -48,6 +48,11 @@ public final class RabbitAttribute {
     public static final String QUEUE_EMAIL = "email";
 
     /**
+     * 任务完成之后
+     */
+    public static final String QUEUE_TASK = "task";
+
+    /**
      * 实现用户锁定功能的交换机，绑定了死信队列 {@value QUEUE_USER_LOCKED_DELAY}
      * 和实际监听处理队列 {@value QUEUE_USER_LOCKED_PROCESS}。
      */

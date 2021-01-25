@@ -32,6 +32,8 @@ public final class ExceptionAttribute {
     public static final String MESSAGE_BAD_REQUEST = "exception.message.badRequest";
     public static final String USER_MESSAGE_FAIL_UPDATE = "exception.message.failUpdate";
 
+    public static final String TASK_REPEAT = "exception.task.repeat";
+    public static final String DOWNLOAD_FILE_NOT_FOUND = "exception.download.fileNotFound";
     public static final String USER_NOT_FOUND = "exception.user.notFound";
     public static final String USER_CAPTCHA_WRONG = "exception.user.captcha.wrong";
     public static final String USER_CHANGE_PASSWORD = "exception.user.changePassword";
