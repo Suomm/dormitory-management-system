@@ -79,10 +79,10 @@ public final class ExcelUtils {
      * @param data 要进行填充的数据
      */
     public static void writeWithTemplate(String filename, Object data) {
-        EasyExcel.write(filename, Note.class)
+        EasyExcel.write("./portfolio/document/" + filename, Note.class)
                 // 优差宿舍成绩背景色处理
                 .registerWriteHandler(new ColorCellWriteHandler())
-                .withTemplate("./template/化学学院宿舍卫生检查表样表.xlsx")
+                .withTemplate("./portfolio/template/化学学院宿舍卫生检查表样表.xlsx")
                 .sheet()
                 .doFill(data);
     }
@@ -143,7 +143,7 @@ public final class ExcelUtils {
         @Cleanup("delete") File pdfFile = File.createTempFile("excel2Pdf", ".pdf");
         // 以长度最长的集合为标准，并加上表头所需的两行，作为需要转换的最后行数。
         excel2Pdf(excelFile, pdfFile, Math.max(first.size(), last.size()) + 2);
-        pdf2Image(pdfFile, imageFile);
+        pdf2Image(pdfFile, "./portfolio/" + imageFile);
     }
 
     /**

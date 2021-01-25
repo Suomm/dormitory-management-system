@@ -21,7 +21,8 @@ import org.jetbrains.annotations.Nullable;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
-import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
@@ -129,8 +130,34 @@ public final class RedisUtils {
      * @return {@code true} 删除成功，{@code false} 删除失败
      */
     @Contract(value = "null -> fail")
-    public Boolean remove(String key) {
+    public Boolean delete(String key) {
         return redisTemplate.delete(key);
+    }
+
+    public void listPush(String key, Object... values) {
+        redisTemplate.opsForList().rightPushAll(key, values);
+    }
+
+    public void listRemove(String key, Object value) {
+        redisTemplate.opsForList().remove(key, 1, value);
+    }
+
+    public int listSize(String key) {
+        Long size = redisTemplate.opsForList().size(key);
+        assert size != null;
+        return size.intValue();
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T> List<T> listGet(String key) {
+        return (List<T>) redisTemplate.opsForList().range(key, 0, -1);
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T> T listFirst(String key) {
+        List<T> v = (List<T>) redisTemplate.opsForList().leftPop(key);
+        assert v != null;
+        return v.get(0);
     }
 
     /**
@@ -143,8 +170,27 @@ public final class RedisUtils {
      * @return {@code null} 插入失败
      */
     @Contract("null,_ -> fail")
-    public Long setAdd(String key, Object value) {
+    public Long setAdd(String key, Object... value) {
         return redisTemplate.opsForSet().add(key, value);
+    }
+
+    public void unmodifiableSet(String key, Object... values) {
+        redisTemplate.delete(key);
+        redisTemplate.opsForSet().add(key, values);
+    }
+
+    /**
+     * <p>
+     * 从 Redis Set 集合中删除数据。
+     * </p>
+     *
+     * @param key 键
+     * @param values 值
+     * @return {@code null} 插入失败
+     */
+    @Contract("null,_ -> fail")
+    public Long setRemove(String key, Object[] values) {
+        return redisTemplate.opsForSet().remove(key, values);
     }
 
     /**
@@ -168,10 +214,10 @@ public final class RedisUtils {
      * @param keys 键
      * @return 合并之后的集合
      */
-    @Nullable
+    @SuppressWarnings("unchecked")
     @Contract(pure = true)
-    public Set<Object> setUnion(String... keys) {
-        return redisTemplate.opsForSet().union(Arrays.asList(keys));
+    public <T> Set<T> setUnion(Collection<String> keys) {
+        return (Set<T>) redisTemplate.opsForSet().union(keys);
     }
 
 }

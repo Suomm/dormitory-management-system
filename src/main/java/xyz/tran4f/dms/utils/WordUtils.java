@@ -72,7 +72,7 @@ public final class WordUtils {
             run.setFontFamily("仿宋GB2312");
         }
         // 保存文档
-        @Cleanup FileOutputStream fos = new FileOutputStream(filename);
+        @Cleanup FileOutputStream fos = new FileOutputStream("./portfolio/" + filename);
         @Cleanup BufferedOutputStream bos = new BufferedOutputStream(fos);
         document.write(bos);
     }

@@ -16,10 +16,14 @@
 
 package xyz.tran4f.dms.utils;
 
+import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
+import xyz.tran4f.dms.pojo.User;
 
 import javax.servlet.http.HttpServletRequest;
+
+import static xyz.tran4f.dms.attribute.WebAttribute.WEB_SESSION_USER;
 
 /**
  * <p>
@@ -36,6 +40,10 @@ public final class ServletUtils {
 
     private static ServletRequestAttributes servletRequestAttributes() {
         return (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
+    }
+
+    public static User getUser() {
+        return (User) servletRequestAttributes().getAttribute(WEB_SESSION_USER, RequestAttributes.SCOPE_SESSION);
     }
 
     /**

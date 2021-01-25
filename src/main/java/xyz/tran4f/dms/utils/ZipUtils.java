@@ -51,7 +51,9 @@ public final class ZipUtils {
         @Cleanup ZipArchiveOutputStream out = new ZipArchiveOutputStream(bos);
         // 向压缩文件中添加指定的资源文件
         for (String resource : resources) {
-            copy(new File(resource), out, "");
+            File file = new File(resource);
+            if (!file.exists()) { continue; }
+            copy(file, out, "");
         }
     }
 
