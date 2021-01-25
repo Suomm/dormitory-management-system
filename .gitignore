@@ -2,9 +2,12 @@
 target/
 
 ### Application Configurations ###
-src/main/resources/application.yml
-src/main/resources/application-dev.yml
-src/main/resources/application-prod.yml
+config/
+portfolio/
+
+### Application resources ###
+src/main/resources/static
+src/main/resources/templates
 
 ### IntelliJ IDEA ###
 .idea
