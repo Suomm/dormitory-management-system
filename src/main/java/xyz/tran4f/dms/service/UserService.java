@@ -16,12 +16,9 @@
 
 package xyz.tran4f.dms.service;
 
-import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
 import xyz.tran4f.dms.exception.RegisterException;
 import xyz.tran4f.dms.pojo.User;
-
-import java.util.List;
 
 /**
  * <p>
@@ -76,58 +73,5 @@ public interface UserService extends IService<User> {
      * @return {@code true} 更改邮箱成功，{@code false} 更改邮箱失败
      */
     boolean changeEmail(String id, String newEmail);
-
-    /**
-     * <p>
-     * 将用户按年级分组，获取年级信息。
-     * </p>
-     *
-     * @return 包含的年级信息
-     */
-    List<Object> getAllGrades();
-
-    /**
-     * <p>
-     * 按年级查询并作分页操作。
-     * </p>
-     *
-     * @param current 当前页
-     * @param size 每页显示的数量
-     * @param grade 查询的年级
-     * @return 分页对象
-     */
-    IPage<User> pageByGrade(long current, long size, String grade);
-
-    /**
-     * <p>
-     * 流动志愿者信息。
-     * </p>
-     *
-     * @param current 当前页
-     * @param size 每页显示的数量
-     * @return 分页对象
-     */
-    IPage<User> guestPage(long current, long size, String grade);
-
-    /**
-     * <p>
-     * 更新用户成员的学分。
-     * </p>
-     *
-     * @param id 学号
-     * @param credit 学分
-     * @return {@code true} 更改学分成功，{@code false} 更改学分失败
-     */
-    boolean updateCredit(String id, Integer credit);
-
-    /**
-     * <p>
-     * 根据学号删除用户。
-     * </p>
-     *
-     * @param id 学号
-     * @return {@code true} 删除成功，{@code false} 删除失败
-     */
-    boolean deleteUser(String id);
 
 }
