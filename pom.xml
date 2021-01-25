@@ -43,30 +43,13 @@
             <url>https://github.com/Suomm</url>
             <email>1474983351@qq.com</email>
             <roles>
+                <role>前端界面设计</role>
                 <role>后端业务开发</role>
                 <role>项目升级维护</role>
             </roles>
             <timezone>+8</timezone>
         </developer>
-        <developer>
-            <name>刘宏伟</name>
-            <roles>
-                <role>前端页面设计</role>
-                <role>服务器端配置</role>
-            </roles>
-            <timezone>+8</timezone>
-        </developer>
     </developers>
-
-    <contributors>
-        <contributor>
-            <name>陈萱</name>
-            <roles>
-                <role>国际化文件制作</role>
-            </roles>
-            <timezone>+8</timezone>
-        </contributor>
-    </contributors>
 
     <dependencies>
         <dependency>
@@ -122,11 +105,6 @@
             <version>1.1.24</version>
         </dependency>
         <dependency>
-            <groupId>org.thymeleaf.extras</groupId>
-            <artifactId>thymeleaf-extras-springsecurity5</artifactId>
-            <version>3.0.4.RELEASE</version>
-        </dependency>
-        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-devtools</artifactId>
             <optional>true</optional>
@@ -147,14 +125,9 @@
             <version>1.20</version>
         </dependency>
         <dependency>
-            <groupId>com.alibaba</groupId>
-            <artifactId>druid</artifactId>
-            <version>1.2.3</version>
-        </dependency>
-        <dependency>
-            <groupId>com.alibaba</groupId>
-            <artifactId>fastjson</artifactId>
-            <version>1.2.73</version>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>2.8.0</version>
         </dependency>
         <dependency>
             <groupId>com.alibaba</groupId>
@@ -162,19 +135,9 @@
             <version>2.2.7</version>
         </dependency>
         <dependency>
-            <groupId>org.webjars</groupId>
-            <artifactId>webjars-locator</artifactId>
-            <version>0.40</version>
-        </dependency>
-        <dependency>
-            <groupId>org.webjars</groupId>
-            <artifactId>jquery</artifactId>
-            <version>3.5.1</version>
-        </dependency>
-        <dependency>
-            <groupId>org.webjars</groupId>
-            <artifactId>bootstrap</artifactId>
-            <version>4.5.3</version>
+            <groupId>com.alibaba</groupId>
+            <artifactId>fastjson</artifactId>
+            <version>1.2.73</version>
         </dependency>
         <dependency>
             <groupId>org.jetbrains</groupId>
