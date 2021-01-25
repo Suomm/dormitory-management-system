@@ -34,14 +34,14 @@ import java.io.IOException;
  * @author 王帅
  * @since 1.0
  */
-public class SaveUserAuthenticationSuccessHandler extends SavedRequestAwareAuthenticationSuccessHandler {
+public class SimpleAuthenticationSuccessHandler extends SavedRequestAwareAuthenticationSuccessHandler {
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
             Authentication authentication) throws IOException, ServletException {
         // 获取 SecurityUser 对象，里面有封装好的 User 对象
         SecurityUser principal = (SecurityUser) authentication.getPrincipal();
-        // 将 User 对象存入 Session 域中，命名为 user
+        // 将 User 对象存入 Session 域中，命名为 WEB_SESSION_USER
         request.getSession().setAttribute(WebAttribute.WEB_SESSION_USER, principal.getUser());
         // 调用父类的方法实现页面跳转
         super.onAuthenticationSuccess(request, response, authentication);

@@ -18,7 +18,6 @@ package xyz.tran4f.dms.handler;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.NoSuchMessageException;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -31,7 +30,6 @@ import xyz.tran4f.dms.exception.RedirectException;
 import xyz.tran4f.dms.utils.I18nUtils;
 
 import javax.validation.ConstraintViolationException;
-import java.io.IOException;
 
 import static xyz.tran4f.dms.attribute.ExceptionAttribute.MESSAGE_BAD_REQUEST;
 import static xyz.tran4f.dms.attribute.WebAttribute.WEB_LAST_EXCEPTION;
@@ -71,7 +69,7 @@ public class GlobalExceptionHandler {
 
     /**
      * <p>
-     * 处理自定义异常中，将异常的详细信息回显到前端界面。返回 HTTP 202 状态码，
+     * 处理自定义异常中，将异常的详细信息回显到前端界面。返回 HTTP 400 状态码，
      * 表示请求因出现异常而未被处理，并包含响应文本 responseText 表示异常的详
      * 细消息。
      * </p>
@@ -84,7 +82,7 @@ public class GlobalExceptionHandler {
         // 获取异常键值指定的国际化消息
         String message = getMessage(exception);
         log.info("处理异常：{} 产生原因：{}", exception.getClass().getName(), message);
-        return ResponseEntity.accepted().body(message);
+        return ResponseEntity.badRequest().body(message);
     }
 
     /**
@@ -119,12 +117,6 @@ public class GlobalExceptionHandler {
     })
     public ResponseEntity<String> validExceptionHandler() {
         return ResponseEntity.badRequest().body(i18nUtils.getMessage(MESSAGE_BAD_REQUEST));
-    }
-
-    @ResponseBody
-    @ExceptionHandler(IOException.class)
-    public ResponseEntity<String> ioExceptionHandler() {
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("生成文件失败");
     }
 
 }
