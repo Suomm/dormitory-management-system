@@ -68,10 +68,10 @@ public class UserLoginListener {
         }
         // 根据键值获取对应的登录次数
         int limit = redisUtils.get(PREFIX_USER_LOCKED + username, 1);
-        if (limit < 3) {
+        if (limit < 10) {
             // 登录次数小于极限，每次登陆失败都要记录，记录三十分钟之后失效
             redisUtils.set(PREFIX_USER_LOCKED + username, limit + 1, 30, TimeUnit.MINUTES);
-        } else if (limit == 3){
+        } else if (limit == 10){
             // 登录次数等于极限值时锁定用户
             setUserNonLocked(username, false);
             // 取消缓存失效时间，手动删除缓存，为了时间一致性
@@ -88,7 +88,7 @@ public class UserLoginListener {
         String username = event.getAuthentication().getPrincipal().toString();
         // 判断是否含有登陆失败的记录键，有的话删除对应的键
         if (redisUtils.hasKey(PREFIX_USER_LOCKED + username)) {
-            boolean remove = redisUtils.remove(PREFIX_USER_LOCKED + username);
+            boolean remove = redisUtils.delete(PREFIX_USER_LOCKED + username);
             log.info("用户 {} 登陆成功，移除键 {}：{}", username, username, remove);
         }
     }
@@ -117,7 +117,7 @@ public class UserLoginListener {
     @RabbitListener(queues = { QUEUE_USER_LOCKED_PROCESS })
     public void unlocked(String username) {
         log.info("取消锁定用户 {}", username);
-        redisUtils.remove(PREFIX_USER_LOCKED + username);
+        redisUtils.delete(PREFIX_USER_LOCKED + username);
         setUserNonLocked(username, true);
     }
 
