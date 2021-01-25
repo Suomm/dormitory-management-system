@@ -32,7 +32,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl;
 import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
-import xyz.tran4f.dms.handler.SaveUserAuthenticationSuccessHandler;
+import xyz.tran4f.dms.handler.SimpleAuthenticationSuccessHandler;
 
 import javax.sql.DataSource;
 
@@ -74,9 +74,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Bean
-    public SaveUserAuthenticationSuccessHandler authenticationSuccessHandler() {
-        SaveUserAuthenticationSuccessHandler handler = new SaveUserAuthenticationSuccessHandler();
-        handler.setDefaultTargetUrl("/manager/dashboard.html");
+    public SimpleAuthenticationSuccessHandler authenticationSuccessHandler() {
+        SimpleAuthenticationSuccessHandler handler = new SimpleAuthenticationSuccessHandler();
+        handler.setDefaultTargetUrl("/");
+        // 设置默认总是跳转到根目录
         // handler.setAlwaysUseDefaultTargetUrl(true);
         return handler;
     }
@@ -96,8 +97,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     public void configure(WebSecurity web) {
         // 前端资源过滤
-        web.ignoring().antMatchers("/favicon.ico", "/webjars/**",
-                "/js/**", "/css/**", "/img/**", "/font/**");
+        web.ignoring().antMatchers("/css/**", "/images/**", "/js/**", "/lib/**");
     }
 
     @Override
@@ -112,26 +112,27 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .maxSessionsPreventsLogin(true);
         http.formLogin()
                 .loginProcessingUrl("/user/login")
-                .loginPage("/user/login.html")
+                .loginPage("/login.html")
                 .successHandler(authenticationSuccessHandler())
-                .failureUrl("/user/login.html?error=true");
+                .failureUrl("/login.html?error=true");
         http.rememberMe()
                 .tokenRepository(persistentTokenRepository())
                 .userDetailsService(userDetailsService);
         http.logout()
                 .logoutUrl("/user/logout")
-                .logoutSuccessUrl("/user/login.html")
+                .logoutSuccessUrl("/login.html")
                 .deleteCookies("JSESSIONID")
                 .invalidateHttpSession(true);
         http.authorizeRequests()
                 .antMatchers("/swagger-ui.html", "/v2/api-docs")
                 .hasRole("ROOT")
-                .antMatchers("/user/register.html", "/user/register")
-                .permitAll()
-                .antMatchers("/user/forget_password.html", "/user/forget_password/*")
-                .permitAll()
-                .antMatchers("/", "/index.html", "/user/login.html",
-                        "/user/reset_password/*/*", "/user/getCaptcha")
+                .antMatchers("/page/manager/**", "/page/add-edit/**")
+                .hasAnyRole("MANAGER", "ROOT")
+                .antMatchers("/page/user/**", "/welcome.html")
+                .authenticated()
+                .antMatchers( "/login.html", "/register.html", "/user/register",
+                        "/forget-password.html", "/user/forget-password/*", "/user/getCaptcha",
+                        "/reset-password/*", "/reset-password/*/*")
                 .permitAll()
                 .anyRequest().authenticated();
     }

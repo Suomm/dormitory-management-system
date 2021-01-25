@@ -22,7 +22,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.web.session.HttpSessionEventPublisher;
 import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
-import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
@@ -89,22 +88,6 @@ public class WebApplicationConfig implements WebMvcConfigurer {
 
     /**
      * <p>
-     * 引入 webjars 取消版本号的相关配置。
-     * </p>
-     */
-    @Override
-    public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        // 配置映射关系，即：/webjars/** 映射到 classpath:/META-INF/resources/webjars/
-        registry.addResourceHandler("/webjars/**")
-                .addResourceLocations("classpath:/META-INF/resources/webjars/")
-                // 新增 resourceChain 配置即开启缓存配置。
-                // 不加这个配置，设置了 webjars-locator 不生效
-                // 生产时建议开启缓存（只是缓存了资源路径而不是资源内容）,开发是可以设置为 false
-                .resourceChain(true);
-    }
-
-    /**
-     * <p>
      * 注册视图解析器，路径参数一定要以 {@code /} 开头，表示绝对路径；视图名被视图解析器解析，
      * 一定不能以 {@code /} 开头。不然打成 JAR 文件后运行，请求路径后会报
      * {@link org.thymeleaf.exceptions.TemplateInputException} 异常！
@@ -112,14 +95,12 @@ public class WebApplicationConfig implements WebMvcConfigurer {
      */
     @Override
     public void addViewControllers(ViewControllerRegistry registry) {
-        // 注册 index 首页视图解析器
-        registry.addViewController("/index.html").setViewName("index");
-        // 注册 user 模块视图解析器
-        registry.addViewController("/user/login.html").setViewName("user/login");
-        registry.addViewController("/user/register.html").setViewName("user/register");
-        registry.addViewController("/user/forget_password.html").setViewName("user/forget_password");
-        // 注册 manager 模块视图解析器
-        registry.addViewController("/manager/dashboard.html").setViewName("manager/dashboard");
+        registry.addViewController("/").setViewName("dashboard");
+        registry.addViewController("/login.html").setViewName("login");
+        registry.addViewController("/forget-password.html").setViewName("forget-password");
+        registry.addViewController("/register.html").setViewName("register");
+        registry.addViewController("/reset-password.html").setViewName("reset-password");
+//        registry.addViewController("/welcome.html").setViewName("welcome");
     }
 
 }

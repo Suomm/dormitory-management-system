@@ -49,13 +49,18 @@ public class RabbitMQConfig implements RabbitListenerConfigurer {
                 .withArgument("x-dead-letter-exchange", EXCHANGE_USER_DIRECT)
                 .withArgument("x-dead-letter-routing-key", QUEUE_USER_LOCKED_PROCESS)
                 // 死信队列设置 24 小时后消息过期。
-                .withArgument("x-message-ttl", 24 * 60 * 60 * 1000)
+                .withArgument("x-message-ttl", 12 * 60 * 60 * 1000)
                 .build();
     }
 
     @Bean
     public Queue email() {
         return new Queue(QUEUE_EMAIL);
+    }
+
+    @Bean
+    public Queue task() {
+        return new Queue(QUEUE_TASK);
     }
 
     @Bean
