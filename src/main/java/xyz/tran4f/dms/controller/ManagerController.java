@@ -21,76 +21,71 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import io.swagger.annotations.*;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import xyz.tran4f.dms.pojo.Dormitory;
-import xyz.tran4f.dms.service.DormitoryService;
+import xyz.tran4f.dms.pojo.User;
+import xyz.tran4f.dms.service.UserService;
+import xyz.tran4f.dms.utils.ServletUtils;
 import xyz.tran4f.dms.utils.WrapperUtils;
 
 import java.util.List;
 
 /**
  * <p>
- * 2021/1/5
+ * 提供管理员的有关操作。
  * </p>
  *
  * @author 王帅
  * @since 1.0
  */
-@RestController()
-@Api(tags = "宿舍模块的程序接口")
-@RequestMapping("/dormitory")
-//@Secured({"ROLE_ROOT", "ROLE_MANAGER"})
-public class DormitoryController extends BaseController<DormitoryService> {
-
-    @GetMapping("buildings")
-    @ApiOperation(value = "获取所有宿舍楼号")
-    public List<Object> getBuildings() {
-        return service.listObjs(Wrappers.lambdaQuery(Dormitory.class)
-                .select(Dormitory::getBuilding)
-                .groupBy(Dormitory::getBuilding));
-    }
+@Validated
+//@Secured({"ROLE_ROOT"})
+@RestController
+@RequestMapping("/manager")
+@Api(tags = "管理员模块的程序接口")
+public class ManagerController extends BaseController<UserService> {
 
     @GetMapping("page")
     @ApiResponses(@ApiResponse(code = 200, message = "返回一个包含分组信息的对象"))
-    @ApiOperation(value = "分页展示宿舍信息", notes = "获取宿舍所属年级、宿舍号、房间号的信息。")
-    public Page<Dormitory> page(@ApiParam(value = "页码", required = true, example = "1") long current,
-                                @ApiParam(value = "每页数据量", required = true, example = "10") long size,
-                                @ApiParam(value = "查询信息") String params) {
-        QueryWrapper<Dormitory> wrapper;
+    @ApiOperation(value = "分页展示用户信息", notes = "获取用户所属年级、性别、学号、邮箱地址等信息。")
+    public Page<User> page(@ApiParam(value = "页码", required = true, example = "1") long current,
+                           @ApiParam(value = "每页数据量", required = true, example = "10") long size,
+                           @ApiParam(value = "查询信息") String params) {
+        QueryWrapper<User> wrapper;
         if (params != null) {
-            wrapper = WrapperUtils.allEq(JSON.parseObject(params, Dormitory.class));
+            wrapper = WrapperUtils.allEq(JSON.parseObject(params, User.class));
         } else {
             wrapper = Wrappers.query();
         }
-        wrapper.lambda().orderByAsc(Dormitory::getRoom);
+        String id = ServletUtils.getUser().getId();
+        wrapper.lambda()
+                .ne(User::getId, id)
+                .ne(User::getRole, "ROLE_ROOT")
+                .orderByAsc(User::getId);
         return service.page(new Page<>(current, size), wrapper);
-    }
-
-    @GetMapping("count")
-    @ApiOperation(value = "根据指定的宿舍楼号获取所有房间数量")
-    public int count(@ApiParam(value = "宿舍楼号", required = true) String building) {
-        return service.count(Wrappers.lambdaQuery(Dormitory.class).eq(Dormitory::getBuilding, building));
     }
 
     @PostMapping("save")
     @ApiOperation(value = "保存宿舍信息")
     @ApiImplicitParam(name = "dormitory", value = "宿舍信息", required = true)
-    public boolean save(Dormitory dormitory) {
-        return service.saveOrUpdate(dormitory);
+    public boolean save(User user) {
+        user.setPassword("123456"); // 默认密码
+        service.register(user);
+        return true;
     }
 
-    @DeleteMapping("delete/{room}")
+    @DeleteMapping("delete/{id}")
     @ApiOperation(value = "根据房间号删除一条宿舍信息")
     @ApiImplicitParam(name = "room", value = "房间号", required = true)
-    public boolean delete(@PathVariable String room) {
-        return service.removeById(room);
+    public boolean delete(@PathVariable String id) {
+        return service.removeById(id);
     }
 
     @DeleteMapping("deleteBatch")
     @ApiOperation(value = "根据房间号批量删除宿舍信息")
     public boolean deleteBatch(@ApiParam(value = "宿舍信息", required = true)
-                               @RequestBody List<String> rooms) {
-        return service.removeByIds(rooms);
+                               @RequestBody List<String> ids) {
+        return service.removeByIds(ids);
     }
 
 }

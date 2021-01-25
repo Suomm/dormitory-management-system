@@ -18,18 +18,25 @@ package xyz.tran4f.dms.controller;
 
 import io.swagger.annotations.Api;
 import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.ContentDisposition;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+import springfox.documentation.annotations.ApiIgnore;
+import xyz.tran4f.dms.exception.ResourceNotFoundException;
 
+import javax.validation.constraints.NotNull;
 import java.io.File;
 import java.io.IOException;
+import java.net.URLEncoder;
+import java.text.MessageFormat;
 
 /**
  * <p>
@@ -39,26 +46,37 @@ import java.io.IOException;
  * @author 王帅
  * @since 1.0
  */
+@ApiIgnore
+@Validated
 @RestController
-//@Secured({"ROLE_MANAGER"})
 @Api(tags = "文件模块的程序接口")
 public class FileController {
 
-    @PostMapping("upload")
-    public void upload(MultipartFile image) throws IOException {
-        System.out.println(image.getOriginalFilename());
-        // suffix
-        image.transferTo(new File("./portfolio/"));
+    @PostMapping("/upload/{room}/{index}")
+    public void upload(MultipartFile file,
+                       @PathVariable String room,
+                       @PathVariable String index) throws IOException {
+        String filename = file.getOriginalFilename();
+        assert filename != null;
+        int begin = filename.lastIndexOf('.');
+        String suffix = filename.substring(begin);
+        file.transferTo(new File("./portfolio/" + room + "/" + room + index + suffix));
     }
 
-    @GetMapping("download/{filename}")
-    public ResponseEntity<FileSystemResource> download(@PathVariable String filename) {
+    @GetMapping("/download")
+    public ResponseEntity<InputStreamResource> download(@NotNull String filename) throws IOException {
+        FileSystemResource resource = new FileSystemResource("./portfolio/" + filename);
+        if (!resource.exists()) {
+            throw new ResourceNotFoundException();
+        }
+        int index = filename.lastIndexOf('/');
+        filename = filename.substring(index + 1);
         HttpHeaders headers = new HttpHeaders();
         headers.setContentDisposition(ContentDisposition.builder("attachment")
-                .filename(filename).build());
+                .filename(URLEncoder.encode(filename, "UTF-8")).build());
         headers.add("content-type", "application/octet-stream");
         headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
-        return ResponseEntity.ok().headers(headers).body(new FileSystemResource("./README.md"));
+        return ResponseEntity.ok().headers(headers).body(new InputStreamResource(resource.getInputStream()));
     }
 
 }

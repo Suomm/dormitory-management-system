@@ -18,7 +18,6 @@ package xyz.tran4f.dms.controller;
 
 import io.swagger.annotations.*;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -94,7 +93,7 @@ public class UserController extends BaseController<UserService> {
         // 调用 Service 层的方法注册用户，写入数据库
         service.register(user);
         // 注册成功之后删除验证码
-        redisUtils.remove(PREFIX_USER_CAPTCHA + user.getId());
+        redisUtils.delete(PREFIX_USER_CAPTCHA + user.getId());
         // 日志记录注册信息
         log.info("注册学号为 {} 的用户成功", user.getId());
     }
@@ -104,7 +103,7 @@ public class UserController extends BaseController<UserService> {
      * 忘记密码的操作，由用户输入学号后，后台发送验证链接到邮箱，并将数据写到数据库。
      * </p>
      */
-    @PostMapping("forget_password/{id}")
+    @PostMapping("forget-password/{id}")
     @ApiOperation(value = "忘记密码操作", notes = "输入学号获取邮箱重置密码链接。")
     @ApiResponses(@ApiResponse(code = 200, message = "在当前页面加载返回的新页面"))
     public String forgetPassword(@PathVariable @ApiParam(value = "用户学号", required = true) @Id String id) {
@@ -125,15 +124,16 @@ public class UserController extends BaseController<UserService> {
         // 存入 Redis 缓存，设置十分钟后过期
         redisUtils.set(PREFIX_RESET_PASSWORD_KEY + user.getId(), new Captcha(secretKey, outDate), 10, TimeUnit.MINUTES);
         // 拼接请求路径
-        String resetPassHref = ServletUtils.getBasePath() + "/user/reset_password/" + user.getId() + "/" + digitalSignature;
+        String resetPassHref = ServletUtils.getBasePath() + "/user/reset-password/" + user.getId() + "/" + digitalSignature;
         // 要发送的邮件内容，默认一 HTML 的格式发送
         String emailContent = "请勿回复本邮件.点击下面的链接,重设密码<br/><a href=" + resetPassHref +
                 " target='_BLANK'>点击我重新设置密码</a>" +
                 "<br/>tips:本邮件超过10分钟,链接将会失效，需要重新申请'找回密码'";
         // 发送找回密码的邮件
         sendEmail("找回密码", emailContent, user.getEmail());
+        System.err.println(resetPassHref);
         // 转到修改密码成功界面
-        return "user/success";
+        return "success";
     }
 
     /**
@@ -141,7 +141,7 @@ public class UserController extends BaseController<UserService> {
      * 解析发送到用户邮箱的找回密码链接，返回重置密码的界面。
      * </p>
      */
-    @GetMapping("reset_password/{id}/{sid}")
+    @GetMapping("reset-password/{id}/{sid}")
     @ApiResponses(@ApiResponse(code = 200, message = "在当前页面加载返回的新页面"))
     @ApiOperation(value = "重置密码检查", notes = "检查重置密码的密匙是否正确，正确则进入重置密码界面。")
     public String checkParam(@ApiParam(value = "密匙", required = true) @PathVariable String id,
@@ -159,13 +159,13 @@ public class UserController extends BaseController<UserService> {
         // 将用户 ID 放入 Redis 缓存中
         redisUtils.set(RedisAttribute.PREFIX_RESET_PASSWORD_ID + id, id);
         // 解析成功转到重置密码界面
-        return "user/reset_password";
+        return "reset-password";
     }
 
     // 满足条件就重定向到 /user/forget_password.html 页面
     private static void redirectIf(boolean test, String message) {
         if (test) {
-            throw new RedirectException("/user/forget_password.html", message);
+            throw new RedirectException("/forget-password.html", message);
         }
     }
 
@@ -174,7 +174,8 @@ public class UserController extends BaseController<UserService> {
      * 重置密码操作，将新密码写入数据库，自动重定向到登陆界面。
      * </p>
      */
-    @PostMapping("reset_password/{id}")
+    @ResponseBody
+    @PostMapping("reset-password/{id}")
     @ApiResponses(@ApiResponse(code = 200, message = "请求响应成功跳转到登陆界面"))
     @ApiOperation(value = "重置密码请求", notes = "重置密码操作，将新密码写入数据库，自动重定向到登陆界面")
     public void resetPassword(@ApiParam(value = "学号", required = true) @PathVariable @Id String id,
@@ -219,8 +220,7 @@ public class UserController extends BaseController<UserService> {
     // === 用户登陆成功之后更改相关信息操作 ===
 
     @ResponseBody
-    @Secured({"ROLE_USER", "ROLE_GUEST"})
-    @PutMapping("change_password/{id}")
+    @PutMapping("change-password/{id}")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "id", value = "学号", required = true, defaultValue = "2030070002"),
             @ApiImplicitParam(name = "oldPassword", value = "旧密码", required = true, paramType = "query"),
@@ -228,17 +228,14 @@ public class UserController extends BaseController<UserService> {
     })
     @ApiOperation(value = "更改密码", notes = "输入旧密码和新密码更改密码")
     @ApiResponses(@ApiResponse(code = 200, message = "提示用户更改密码操作已成功"))
-    public void changePassword(@PathVariable @Id String id,
-                               @Password String oldPassword,
-                               @Password String newPassword) {
-        if (!service.changePassword(id, oldPassword, newPassword)) {
-            throw new DatabaseException();
-        }
+    public boolean changePassword(@PathVariable @Id String id,
+                                  @Password String oldPassword,
+                                  @Password String newPassword) {
+        return service.changePassword(id, oldPassword, newPassword);
     }
 
     @ResponseBody
-    @PutMapping("change_email/{id}")
-    @Secured({"ROLE_USER", "ROLE_GUEST"})
+    @PutMapping("change-email/{id}")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "id", value = "学号", required = true, defaultValue = "2030070002"),
             @ApiImplicitParam(name = "newEmail", value = "新邮箱", required = true, paramType = "query"),
@@ -246,9 +243,9 @@ public class UserController extends BaseController<UserService> {
     })
     @ApiOperation(value = "更改邮箱", notes = "输入新邮箱地址和验证码更改邮箱")
     @ApiResponses(@ApiResponse(code = 200, message = "提示用户更改邮箱操作已成功"))
-    public void changeEmail(@PathVariable @Id String id,
-                            @NotBlank @Email String newEmail,
-                            @NotBlank String emailCode) {
+    public boolean changeEmail(@PathVariable @Id String id,
+                               @NotBlank @Email String newEmail,
+                               @NotBlank String emailCode) {
         // 获取缓存中的验证码对象
         Captcha captcha = redisUtils.get(PREFIX_USER_CAPTCHA + id);
         // 校验邮箱验证码
@@ -261,12 +258,10 @@ public class UserController extends BaseController<UserService> {
         }
         // 发送邮件到原邮箱提示邮箱地址已改
         sendEmail("更改邮箱地址", "您的邮箱地址已更改，如非本人操作请联系管理员。", user.getEmail());
+        // 删除验证码
+        redisUtils.delete(PREFIX_USER_CAPTCHA + id);
         // 更改邮箱地址
-        if (!service.changeEmail(id, newEmail)) {
-            throw new DatabaseException();
-        }
-        // 更改成功之后删除验证码
-        redisUtils.remove(PREFIX_USER_CAPTCHA + id);
+        return service.changeEmail(id, newEmail);
     }
 
 }
