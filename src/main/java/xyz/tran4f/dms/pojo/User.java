@@ -20,10 +20,7 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.experimental.Accessors;
 import org.jetbrains.annotations.Contract;
 import xyz.tran4f.dms.validation.constraints.Gender;
@@ -47,6 +44,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 @Accessors(chain = true)
+@EqualsAndHashCode(of = "id")
 @ApiModel(value = "用户实体类", description = "封装学号、姓名、性别、密码、邮箱等用户信息")
 public class User implements Serializable {
 
@@ -78,8 +76,6 @@ public class User implements Serializable {
     private String role; // 角色
     @ApiModelProperty(hidden = true)
     private String grade; // 年级
-    @ApiModelProperty(hidden = true)
-    private Integer credit; // 学分
     @ApiModelProperty(hidden = true)
     private Boolean locked; // 锁定
 

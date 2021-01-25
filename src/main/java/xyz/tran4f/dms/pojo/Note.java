@@ -16,6 +16,7 @@
 
 package xyz.tran4f.dms.pojo;
 
+import com.alibaba.excel.annotation.ExcelIgnore;
 import com.alibaba.excel.annotation.format.DateTimeFormat;
 import com.alibaba.excel.annotation.format.NumberFormat;
 import io.swagger.annotations.ApiModel;
@@ -68,7 +69,11 @@ public class Note implements Serializable, Comparable<Note> {
     private String week;
 
     @ApiModelProperty(value = "备注")
-    private String details = "";
+    private String details;
+
+    @ExcelIgnore
+    @ApiModelProperty(value = "宿舍类型")
+    private Integer type;
 
     @Override
     @Contract(pure = true)

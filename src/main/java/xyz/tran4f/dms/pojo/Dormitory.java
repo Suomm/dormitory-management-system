@@ -16,6 +16,7 @@
 
 package xyz.tran4f.dms.pojo;
 
+import com.alibaba.excel.annotation.ExcelIgnoreUnannotated;
 import com.alibaba.excel.annotation.ExcelProperty;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
@@ -41,6 +42,7 @@ import java.io.Serializable;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@ExcelIgnoreUnannotated
 @Accessors(chain = true)
 @ApiModel(value = "宿舍楼信息", description = "宿舍楼的相关信息，包括所属年级、楼号、房间号。")
 public class Dormitory implements Serializable {
@@ -59,5 +61,11 @@ public class Dormitory implements Serializable {
     @TableId(value = "room", type = IdType.INPUT)
     @ApiModelProperty(value = "房间号", example = "3-214", required = true)
     private String room;
+
+    @ApiModelProperty(value = "宿舍类别", example = "0", required = true)
+    private Integer category;
+
+    @ApiModelProperty(value = "宿舍类型", example = "0", required = true)
+    private Integer type;
 
 }
