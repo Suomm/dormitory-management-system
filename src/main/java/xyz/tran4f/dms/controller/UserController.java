@@ -22,10 +22,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import xyz.tran4f.dms.attribute.RedisAttribute;
-import xyz.tran4f.dms.exception.DatabaseException;
-import xyz.tran4f.dms.exception.InvalidOrOverdueException;
-import xyz.tran4f.dms.exception.RedirectException;
-import xyz.tran4f.dms.exception.UserNotFoundException;
+import xyz.tran4f.dms.exception.*;
 import xyz.tran4f.dms.pojo.Captcha;
 import xyz.tran4f.dms.pojo.User;
 import xyz.tran4f.dms.service.UserService;
@@ -41,8 +38,7 @@ import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 import static xyz.tran4f.dms.attribute.ExceptionAttribute.*;
-import static xyz.tran4f.dms.attribute.RedisAttribute.PREFIX_RESET_PASSWORD_KEY;
-import static xyz.tran4f.dms.attribute.RedisAttribute.PREFIX_USER_CAPTCHA;
+import static xyz.tran4f.dms.attribute.RedisAttribute.*;
 
 /**
  * <p>
@@ -88,8 +84,13 @@ public class UserController extends BaseController<UserService> {
         Captcha captcha = redisUtils.get(PREFIX_USER_CAPTCHA + user.getId());
         // 校验邮箱验证码
         CaptchaUtils.checkCaptcha(captcha, Captcha.defaultCaptcha(emailCode));
-        // TODO 比对部门的邀请码是否正确
-        log.info("校验用户输入的邀请码：{}", validateCode);
+        // 获取邮箱验证码，并断言不为空
+        String code = redisUtils.get(KEY_CAPTCHA);
+        assert code != null;
+        // 比对部门的邀请码是否正确
+        if (!code.equals(validateCode)) {
+            throw new CaptchaException(USER_CAPTCHA_WRONG);
+        }
         // 调用 Service 层的方法注册用户，写入数据库
         service.register(user);
         // 注册成功之后删除验证码
@@ -244,6 +245,7 @@ public class UserController extends BaseController<UserService> {
     @ApiOperation(value = "更改邮箱", notes = "输入新邮箱地址和验证码更改邮箱")
     @ApiResponses(@ApiResponse(code = 200, message = "提示用户更改邮箱操作已成功"))
     public boolean changeEmail(@PathVariable @Id String id,
+                               @NotBlank @Email String oldEmail,
                                @NotBlank @Email String newEmail,
                                @NotBlank String emailCode) {
         // 获取缓存中的验证码对象
@@ -255,6 +257,10 @@ public class UserController extends BaseController<UserService> {
         // 用户为空提示用户未找到
         if (user == null) {
             throw new UserNotFoundException();
+        }
+        // 原邮箱有误
+        if (!oldEmail.equals(user.getEmail())) {
+            throw new InvalidOrOverdueException("");
         }
         // 发送邮件到原邮箱提示邮箱地址已改
         sendEmail("更改邮箱地址", "您的邮箱地址已更改，如非本人操作请联系管理员。", user.getEmail());

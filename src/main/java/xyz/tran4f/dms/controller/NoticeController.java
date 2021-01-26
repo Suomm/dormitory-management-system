@@ -16,6 +16,7 @@
 
 package xyz.tran4f.dms.controller;
 
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 import xyz.tran4f.dms.pojo.Notice;
 import xyz.tran4f.dms.utils.RedisUtils;
@@ -35,6 +36,7 @@ import static xyz.tran4f.dms.attribute.RedisAttribute.KEY_NOTICE;
  */
 @RestController
 @RequestMapping("/notice")
+@Secured({"ROLE_MANAGER","ROLE_ROOT"})
 public class NoticeController {
 
     private final RedisUtils redisUtils;

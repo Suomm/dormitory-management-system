@@ -21,6 +21,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import io.swagger.annotations.*;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 import xyz.tran4f.dms.pojo.Dormitory;
 import xyz.tran4f.dms.service.DormitoryService;
@@ -39,7 +40,7 @@ import java.util.List;
 @RestController()
 @Api(tags = "宿舍模块的程序接口")
 @RequestMapping("/dormitory")
-//@Secured({"ROLE_ROOT", "ROLE_MANAGER"})
+@Secured({"ROLE_MANAGER", "ROLE_ROOT"})
 public class DormitoryController extends BaseController<DormitoryService> {
 
     @GetMapping("buildings")
@@ -64,12 +65,6 @@ public class DormitoryController extends BaseController<DormitoryService> {
         }
         wrapper.lambda().orderByAsc(Dormitory::getRoom);
         return service.page(new Page<>(current, size), wrapper);
-    }
-
-    @GetMapping("count")
-    @ApiOperation(value = "根据指定的宿舍楼号获取所有房间数量")
-    public int count(@ApiParam(value = "宿舍楼号", required = true) String building) {
-        return service.count(Wrappers.lambdaQuery(Dormitory.class).eq(Dormitory::getBuilding, building));
     }
 
     @PostMapping("save")

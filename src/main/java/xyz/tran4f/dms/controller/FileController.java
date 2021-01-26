@@ -36,7 +36,6 @@ import javax.validation.constraints.NotNull;
 import java.io.File;
 import java.io.IOException;
 import java.net.URLEncoder;
-import java.text.MessageFormat;
 
 /**
  * <p>
@@ -53,14 +52,15 @@ import java.text.MessageFormat;
 public class FileController {
 
     @PostMapping("/upload/{room}/{index}")
-    public void upload(MultipartFile file,
+    public String upload(MultipartFile file,
                        @PathVariable String room,
                        @PathVariable String index) throws IOException {
         String filename = file.getOriginalFilename();
         assert filename != null;
         int begin = filename.lastIndexOf('.');
-        String suffix = filename.substring(begin);
-        file.transferTo(new File("./portfolio/" + room + "/" + room + index + suffix));
+        filename = room + index + filename.substring(begin);
+        file.transferTo(new File("./portfolio/assets/" + room + "/" + filename));
+        return filename;
     }
 
     @GetMapping("/download")

@@ -21,8 +21,10 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import io.swagger.annotations.*;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import xyz.tran4f.dms.attribute.RedisAttribute;
 import xyz.tran4f.dms.pojo.User;
 import xyz.tran4f.dms.service.UserService;
 import xyz.tran4f.dms.utils.ServletUtils;
@@ -39,11 +41,16 @@ import java.util.List;
  * @since 1.0
  */
 @Validated
-//@Secured({"ROLE_ROOT"})
 @RestController
 @RequestMapping("/manager")
 @Api(tags = "管理员模块的程序接口")
+@Secured({"ROLE_MANAGER","ROLE_ROOT"})
 public class ManagerController extends BaseController<UserService> {
+
+    @GetMapping("captcha")
+    public String captcha() {
+        return redisUtils.get(RedisAttribute.KEY_CAPTCHA);
+    }
 
     @GetMapping("page")
     @ApiResponses(@ApiResponse(code = 200, message = "返回一个包含分组信息的对象"))
