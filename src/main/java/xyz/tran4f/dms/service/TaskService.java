@@ -37,4 +37,6 @@ public interface TaskService extends IService<Task> {
 
     Object[] notes(String building);
 
+    void notParentTask(Integer taskId);
+
 }

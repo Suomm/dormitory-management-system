@@ -21,7 +21,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
-import xyz.tran4f.dms.exception.TaskException;
+import xyz.tran4f.dms.exception.TaskStatusException;
 import xyz.tran4f.dms.mapper.DormitoryMapper;
 import xyz.tran4f.dms.mapper.TaskMapper;
 import xyz.tran4f.dms.pojo.Dormitory;
@@ -56,7 +56,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements Ta
     public List<Integer> create(String name, List<String> buildings) {
         LambdaQueryWrapper<Task> query = Wrappers.lambdaQuery();
         if (baseMapper.selectCount(query.eq(Task::getName, name)) != 0) {
-            throw new TaskException(TASK_REPEAT);
+            throw new TaskStatusException(TASK_REPEAT);
         }
 
         List<Integer> idList = new ArrayList<>(buildings.size() + 1);
@@ -126,6 +126,18 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements Ta
                 .grade(e.getGrade())
                 .building(e.getBuilding())
                 .build()).toArray();
+    }
+
+    @Override
+    public void notParentTask(Integer taskId) {
+        // TODO 异常信息国际化
+        if (lambdaQuery()
+                .eq(Task::getTaskId, taskId)
+                .oneOpt()
+                .orElseThrow(() -> new TaskStatusException("找不到任务"))
+                .getMenu()) {
+            throw new TaskStatusException("不能修改父任务");
+        }
     }
 
 }
