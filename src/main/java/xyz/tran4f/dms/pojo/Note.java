@@ -44,7 +44,7 @@ import java.util.Date;
 @Accessors(chain = true)
 @EqualsAndHashCode(of = "room")
 @ApiModel(value = "宿舍检查的成绩信息")
-public class Note implements Serializable, Comparable<Note> {
+public class Note implements Serializable {
 
     private static final long serialVersionUID = 5736959954440581339L;
 
@@ -71,14 +71,7 @@ public class Note implements Serializable, Comparable<Note> {
     @ApiModelProperty(value = "备注")
     private String details;
 
-    @ExcelIgnore
     @ApiModelProperty(value = "宿舍类型")
     private Integer type;
-
-    @Override
-    @Contract(pure = true)
-    public int compareTo(@NotNull Note o) {
-        return this.room.compareTo(o.room);
-    }
 
 }

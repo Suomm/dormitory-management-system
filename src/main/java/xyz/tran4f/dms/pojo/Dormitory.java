@@ -42,22 +42,18 @@ import java.io.Serializable;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@ExcelIgnoreUnannotated
 @Accessors(chain = true)
 @ApiModel(value = "宿舍楼信息", description = "宿舍楼的相关信息，包括所属年级、楼号、房间号。")
 public class Dormitory implements Serializable {
 
     private static final long serialVersionUID = -6765246421822725327L;
 
-    @ExcelProperty(value = "年级")
     @ApiModelProperty(value = "所属年级", example = "2020级", required = true)
     private String grade;
 
-    @ExcelProperty(value = "宿舍楼")
     @ApiModelProperty(value = "楼号", example = "学生公寓3号楼", required = true)
     private String building;
 
-    @ExcelProperty(value = "房间号")
     @TableId(value = "room", type = IdType.INPUT)
     @ApiModelProperty(value = "房间号", example = "3-214", required = true)
     private String room;
