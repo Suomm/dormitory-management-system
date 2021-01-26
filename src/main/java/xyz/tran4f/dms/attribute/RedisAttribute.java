@@ -31,6 +31,7 @@ public final class RedisAttribute {
 
     public static final String KEY_DRAFT = "KEY_DRAFT";
     public static final String KEY_NOTICE = "KEY_NOTICE";
+    public static final String KEY_CAPTCHA = "KEY_CAPTCHA";
     public static final String KEY_BUILDING_LIST = "KEY_RECORD_LIST";
     public static final String KEY_ACTIVE_TASK = "KEY_ACTIVE_TASK";
     public static final String KEY_ACTIVE_WEEK = "KEY_ACTIVE_WEEK";

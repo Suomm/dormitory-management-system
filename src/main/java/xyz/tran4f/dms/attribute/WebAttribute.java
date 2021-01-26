@@ -31,5 +31,7 @@ public final class WebAttribute {
 
     public static final String WEB_SESSION_USER = "WEB_SESSION_USER";
     public static final String WEB_LAST_EXCEPTION = "WEB_LAST_EXCEPTION";
+    public static final String WEB_PORTFOLIO_STORES = "./portfolio/stores/";
+    public static final String WEB_PORTFOLIO_ASSETS = "./portfolio/assets/";
 
 }
