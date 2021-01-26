@@ -134,8 +134,13 @@ public final class RedisUtils {
         return redisTemplate.delete(key);
     }
 
-    public void listPush(String key, Object... values) {
-        redisTemplate.opsForList().rightPushAll(key, values);
+    @Contract(value = "null -> fail")
+    public Long delete(Collection<String> keys) {
+        return redisTemplate.delete(keys);
+    }
+
+    public boolean listPush(String key, Object... values) {
+        return redisTemplate.opsForList().rightPushAll(key, values) != null;
     }
 
     public void listRemove(String key, Object value) {
@@ -144,7 +149,7 @@ public final class RedisUtils {
 
     public int listSize(String key) {
         Long size = redisTemplate.opsForList().size(key);
-        assert size != null;
+        if (size == null) { return 0; }
         return size.intValue();
     }
 

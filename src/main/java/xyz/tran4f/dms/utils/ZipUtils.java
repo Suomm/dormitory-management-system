@@ -22,6 +22,8 @@ import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
 import org.apache.commons.compress.utils.IOUtils;
 
 import java.io.*;
+import java.util.Arrays;
+import java.util.Collection;
 
 /**
  * <p>
@@ -46,6 +48,10 @@ public final class ZipUtils {
      * @throws IOException 压缩失败抛出此异常
      */
     public static void compress(String filename, String... resources) throws IOException {
+        compress(filename, Arrays.asList(resources));
+    }
+
+    public static void compress(String filename, Collection<String> resources) throws IOException {
         @Cleanup FileOutputStream fos = new FileOutputStream(filename);
         @Cleanup BufferedOutputStream bos = new BufferedOutputStream(fos);
         @Cleanup ZipArchiveOutputStream out = new ZipArchiveOutputStream(bos);

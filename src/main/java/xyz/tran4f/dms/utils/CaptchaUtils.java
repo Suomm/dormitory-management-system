@@ -70,15 +70,17 @@ public final class CaptchaUtils {
      * @return 验证码封装类
      */
     public static Captcha getCaptcha(int length, long time) {
+        return new Captcha(getCode(length), System.currentTimeMillis() + time);
+    }
+
+    public static String getCode(int length) {
         // 随机数生成器，用于取出字符数组中的元素
         Random random = new Random();
         char[] ret = new char[length];
         for (int i = 0; i < length; i++) {
             ret[i] = CHARS[random.nextInt(LENGTH)];
         }
-        String code = new String(ret);
-        long outDate = System.currentTimeMillis() + time;
-        return new Captcha(code, outDate);
+        return new String(ret);
     }
 
     /**

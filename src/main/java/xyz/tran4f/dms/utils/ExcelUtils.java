@@ -70,6 +70,9 @@ public final class ExcelUtils {
     private ExcelUtils() {
     }
 
+    private static final File TEMPLATE_NOTES = new File("./portfolio/templet/化学学院宿舍卫生检查表样表.xlsx");
+    private static final File TEMPLATE_CHART = new File("./portfolio/templet/新闻稿表格样式.xlsx");
+
     /**
      * <p>
      * 根据模板填充查宿成绩记录。
@@ -79,10 +82,10 @@ public final class ExcelUtils {
      * @param data 要进行填充的数据
      */
     public static void writeWithTemplate(String filename, Object data) {
-        EasyExcel.write("./portfolio/document/" + filename, Note.class)
+        EasyExcel.write(filename, Note.class)
                 // 优差宿舍成绩背景色处理
                 .registerWriteHandler(new ColorCellWriteHandler())
-                .withTemplate("./portfolio/template/化学学院宿舍卫生检查表样表.xlsx")
+                .withTemplate(TEMPLATE_NOTES)
                 .sheet()
                 .doFill(data);
     }
@@ -99,7 +102,7 @@ public final class ExcelUtils {
     @SuppressWarnings("rawtypes")
     private static void writeWithTemplate(File filename, Collection first, Collection last) {
         @Cleanup("finish") ExcelWriter excelWriter = EasyExcel.write(filename)
-                .withTemplate("D:\\Document\\新闻稿表格样表.xlsx").build();
+                .withTemplate(TEMPLATE_CHART).build();
         WriteSheet writeSheet = EasyExcel.writerSheet().build();
         excelWriter.fill(new FillWrapper("first", first), writeSheet);
         excelWriter.fill(new FillWrapper("last", last), writeSheet);
@@ -143,7 +146,7 @@ public final class ExcelUtils {
         @Cleanup("delete") File pdfFile = File.createTempFile("excel2Pdf", ".pdf");
         // 以长度最长的集合为标准，并加上表头所需的两行，作为需要转换的最后行数。
         excel2Pdf(excelFile, pdfFile, Math.max(first.size(), last.size()) + 2);
-        pdf2Image(pdfFile, "./portfolio/" + imageFile);
+        pdf2Image(pdfFile, imageFile);
     }
 
     /**
