@@ -21,7 +21,7 @@ import xyz.tran4f.dms.pojo.Dormitory;
 
 /**
  * <p>
- * 宿舍操作的服务类。
+ * 宿舍相关操作的服务层接口。
  * </p>
  *
  * @author 王帅

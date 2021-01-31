@@ -17,12 +17,16 @@
 package xyz.tran4f.dms.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import org.jetbrains.annotations.Nullable;
 import xyz.tran4f.dms.exception.RegisterException;
+import xyz.tran4f.dms.exception.UserNotFoundException;
 import xyz.tran4f.dms.pojo.User;
+
+import java.util.Optional;
 
 /**
  * <p>
- * 用户操作的服务类。
+ * 用户相关操作的服务层接口。
  * </p>
  *
  * @author 王帅
@@ -32,28 +36,32 @@ public interface UserService extends IService<User> {
 
     /**
      * <p>
-     * 将用户信息写入数据库。
-     * </p>
-     *
-     * @param user 封装好的数据对象
-     * @exception RegisterException 注册失败抛出此异常
-     */
-    void register(User user) throws RegisterException;
-
-    /**
-     * <p>
-     * 忘记密码之后重置密码的操作，加密密码存入数据库。
+     * 根据学号查找对应的学生信息，没有该学生的信息则抛出异常。
      * </p>
      *
      * @param id 学号
-     * @param password 重置后的密码
-     * @return {@code true} 重置密码成功，{@code false} 重置密码失败
+     * @return 学生信息
+     * @throws UserNotFoundException 没有找到该学生的信息抛出异常
      */
-    boolean resetPassword(String id, String password);
+    default User findUser(final String id) throws UserNotFoundException {
+        return Optional.ofNullable(getById(id))
+                .orElseThrow(() -> new UserNotFoundException("UserService.notFound", id));
+    }
 
     /**
      * <p>
-     * 实现用户登录成功之后更改密码的操作。
+     * 注册用户操作，将封装好的用户信息保存到数据库。
+     * </p>
+     *
+     * @param user 封装好的数据对象
+     * @return {@code true} 注册用户成功，{@code false} 注册用户失败
+     * @exception RegisterException 注册用户失败抛出此异常
+     */
+    boolean register(User user) throws RegisterException;
+
+    /**
+     * <p>
+     * 实现用户更改密码的操作（<b>可以不提供旧密码<b/>）。
      * </p>
      *
      * @param id 学号
@@ -61,7 +69,7 @@ public interface UserService extends IService<User> {
      * @param newPassword 新密码
      * @return {@code true} 更改密码成功，{@code false} 更改密码失败
      */
-    boolean changePassword(String id, String oldPassword, String newPassword);
+    boolean changePassword(String id, @Nullable String oldPassword, String newPassword);
 
     /**
      * <p>
@@ -69,9 +77,10 @@ public interface UserService extends IService<User> {
      * </p>
      *
      * @param id 学号
+     * @param oldEmail 旧邮箱地址
      * @param newEmail 新邮箱地址
      * @return {@code true} 更改邮箱成功，{@code false} 更改邮箱失败
      */
-    boolean changeEmail(String id, String newEmail);
+    boolean changeEmail(String id, String oldEmail, String newEmail);
 
 }

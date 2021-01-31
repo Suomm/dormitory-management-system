@@ -24,7 +24,7 @@ import xyz.tran4f.dms.service.DormitoryService;
 
 /**
  * <p>
- * 宿舍操作服务类的实现。
+ * 宿舍相关操作的服务接口实现。
  * </p>
  *
  * @author 王帅

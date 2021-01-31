@@ -17,19 +17,19 @@
 package xyz.tran4f.dms.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import org.jetbrains.annotations.Nullable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import xyz.tran4f.dms.attribute.ExceptionAttribute;
-import xyz.tran4f.dms.exception.DatabaseException;
-import xyz.tran4f.dms.exception.InvalidPasswordException;
+import xyz.tran4f.dms.exception.BadCredentialException;
 import xyz.tran4f.dms.exception.RegisterException;
 import xyz.tran4f.dms.mapper.UserMapper;
 import xyz.tran4f.dms.pojo.User;
 import xyz.tran4f.dms.service.UserService;
+import xyz.tran4f.dms.utils.DateUtils;
 
 /**
  * <p>
- * 用户操作服务类的实现。
+ * 用户相关操作的服务接口实现。
  * </p>
  *
  * @author 王帅
@@ -50,20 +50,17 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
      * {@inheritDoc}
      */
     @Override
-    public void register(User user) {
+    public boolean register(User user) throws RegisterException {
         // 检查数据库中是否有该用户
         if (baseMapper.selectById(user.getId()) != null) {
-            throw new RegisterException(ExceptionAttribute.USER_REGISTER_REPEAT);
+            throw new RegisterException("UserServiceImpl.existed");
         }
         // 设置年级信息
-        String grade = user.getId().substring(0, 2);
-        user.setGrade("20" + grade);
+        user.setGrade(DateUtils.subYear().concat(user.getId().substring(0, 2)));
         // 进行密码加密设置
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        // 插入用户信息失败
-        if (baseMapper.insert(user) != 1) {
-            throw new DatabaseException();
-        }
+        // 插入用户信息
+        return baseMapper.insert(user) == 1;
     }
 
     private boolean update(User user) {
@@ -74,18 +71,13 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
      * {@inheritDoc}
      */
     @Override
-    public boolean resetPassword(String id, String password) {
-        return update(new User(id).setPassword(passwordEncoder.encode(password)));
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean changePassword(String id, String oldPassword, String newPassword) {
-        User user = baseMapper.selectById(id);
+    public boolean changePassword(String id, @Nullable String oldPassword, String newPassword) {
+        if (oldPassword == null) {
+            return update(User.builder().id(id).password(passwordEncoder.encode(newPassword)).build());
+        }
+        User user = findUser(id);
         if (!passwordEncoder.matches(oldPassword, user.getPassword())) {
-            throw new InvalidPasswordException();
+            throw new BadCredentialException("UserServiceImpl.incorrectPassword");
         }
         return update(user.setPassword(passwordEncoder.encode(newPassword)));
     }
@@ -94,7 +86,13 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
      * {@inheritDoc}
      */
     @Override
-    public boolean changeEmail(String id, String newEmail) {
+    public boolean changeEmail(String id, String oldEmail, String newEmail) {
+        // 获取数据库中的用户
+        User user = findUser(id);
+        // 原邮箱地址有误
+        if (!oldEmail.equals(user.getEmail())) {
+            throw new BadCredentialException("UserServiceImpl.incorrectEmail");
+        }
         return update(User.builder().id(id).email(newEmail).build());
     }
 

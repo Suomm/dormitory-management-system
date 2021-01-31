@@ -17,13 +17,14 @@
 package xyz.tran4f.dms.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import xyz.tran4f.dms.exception.TaskSchedulingException;
 import xyz.tran4f.dms.pojo.Task;
 
 import java.util.List;
 
 /**
  * <p>
- * 2021/1/21
+ * 任务相关操作的服务层接口。
  * </p>
  *
  * @author 王帅
@@ -31,12 +32,67 @@ import java.util.List;
  */
 public interface TaskService extends IService<Task> {
 
-    List<Integer> create(String week, List<String> buildings);
+    /**
+     * <p>
+     * 通过任务 ID 查找具体任务。
+     * </p>
+     *
+     * @param taskId 任务 ID
+     * @param menu 是否为任务菜单
+     * @return 任务信息
+     * @throws TaskSchedulingException 不存在该任务时抛出此异常
+     */
+    default Task findTask(Integer taskId, boolean menu) throws TaskSchedulingException {
+        return lambdaQuery()
+                .eq(Task::getTaskId, taskId)
+                .eq(Task::getMenu, menu)
+                .oneOpt()
+                .orElseThrow(() -> new TaskSchedulingException("TaskService.incorrectKey"));
+    }
 
-    int delete(Integer taskId);
+    /**
+     * <p>
+     * 通过指定的当前周数和需要检查的宿舍楼，创建任务信息并写入数据库。生成任务菜单和具体任务，
+     * 其中任务菜单是以当前周数为任务名称，具体任务是以需要检查的宿舍楼作为任务名称。任务菜单不
+     * 能重复，即：如果存在以当前周数为任务名称的任务菜单则会抛出异常。
+     * </p>
+     *
+     * @param week 当前周数
+     * @param buildings 宿舍楼
+     * @return 创建成功之后的所有任务 ID
+     * @throws TaskSchedulingException 存在相同名称的任务菜单
+     */
+    List<Integer> create(String week, List<String> buildings) throws TaskSchedulingException;
 
+    /**
+     * <p>
+     * 根据任务 ID 删除任务菜单及其子任务。
+     * </p>
+     *
+     * @param taskId 任务 ID
+     * @throws TaskSchedulingException 如果 ID 对应的不是任务菜单抛出此异常
+     */
+    void delete(Integer taskId) throws TaskSchedulingException;
+
+    /**
+     * <p>
+     * 根据宿舍楼初始化所要检查的宿舍信息。
+     * </p>
+     *
+     * @param building 要检查的宿舍楼
+     * @return 该宿舍楼的宿舍信息
+     */
     Object[] notes(String building);
 
-    void notParentTask(Integer taskId);
+    /**
+     * <p>
+     * 回滚具体任务
+     * </p>
+     *
+     * @param taskId 任务 ID
+     * @return 回滚的任务和他的任务菜单 ID
+     * @throws TaskSchedulingException 如果 ID 对应的不是具体任务抛出此异常
+     */
+    Object[] rollback(Integer taskId) throws TaskSchedulingException;
 
 }

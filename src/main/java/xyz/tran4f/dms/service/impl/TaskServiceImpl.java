@@ -16,12 +16,12 @@
 
 package xyz.tran4f.dms.service.impl;
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
-import xyz.tran4f.dms.exception.TaskStatusException;
+import org.springframework.transaction.annotation.Transactional;
+import xyz.tran4f.dms.exception.TaskSchedulingException;
 import xyz.tran4f.dms.mapper.DormitoryMapper;
 import xyz.tran4f.dms.mapper.TaskMapper;
 import xyz.tran4f.dms.pojo.Dormitory;
@@ -34,11 +34,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static xyz.tran4f.dms.attribute.ExceptionAttribute.TASK_REPEAT;
-
 /**
  * <p>
- * 2021/1/21
+ * 任务相关操作的服务接口实现。
  * </p>
  *
  * @author 王帅
@@ -47,18 +45,23 @@ import static xyz.tran4f.dms.attribute.ExceptionAttribute.TASK_REPEAT;
 @Service
 public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements TaskService {
 
-    private final DormitoryMapper mapper;
+    private final DormitoryMapper dormitoryMapper;
 
-    public TaskServiceImpl(DormitoryMapper mapper) {
-        this.mapper = mapper;
+    public TaskServiceImpl(DormitoryMapper dormitoryMapper) {
+        this.dormitoryMapper = dormitoryMapper;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    @Transactional(noRollbackFor = TaskSchedulingException.class)
     public List<Integer> create(String name, List<String> buildings) {
-        LambdaQueryWrapper<Task> query = Wrappers.lambdaQuery();
-        if (baseMapper.selectCount(query.eq(Task::getName, name)) != 0) {
-            throw new TaskStatusException(TASK_REPEAT);
+        // 存在相同的任务菜单，抛出异常
+        if (lambdaQuery().eq(Task::getName, name).count() != 0) {
+            throw new TaskSchedulingException("TaskServiceImpl.existed");
         }
-
+        // 创建任务菜单
         List<Integer> idList = new ArrayList<>(buildings.size() + 1);
         Task parent = Task.builder()
                 .menuIcon(Task.ICON)
@@ -67,14 +70,14 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements Ta
                 .build();
         baseMapper.insert(parent);
         idList.add(parent.getTaskId());
-
+        // 查询创建子任务需要的信息
         QueryWrapper<Dormitory> wrapper = Wrappers.query();
         wrapper.select("building", "grade", "category", "type", "count(1) as count");
         for (Iterator<String> itr = buildings.iterator(); itr.hasNext();) {
             wrapper.eq("building", itr.next()).or(itr.hasNext());
         }
-
-        mapper.selectMaps(wrapper.groupBy("building")).forEach((map) -> {
+        // 创建并插入子任务
+        dormitoryMapper.selectMaps(wrapper.groupBy("building")).forEach((map) -> {
             Task child = new Task();
             child.setParentId(parent.getTaskId());
             map.forEach((key, value) -> {
@@ -102,21 +105,34 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements Ta
         return idList;
     }
 
-    public int delete(Integer taskId) {
-        Task task = baseMapper.selectById(taskId);
-        if (task.getMenu()) {
-            LambdaQueryWrapper<Task> wrapper = Wrappers.lambdaQuery();
-            List<Integer> collect = baseMapper.selectList(wrapper.eq(Task::getParentId, task.getTaskId()))
-                    .stream().map(Task::getTaskId).collect(Collectors.toList());
-            if (collect.size() > 0) {
-                baseMapper.deleteBatchIds(collect);
-            }
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    @Transactional(noRollbackFor = TaskSchedulingException.class)
+    public void delete(Integer taskId) {
+        // 根据任务号查找对应的任务
+        Task task = findTask(taskId, true);
+        // 查找并删除子任务
+        List<Integer> collect = lambdaQuery()
+                .eq(Task::getParentId, task.getTaskId())
+                .list()
+                .stream()
+                .map(Task::getTaskId)
+                .collect(Collectors.toList());
+        if (collect.size() > 0) {
+            baseMapper.deleteBatchIds(collect);
         }
-        return baseMapper.deleteById(taskId);
+        // 删除任务菜单
+        baseMapper.deleteById(taskId);
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public Object[] notes(String building) {
-        return mapper.selectList(Wrappers.lambdaQuery(Dormitory.class)
+        return dormitoryMapper.selectList(Wrappers.lambdaQuery(Dormitory.class)
                 .eq(Dormitory::getBuilding, building)
                 .orderByAsc(Dormitory::getRoom))
                 .stream()
@@ -128,16 +144,16 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements Ta
                 .build()).toArray();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public void notParentTask(Integer taskId) {
-        // TODO 异常信息国际化
-        if (lambdaQuery()
-                .eq(Task::getTaskId, taskId)
-                .oneOpt()
-                .orElseThrow(() -> new TaskStatusException("找不到任务"))
-                .getMenu()) {
-            throw new TaskStatusException("不能修改父任务");
-        }
+    @Transactional(noRollbackFor = TaskSchedulingException.class)
+    public Object[] rollback(Integer taskId) {
+        Integer parentId = findTask(taskId, false).getParentId();
+        lambdaUpdate().eq(Task::getTaskId, taskId).set(Task::getComplete, false).update();
+        lambdaUpdate().eq(Task::getTaskId, parentId).set(Task::getComplete, false).update();
+        return new Object[]{parentId, taskId};
     }
 
 }
