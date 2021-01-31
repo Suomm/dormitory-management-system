@@ -1,13 +1,7 @@
 ### Default Ignore ###
-target/
-
-### Application Configurations ###
 config/
+target/
 portfolio/
-
-### Application resources ###
-src/main/resources/static
-src/main/resources/templates
 
 ### IntelliJ IDEA ###
 .idea
