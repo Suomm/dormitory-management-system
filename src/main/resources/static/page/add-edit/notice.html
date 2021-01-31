@@ -1,0 +1,28 @@
+<div class="layuimini-main">
+	<div class="layui-form layuimini-form" lay-filter="example" style="margin-left: -90px;">
+		<input type="hidden" name="date">
+		<div class="layui-form-item">
+			<label class="layui-form-label required">标题：</label>
+			<div class="layui-input-block">
+				<input type="text" name="title" lay-verify="required" lay-reqtext="请输入标题" placeholder="请输入标题" autocomplete="off" class="layui-input">
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label required">内容：</label>
+			<div class="layui-input-block">
+				<textarea name="content" lay-verify="required" lay-reqtext="请输入内容" placeholder="请输入内容" class="layui-textarea"></textarea>
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<div class="layui-input-block">
+			<button class="layui-btn layui-btn layui-btn-normal" lay-submit lay-filter="saveBtn">确认保存</button>
+		</div>
+		</div>
+	</div>
+</div>
+<script>
+	layui.use('template', function() {
+		var template = layui.template;
+		template.save('/notice/save');
+	});
+</script>

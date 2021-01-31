@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="templet/mould :: header(~{::title}, ~{::link}, ~{})">
+	<title>权益保障部-登陆</title>
+	<link rel="stylesheet" type="text/css" href="css/main.css" media="all"/>
+</head>
+<body>
+<div class="layui-container">
+    <div class="admin-login-background">
+        <form class="layui-form login-form" th:action="@{/user/login}" method="post">
+			<div class="layui-form-item logo-title">
+				<h1>登录</h1>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-icon layui-icon-username"></label>
+				<input type="text" name="username" value="2030070006" lay-verify="required" lay-reqtext="请输入学号" placeholder="请输入学号" class="layui-input">
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-icon layui-icon-password"></label>
+				<input type="password" name="password" value="59741wangshuai" lay-verify="required" lay-reqtext="请输入密码" placeholder="请输入密码" class="layui-input">
+			</div>
+			<div class="layui-form-item">
+				<input type="checkbox" name="remember-me" value="true" lay-skin="primary" title="十四天内免登录">
+				<div style="float: right; margin-top: 10px;">
+					<a href="register.html">注册账号</a>&nbsp;&nbsp;&nbsp;&nbsp;
+					<a href="forget-password.html">忘记密码</a>
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<button class="layui-btn layui-btn layui-btn-normal layui-btn-fluid" lay-submit="" lay-filter="login">登 录</button>
+			</div>
+        </form>
+    </div>
+</div>
+<script th:inline="javascript">
+    layui.use(['form', 'layer'], function () {
+        var form = layui.form,
+            layer = layui.layer;
+        // 初始化表单
+        form.render();
+		// 粒子线条背景
+        $(document).ready(function() {
+            $('.layui-container').particleground({
+                dotColor:'#7ec7fd',
+                lineColor:'#7ec7fd'
+            });
+			// 登陆失败提示
+			let err = [[${param.error}]];
+			let msg = [[${session?.SPRING_SECURITY_LAST_EXCEPTION?.message}]];
+			if (err && msg) layer.msg(msg, {icon: 5, shift: 6, area: ['260px', '60px']});
+        });
+    });
+</script>
+</body>
+</html>

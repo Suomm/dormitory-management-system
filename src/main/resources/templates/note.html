@@ -1,0 +1,159 @@
+<link rel="stylesheet" href="js/lay-module/step-lay/step.css" media="all">
+<div class="layuimini-container layuimini-page-anim">
+    <div class="layuimini-main">
+        <div class="layui-fluid" style="padding: 0;">
+            <div class="layui-card">
+                <div class="layui-card-body">
+                    <div class="layui-carousel" id="stepForm" lay-filter="stepForm" style="margin: 0 auto;">
+                        <div carousel-item>
+                            <div class="layui-form" th:each="note,status : ${notes}" style="margin-top: 50px;">
+                                <input type="hidden" name="building" th:value="${note.building}">
+                                <input type="hidden" name="grade" th:value="${note.grade}">
+                                <input type="hidden" name="room" th:value="${note.room}">
+                                <input type="hidden" name="type" th:value="${note.type}">
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label">房间号：</label>
+                                    <div class="layui-input-block">
+                                        <div class="layui-form-mid layui-word-aux" th:text="${note.room}"></div>
+                                    </div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label">分数：</label>
+                                    <div class="layui-input-block">
+                                        <input type="number" placeholder="请填写入分数" name="score" th:value="${note.score}" class="layui-input" lay-verify="number" required>
+                                    </div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label">备注：</label>
+                                    <div class="layui-input-block">
+                                        <textarea placeholder="备注说明" name="details" th:value="${note.details}" class="layui-textarea"></textarea>
+                                    </div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label">图片上传：</label>
+                                    <div class="layui-input-block">
+                                        <div class="layui-btn-container">
+                                            <button class="layui-btn layui-btn-sm upload" th:lay-data="'{url: \'/upload/' + ${note.room} + '/(1)\', accept: \'images\'}'">门牌</button>
+                                            <button class="layui-btn layui-btn-sm upload" th:lay-data="'{url: \'/upload/' + ${note.room} + '/(2)\', accept: \'images\'}'">全景</button>
+                                            <button class="layui-btn layui-btn-sm upload" th:lay-data="'{url: \'/upload/' + ${note.room} + '/(3)\', accept: \'images\'}'">局部</button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <div class="layui-input-block">
+                                        <button th:if="${!status.first}" type="button" class="layui-btn layui-btn-primary pre">上一步</button>
+                                        <button class="layui-btn" lay-submit lay-filter="formStep">
+                                            [[${status.last} ? '完成' : '下一步']]
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                <div style="text-align: center;margin-top: 50px;">
+                                    <i class="layui-icon layui-circle"
+                                       style="color: white;font-size:30px;font-weight:bold;background: #52C41A;padding: 20px;line-height: 80px;">&#xe605;</i>
+                                    <div style="font-size: 24px;color: #333;font-weight: 500;margin-top: 30px;">
+                                        任务完成
+                                    </div>
+                                    <div style="font-size: 14px;color: #666;margin-top: 20px;">可以选择结束任务了</div>
+                                </div>
+                                <div style="text-align: center;margin-top: 50px;">
+                                    <button class="layui-btn next">再次核查</button>
+                                    <button class="layui-btn layui-btn-primary" id="submit" layuimini-content-href="page/user/inspect.html">提交成绩</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <hr>
+                    <div style="color: #666;margin-top: 30px;margin-bottom: 40px;padding-left: 30px;">
+                        <h3>说明</h3><br>
+                        <h4>入款到保险箱</h4>
+                        <p>如果需要，这里可以放一些关于产品的常见问题说明。</p>
+                        <br><h4>入款到现金</h4>
+                        <p>如果需要，这里可以放一些关于产品的常见问题说明。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+<script>
+    layui.use(['form', 'step', 'upload'], function () {
+        var $ = layui.$,
+            step = layui.step,
+            form = layui.form,
+            layer = layui.layer,
+			upload = layui.upload;
+
+        /**
+         * 初始化表单，要加上，不然刷新部分组件可能会不加载
+         */
+        form.render();
+
+        step.render({
+            elem: '#stepForm',
+            filter: 'stepForm',
+            width: '100%', //设置容器宽度
+            stepWidth: '750px',
+            height: '450px',
+            stepItems: []
+        });
+
+        var datas = [];
+
+        form.on('submit(formStep)', function (data) {
+            var score = data.field.score;
+            if ((score != 0 || score != 59) && score % 5 != 0) {
+                var change;
+                layer.confirm('真的删除行么', {
+                    btn: ['更改','继续']
+                }, function() {
+                    change = true;
+                });
+                if (change) return false;
+            }
+            datas.push(data.field);
+            step.next('#stepForm');
+            return false;
+        });
+		
+		upload.render({
+            elem: '.upload',
+            before: function(obj){
+                layer.load(); // 上传 loading
+            },
+            done: function(res, index, upload){
+                layer.closeAll('loading'); // 关闭 loading
+            },
+            error: function(index, upload){
+                layer.closeAll('loading'); // 关闭 loading
+                layer.confirm('上传失败，是否重新上传', function(index) {
+                    upload();
+                    layer.close(index);
+                });
+            }
+        });
+
+        $('.pre').click(function () {
+            step.pre('#stepForm');
+        });
+
+        $('.next').click(function () {
+            datas = [];
+            step.next('#stepForm');
+        });
+
+        $('#submit').click(function () {
+            $.ajax({
+                type: 'post',
+                url: '/task/notes',
+                data: JSON.stringify(datas),
+                contentType: 'application/json',
+                success: function () {
+                    layer.msg("提交成功", {icon: 1});
+                }
+            });
+        });
+    })
+</script>

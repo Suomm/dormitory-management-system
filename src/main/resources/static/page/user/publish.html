@@ -1,0 +1,65 @@
+<div class="layuimini-container layuimini-page-anim">
+	<div class="layuimini-main">
+		<blockquote class="layui-elem-quote layui-text">
+			文本框内的内容是上一次的新闻稿内容哦~要改一改的哈！
+		</blockquote>
+		<fieldset class="layui-elem-field">
+			<legend>新闻稿</legend>
+			<div class="layui-field-box">
+				<div class="layui-form">
+					<div class="layui-form-item layui-form-text">
+						<textarea class="layui-textarea layui-hide" name="content" lay-verify="content" id="LAY_demo_editor"></textarea>
+					</div>
+					<div class="layui-form-item">
+						<button class="layui-btn" lay-submit lay-filter="text">立即提交</button>
+					</div>
+				</div>
+			</div>
+		</fieldset>
+	</div>
+</div>
+<script>
+	layui.use(['form', 'layedit', 'laydate'], function() {
+		var $ = layui.jquery,
+			form = layui.form,
+			layer = layui.layer,
+			layedit = layui.layedit;
+		var editIndex;
+		$(document).ready(function () {
+			$.get('/task/draft', function (values) {
+				var editor = $('#LAY_demo_editor');
+				values.forEach(function (e) {
+					editor.append(`&lt;p&gt;&nbsp;&nbsp;&nbsp;&nbsp;${e}&lt;/p&gt;`);
+					// 渲染表单
+					form.render();
+					// 创建编辑器
+					editIndex = layedit.build('LAY_demo_editor', {
+						tool: ["strong", "italic", "underline", "del", "|", "left", "center", "right"]
+					});
+				});
+			});
+		});
+		//自定义验证规则
+		form.verify({
+			content: function(value) {
+				layedit.sync(editIndex);
+			}
+		});
+		//监听提交
+		form.on('submit(text)', function(data) {
+			var contents = data.field['content'].split(/<\/p>/).slice(0, -1).map(function (e) {
+				return e.substring(3).replaceAll(/&nbsp;|\s+/g, '');
+			});
+			$.ajax({
+				type: 'post',
+				url: '/task/publish',
+				data: JSON.stringify(contents),
+				contentType: 'application/json',
+				success: function () {
+					layer.msg("生成周报成功", {icon: 1});
+				}
+			});
+			return false;
+		});
+	});
+</script>
