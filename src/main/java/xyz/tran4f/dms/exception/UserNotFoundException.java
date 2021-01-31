@@ -17,7 +17,6 @@
 package xyz.tran4f.dms.exception;
 
 import org.jetbrains.annotations.Contract;
-import xyz.tran4f.dms.attribute.ExceptionAttribute;
 
 /**
  * <p>
@@ -31,9 +30,17 @@ public class UserNotFoundException extends MessageException {
 
     private static final long serialVersionUID = -8639444066340783164L;
 
-    @Contract(pure = true)
-    public UserNotFoundException(Object... args) {
-        super(ExceptionAttribute.USER_NOT_FOUND, args);
+    /**
+     * <p>
+     * 用指定的详细消息构建一个 {@code UserNotFoundException} 实例。
+     * </p>
+     *
+     * @param message 需要回显的消息信息
+     * @param args 使用国际化消息时可设定的参数
+     */
+    @Contract(value = "null,_ -> fail", pure = true)
+    public UserNotFoundException(String message, Object... args) {
+        super(message, args);
     }
 
 }

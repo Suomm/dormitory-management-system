@@ -16,30 +16,31 @@
 
 package xyz.tran4f.dms.exception;
 
-import lombok.Getter;
-import lombok.Setter;
 import org.jetbrains.annotations.Contract;
 
 /**
  * <p>
- * 用于回显错误消息并重定向操作。
+ * 缺少相关属性信息时的异常。
  * </p>
  *
  * @author 王帅
  * @since 1.0
  */
-@Getter
-@Setter
-public class RedirectException extends MessageException {
+public class MissingAttributeException extends MessageException {
 
-    private static final long serialVersionUID = -36415506607708975L;
+    private static final long serialVersionUID = 5119539187946629143L;
 
-    private String redirectUrl;
-
-    @Contract(pure = true)
-    public RedirectException(String redirectUrl, String message) {
-        super(message);
-        setRedirectUrl(redirectUrl);
+    /**
+     * <p>
+     * 用指定的详细消息构建一个 {@code MissingAttributeException} 实例。
+     * </p>
+     *
+     * @param message 需要回显的消息信息
+     * @param args 使用国际化消息时可设定的参数
+     */
+    @Contract(value = "null,_ -> fail", pure = true)
+    public MissingAttributeException(String message, Object... args) {
+        super(message, args);
     }
 
 }

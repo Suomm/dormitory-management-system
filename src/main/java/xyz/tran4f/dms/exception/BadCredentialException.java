@@ -20,20 +20,25 @@ import org.jetbrains.annotations.Contract;
 
 /**
  * <p>
- * 与验证码有关操作异常。
+ * 处理请求时传入的参数不正确异常。
  * </p>
  *
  * @author 王帅
  * @since 1.0
- * @see xyz.tran4f.dms.pojo.Captcha
- * @see xyz.tran4f.dms.utils.CaptchaUtils
  */
-public class CaptchaException extends MessageException {
+public class BadCredentialException extends MessageException {
 
-    private static final long serialVersionUID = 5422567440119072978L;
+    private static final long serialVersionUID = -8340470497161439206L;
 
-    @Contract(pure = true)
-    public CaptchaException(String message) {
+    /**
+     * <p>
+     * 用指定的详细消息构建一个 {@code BadCredentialException} 实例。
+     * </p>
+     *
+     * @param message 需要回显的消息信息
+     */
+    @Contract(value = "null -> fail", pure = true)
+    public BadCredentialException(String message) {
         super(message);
     }
 

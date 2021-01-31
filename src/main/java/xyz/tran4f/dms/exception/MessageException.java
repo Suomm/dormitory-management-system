@@ -20,11 +20,13 @@ import lombok.Getter;
 import lombok.Setter;
 import org.jetbrains.annotations.Contract;
 
+import java.util.Objects;
+
 /**
  * <p>
  * 运行时异常的消息回显，是所有需要回显给用户的异常信息的父类。该异常会被全局异常解析器解析，
  * 返回出错的界面并回显错误的详细信息。如需使用 i18n 国际化消息，详细消息可使用国际化信息配
- * 置文件中的键值，可用的键值请参见 {@link xyz.tran4f.dms.attribute.ExceptionAttribute}
+ * 置文件中的键值。
  * </p>
  *
  * @author 王帅
@@ -32,10 +34,15 @@ import org.jetbrains.annotations.Contract;
  */
 @Setter
 @Getter
-public class MessageException extends RuntimeException {
+public abstract class MessageException extends RuntimeException {
 
     private static final long serialVersionUID = 8747711960406241674L;
 
+    /**
+     * <p>
+     * 将为消息中的参数填充的参数数组，如果没有，则为 {@code null}。
+     * </p>
+     */
     private Object[] args;
 
     /**
@@ -46,26 +53,11 @@ public class MessageException extends RuntimeException {
      *
      * @param message 需要回显的消息信息
      * @param args 使用国际化消息时可设定的参数
+     * @exception NullPointerException 如果回显详细消息为 {@code null}
      */
-    @Contract(pure = true)
+    @Contract(value = "null,_ -> fail", pure = true)
     public MessageException(String message, Object... args) {
-        super(message);
-        setArgs(args);
-    }
-
-    /**
-     * <p>
-     * 用指定的详细消息和原因构造一个新的运行时异常。其中的详细消息用于回显到前端界面，
-     * 详细消息的内容不应该为 {@code null}。
-     * </p>
-     *
-     * @param message 需要回显的消息信息
-     * @param cause 触发该异常的原因
-     * @param args 使用国际化消息时可设定的参数
-     */
-    @Contract(pure = true)
-    public MessageException(String message, Throwable cause, Object... args) {
-        super(message, cause);
+        super(Objects.requireNonNull(message));
         setArgs(args);
     }
 

@@ -16,6 +16,8 @@
 
 package xyz.tran4f.dms.exception;
 
+import org.jetbrains.annotations.Contract;
+
 /**
  * <p>
  * 无效或者逾期异常。
@@ -28,6 +30,14 @@ public class InvalidOrOverdueException extends MessageException {
 
     private static final long serialVersionUID = 6723413299262506626L;
 
+    /**
+     * <p>
+     * 用指定的详细消息构建一个 {@code InvalidOrOverdueException} 实例。
+     * </p>
+     *
+     * @param message 需要回显的消息信息
+     */
+    @Contract(value = "null -> fail", pure = true)
     public InvalidOrOverdueException(String message) {
         super(message);
     }

@@ -30,7 +30,14 @@ public class RegisterException extends MessageException {
 
     private static final long serialVersionUID = 6354950372852467340L;
 
-    @Contract(pure = true)
+    /**
+     * <p>
+     * 用指定的详细消息构建一个 {@code RegisterException} 实例。
+     * </p>
+     *
+     * @param message 需要回显的消息信息
+     */
+    @Contract(value = "null -> fail", pure = true)
     public RegisterException(String message) {
         super(message);
     }

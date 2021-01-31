@@ -16,22 +16,30 @@
 
 package xyz.tran4f.dms.exception;
 
-import xyz.tran4f.dms.attribute.ExceptionAttribute;
+import org.jetbrains.annotations.Contract;
 
 /**
  * <p>
- * 用户更改密码时，原始密码错误。
+ * 任务调度异常。
  * </p>
  *
  * @author 王帅
  * @since 1.0
  */
-public class InvalidPasswordException extends MessageException {
+public class TaskSchedulingException extends MessageException {
 
-    private static final long serialVersionUID = -5059082845327377847L;
+    private static final long serialVersionUID = -6427827007457767871L;
 
-    public InvalidPasswordException() {
-        super(ExceptionAttribute.USER_CHANGE_PASSWORD);
+    /**
+     * <p>
+     * 用指定的详细消息构建一个 {@code TaskSchedulingException} 实例。
+     * </p>
+     *
+     * @param message 需要回显的消息信息
+     */
+    @Contract(value = "null -> fail", pure = true)
+    public TaskSchedulingException(String message) {
+        super(message);
     }
 
 }
