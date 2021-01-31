@@ -24,6 +24,7 @@ import org.springframework.stereotype.Service;
 import xyz.tran4f.dms.mapper.UserMapper;
 import xyz.tran4f.dms.pojo.SecurityUser;
 import xyz.tran4f.dms.pojo.User;
+import xyz.tran4f.dms.utils.I18nUtils;
 
 /**
  * <p>
@@ -36,9 +37,11 @@ import xyz.tran4f.dms.pojo.User;
 @Service("userManager")
 public class UserDetailsManagerImpl implements UserDetailsManager {
 
+    private final I18nUtils  i18nUtils;
     private final UserMapper userMapper;
 
-    public UserDetailsManagerImpl(UserMapper userMapper) {
+    public UserDetailsManagerImpl(I18nUtils i18nUtils, UserMapper userMapper) {
+        this.i18nUtils  = i18nUtils;
         this.userMapper = userMapper;
     }
 
@@ -49,13 +52,13 @@ public class UserDetailsManagerImpl implements UserDetailsManager {
      *
      * @param username 用户名（学号）
      * @return 带有用户信息的{@code UserDetails}对象
-     * @throws UsernameNotFoundException 如果ID不存在抛出此异常
+     * @throws UsernameNotFoundException 如果学号不存在抛出此异常
      */
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userMapper.selectById(username);
         if (user == null) {
-            throw new UsernameNotFoundException("用户名不存在");
+            throw new UsernameNotFoundException(i18nUtils.getMessage("UserDetailsManagerImpl.userNotFound"));
         }
         return new SecurityUser(user, AuthorityUtils.createAuthorityList(user.getRole()));
     }
@@ -66,9 +69,10 @@ public class UserDetailsManagerImpl implements UserDetailsManager {
 
     @Override
     public void updateUser(UserDetails user) {
-        User u = new User(user.getUsername());
-        u.setLocked(!user.isAccountNonLocked());
-        userMapper.updateById(u);
+        userMapper.updateById(User.builder()
+                .id(user.getUsername())
+                .locked(!user.isAccountNonLocked())
+                .build());
     }
 
     @Override

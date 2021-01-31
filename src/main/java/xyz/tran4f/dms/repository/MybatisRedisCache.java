@@ -36,10 +36,8 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
  */
 public class MybatisRedisCache implements Cache {
 
-    // 读写锁
     private final ReadWriteLock readWriteLock = new ReentrantReadWriteLock(true);
 
-    //这里使用了redis缓存，使用springboot自动注入
     private RedisTemplate<String, Object> redisTemplate;
 
     private final String id;
