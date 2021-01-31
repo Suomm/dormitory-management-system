@@ -29,9 +29,34 @@ public final class WebAttribute {
     private WebAttribute() {
     }
 
+    /**
+     * <p>
+     * 登陆成功之后保存在 SESSION 域中的用户数据对象。
+     * </p>
+     */
     public static final String WEB_SESSION_USER = "WEB_SESSION_USER";
+
+    /**
+     * <p>
+     * 用于重定向之后保存上次的异常详细信息。
+     * </p>
+     */
     public static final String WEB_LAST_EXCEPTION = "WEB_LAST_EXCEPTION";
+
+    /**
+     * <p>
+     * 每周查宿任务结束之后，在该目录下生成以任务 ID 为名称的文件夹，用于存放生成的文件。
+     * 因此该目录被作为历史记录目录存放每周查宿生成的文件，并在学期结束之后删除这个文件夹
+     * 中的所有内容。
+     * </p>
+     */
     public static final String WEB_PORTFOLIO_STORES = "./portfolio/stores/";
+
+    /**
+     * <p>
+     * 每周查宿任务的临时资源目录，存放上传的优差宿舍的图片，该路径会在创建新任务时被删除。
+     * </p>
+     */
     public static final String WEB_PORTFOLIO_ASSETS = "./portfolio/assets/";
 
 }

@@ -30,8 +30,18 @@ public final class RegexAttribute {
     private RegexAttribute() {
     }
 
+    /**
+     * <p>
+     * 用于校验天津师范大学化学学院的学生学号。
+     * </p>
+     */
     public static final String ID = "\\d{2}3007\\d{4}";
-    public static final String GRADE = "\\d{4}";
+
+    /**
+     * <p>
+     * 用于校验密码，六到三十二位非空白。
+     * </p>
+     */
     public static final String PASSWORD = "^[\\S]{6,32}$";
 
 }
