@@ -34,6 +34,10 @@ import static xyz.tran4f.dms.attribute.RabbitAttribute.*;
 import static xyz.tran4f.dms.attribute.RedisAttribute.PREFIX_USER_LOCKED;
 
 /**
+ * <p>
+ * 用户登陆的监听。
+ * </p>
+ *
  * @author 王帅
  * @since 1.0
  */
@@ -67,28 +71,33 @@ public class UserLoginListener {
             return;
         }
         // 根据键值获取对应的登录次数
-        int limit = redisUtils.get(PREFIX_USER_LOCKED + username, 1);
+        int limit = redisUtils.get(PREFIX_USER_LOCKED.concat(username), 1);
         if (limit < 10) {
             // 登录次数小于极限，每次登陆失败都要记录，记录三十分钟之后失效
-            redisUtils.set(PREFIX_USER_LOCKED + username, limit + 1, 30, TimeUnit.MINUTES);
+            redisUtils.set(PREFIX_USER_LOCKED.concat(username), limit + 1, 30, TimeUnit.MINUTES);
         } else if (limit == 10){
             // 登录次数等于极限值时锁定用户
             setUserNonLocked(username, false);
             // 取消缓存失效时间，手动删除缓存，为了时间一致性
-            redisUtils.set(PREFIX_USER_LOCKED + username, limit + 1);
+            redisUtils.set(PREFIX_USER_LOCKED.concat(username), limit + 1);
             // 将用户锁定状态发送到消息队列，等待解锁用户
             rabbitTemplate.convertAndSend(EXCHANGE_USER_DIRECT, QUEUE_USER_LOCKED_DELAY, username);
         }
         log.warn("用户 {} 登陆失败 {} 次", username, limit);
     }
 
+    /**
+     * <p>
+     * 登陆成功监听。
+     * </p>
+     */
     @EventListener
     public void success(AuthenticationSuccessEvent event) {
         // 获取操作的用户名
         String username = event.getAuthentication().getPrincipal().toString();
         // 判断是否含有登陆失败的记录键，有的话删除对应的键
-        if (redisUtils.hasKey(PREFIX_USER_LOCKED + username)) {
-            boolean remove = redisUtils.delete(PREFIX_USER_LOCKED + username);
+        if (redisUtils.hasKey(PREFIX_USER_LOCKED.concat(username))) {
+            boolean remove = redisUtils.delete(PREFIX_USER_LOCKED.concat(username));
             log.info("用户 {} 登陆成功，移除键 {}：{}", username, username, remove);
         }
     }
@@ -116,9 +125,9 @@ public class UserLoginListener {
      */
     @RabbitListener(queues = { QUEUE_USER_LOCKED_PROCESS })
     public void unlocked(String username) {
-        log.info("取消锁定用户 {}", username);
-        redisUtils.delete(PREFIX_USER_LOCKED + username);
+        redisUtils.delete(PREFIX_USER_LOCKED.concat(username));
         setUserNonLocked(username, true);
+        log.info("取消锁定用户 {}", username);
     }
 
 }
