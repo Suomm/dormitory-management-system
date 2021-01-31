@@ -31,10 +31,7 @@ import xyz.tran4f.dms.utils.ZipUtils;
 import java.io.File;
 import java.io.IOException;
 import java.text.MessageFormat;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -147,8 +144,10 @@ public class TaskStatusListener {
         // 优秀宿舍信息
         Set<Dormitory> clean = union(stream.map(PREFIX_CLEAN_SET::concat));
         // 分类归纳上传的图片
-        copyDirectory(dirty, "脏乱宿舍");
-        copyDirectory(clean, "优秀宿舍");
+        List<String> message = new ArrayList<>();
+        copyDirectory(dirty, "脏乱宿舍", message);
+        copyDirectory(clean, "优秀宿舍", message);
+        redisUtils.set(KEY_WARNINGS, message);
         // 生成新闻稿图片
         ExcelUtils.data2Image(MessageFormat.format(IMAGE_FILE, taskId), dirty, clean);
         // 生成压缩文件
@@ -177,17 +176,30 @@ public class TaskStatusListener {
      *
      * @param dormitories 宿舍信息
      * @param name 文件夹名称
+     * @param message 存放警告的集合
      */
-    private void copyDirectory(Set<Dormitory> dormitories, String name) {
-        File destFile = new File(WEB_PORTFOLIO_ASSETS + name);
+    private void copyDirectory(Set<Dormitory> dormitories, String name, List<String> message) {
+        File destFile = new File(WEB_PORTFOLIO_ASSETS.concat(name));
         FileUtils.deleteQuietly(destFile);
         dormitories.stream().map(Dormitory::getRoom).forEach(e -> {
-            try {
-                FileUtils.copyDirectory(new File(WEB_PORTFOLIO_ASSETS + e), destFile);
-            } catch (IOException ignored) {
-                // 忽略异常的抛出
+            File file = new File(WEB_PORTFOLIO_ASSETS.concat(e));
+            if (!file.exists()) {
+                message.add("宿舍" + e + "被标记为" + name + "，但未上传任何图片");
+            } else {
+                int length = file.list().length;
+                if (length != 3) {
+                    message.add("宿舍" + e + "被标记为" + name + "，但只上传了" + length + "张图片");
+                }
+                try {
+                    FileUtils.copyDirectory(file, destFile);
+                } catch (IOException ignored) {
+                    // 忽略异常的抛出
+                }
             }
         });
+        if (!destFile.exists()) {
+            message.add("本次宿舍检查没有上传任何" + name + "照片");
+        }
     }
 
     /**
