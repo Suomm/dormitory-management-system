@@ -23,8 +23,16 @@
                 xhr.setRequestHeader(header, token);
             },
             error: function(xhr, status, error) {
-                // TODO 状态码 400 500 判断 dashboard.html
-                layer.msg(xhr.responseText, {icon: 5, shift: 6});
+                switch (status) {
+                    case 400:
+                        layer.msg(xhr.responseText, {icon: 5, shift: 6});
+                        break;
+                    case 500:
+                        console.log(xhr);
+                        console.log(error);
+                        layer.msg(xhr.message, {icon: 5, shift: 6});
+                        break;
+                }
             }
         });
     </script>

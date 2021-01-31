@@ -40,7 +40,7 @@
 									<option value="">请选择角色</option>
 									<option value="ROLE_USER">常驻志愿者</option>
 									<option value="ROLE_GUEST">流动志愿者</option>
-									<option value="ROLE_MANAGER">部门部长</option>
+									<option value="ROLE_MANAGER">部门管理员</option>
 								</select>
 							</div>
 						</div>
@@ -84,7 +84,7 @@
 				{field: 'role', minWidth: 100, title: '角色', templet: function(user) {
 					switch (user.role) {
 						case 'ROLE_USER': return '常驻志愿者';
-						case 'ROLE_MANAGER': return '部门部长';
+						case 'ROLE_MANAGER': return '部门管理员';
 						case 'ROLE_GUEST': return '流动志愿者';
 					}
 				}, align: "center", sort: true},

@@ -4,20 +4,20 @@
             <div class="layui-form-item">
                 <label class="layui-form-label required">旧的邮箱</label>
                 <div class="layui-input-block">
-                    <input type="password" name="old_password" lay-verify="required" lay-reqtext="旧的密码不能为空" placeholder="请输入旧的密码" value="" class="layui-input">
+                    <input type="password" name="oldEmail" lay-verify="required" lay-reqtext="旧的密码不能为空" placeholder="请输入旧的密码" value="" class="layui-input">
                     <tip>填写自己账号的旧的邮箱地址。</tip>
                 </div>
             </div>
             <div class="layui-form-item">
                 <label class="layui-form-label required">新的邮箱</label>
                 <div class="layui-input-block">
-                    <input type="password" name="new_password" lay-verify="required" lay-reqtext="新的密码不能为空" placeholder="请输入新的密码" value="" class="layui-input">
+                    <input type="password" name="newEmail" lay-verify="required" lay-reqtext="新的密码不能为空" placeholder="请输入新的密码" value="" class="layui-input">
                 </div>
             </div>
             <div class="layui-form-item">
                 <label class="layui-form-label required">邮箱验证码</label>
                 <div class="layui-input-block">
-                    <input type="password" name="again_password" lay-verify="required" lay-reqtext="新的密码不能为空" placeholder="请输入新的密码" value="" class="layui-input">
+                    <input type="password" name="againEmail" lay-verify="required" lay-reqtext="新的密码不能为空" placeholder="请输入新的密码" value="" class="layui-input">
                 </div>
             </div>
             <div class="layui-form-item">
@@ -40,19 +40,25 @@
         form.render();
         //监听提交
         form.on('submit(saveBtn)', function (data) {
-            // TODO 两次邮箱一样处理
-            $.ajax({
-                type: 'put',
-                data: data.field,
-                url: '/user/change-email/' + $('#studentId').text(),
-                success: function (status) {
-                    if (status) {
-                        layer.msg("更改邮箱成功", {icon: 1});
-                    } else {
-                        layer.msg("更改邮箱失败", {icon: 5, shift: 6});
+            data = data.field;
+            if (data.newEmail !== data.againEmail) {
+                layer.msg('两次输入的邮箱不一致', {icon: 5, shift: 6});
+            } else if (data.oldEmail === data.newEmail) {
+                layer.msg('旧邮箱与新邮箱一致', {icon: 5, shift: 6});
+            } else {
+                $.ajax({
+                    type: 'put',
+                    data: data,
+                    url: '/user/change-email/' + $('#studentId').text(),
+                    success: function (status) {
+                        if (status) {
+                            layer.msg("更改邮箱成功", {icon: 1});
+                        } else {
+                            layer.msg("更改邮箱失败", {icon: 5, shift: 6});
+                        }
                     }
-                }
-            });
+                });
+            }
             return false;
         });
     });
