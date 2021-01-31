@@ -22,7 +22,6 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
 import lombok.experimental.Accessors;
-import org.jetbrains.annotations.Contract;
 import xyz.tran4f.dms.validation.constraints.Gender;
 import xyz.tran4f.dms.validation.constraints.Id;
 import xyz.tran4f.dms.validation.constraints.Password;
@@ -78,10 +77,5 @@ public class User implements Serializable {
     private String grade; // 年级
     @ApiModelProperty(hidden = true)
     private Boolean locked; // 锁定
-
-    @Contract(pure = true)
-    public User(String id) {
-        this.id = id;
-    }
 
 }

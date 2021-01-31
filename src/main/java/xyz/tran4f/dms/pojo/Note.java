@@ -16,22 +16,19 @@
 
 package xyz.tran4f.dms.pojo;
 
-import com.alibaba.excel.annotation.ExcelIgnore;
 import com.alibaba.excel.annotation.format.DateTimeFormat;
 import com.alibaba.excel.annotation.format.NumberFormat;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
 import lombok.experimental.Accessors;
-import org.jetbrains.annotations.Contract;
-import org.jetbrains.annotations.NotNull;
 
 import java.io.Serializable;
 import java.util.Date;
 
 /**
  * <p>
- * 2021/1/6
+ * 检查宿舍的相关信息记录。
  * </p>
  *
  * @author 王帅
@@ -49,7 +46,7 @@ public class Note implements Serializable {
     private static final long serialVersionUID = 5736959954440581339L;
 
     @DateTimeFormat("yyyy-MM-dd")
-    @ApiModelProperty(value = "日期", example = "2020/12/12", required = true)
+    @ApiModelProperty(value = "日期", example = "2020-12-12", required = true)
     private Date date;
 
     @ApiModelProperty(value = "所属年级", example = "2020级", required = true)

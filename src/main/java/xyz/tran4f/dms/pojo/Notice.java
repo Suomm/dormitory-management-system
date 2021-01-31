@@ -17,6 +17,8 @@
 package xyz.tran4f.dms.pojo;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -29,7 +31,7 @@ import java.util.Date;
 
 /**
  * <p>
- * 2021/1/16
+ * 公告信息。
  * </p>
  *
  * @author 王帅
@@ -40,14 +42,20 @@ import java.util.Date;
 @AllArgsConstructor
 @Accessors(chain = true)
 @EqualsAndHashCode(of = "date")
+@ApiModel(value = "公告的相关信息")
 public class Notice implements Serializable {
 
     private static final long serialVersionUID = -3086197065953137272L;
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @ApiModelProperty(value = "日期", example = "2020-12-12")
     private Date date;
+
+    @ApiModelProperty(value = "标题", required = true)
     private String title;
+
+    @ApiModelProperty(value = "内容", required = true)
     private String content;
 
 }

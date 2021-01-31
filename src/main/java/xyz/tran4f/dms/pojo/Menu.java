@@ -28,7 +28,7 @@ import java.util.List;
 
 /**
  * <p>
- * 2021/1/18
+ * Layuimini 主页菜单信息。
  * </p>
  *
  * @author 王帅
