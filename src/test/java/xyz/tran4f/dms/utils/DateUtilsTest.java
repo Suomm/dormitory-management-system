@@ -14,26 +14,28 @@
  * limitations under the License.
  */
 
-package xyz.tran4f.dms.exception;
+package xyz.tran4f.dms.utils;
 
-import org.jetbrains.annotations.Contract;
-import xyz.tran4f.dms.attribute.ExceptionAttribute;
+import org.junit.jupiter.api.Test;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 
 /**
  * <p>
- * 操作数据库出现的异常。
+ * 2021/1/29
  * </p>
  *
  * @author 王帅
  * @since 1.0
  */
-public class DatabaseException extends MessageException {
+public class DateUtilsTest {
 
-    private static final long serialVersionUID = -9134621069235358217L;
-
-    @Contract(pure = true)
-    public DatabaseException() {
-        super(ExceptionAttribute.USER_MESSAGE_FAIL_UPDATE);
+    @Test
+    public void weekOfSemester() throws ParseException {
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+        long start = format.parse("2020-12-31").getTime();
+        System.out.println(DateUtils.weekOfSemester(start));
     }
 
 }

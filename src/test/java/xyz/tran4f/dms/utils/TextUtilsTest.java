@@ -14,22 +14,23 @@
  * limitations under the License.
  */
 
-package xyz.tran4f.dms.exception;
+package xyz.tran4f.dms.utils;
+
+import org.junit.jupiter.api.Test;
 
 /**
  * <p>
- * 2021/1/22
+ * 2021/1/30
  * </p>
  *
  * @author 王帅
  * @since 1.0
  */
-public class TaskException extends MessageException {
+public class TextUtilsTest {
 
-    private static final long serialVersionUID = -6427827007457767871L;
-
-    public TaskException(String message, Object... args) {
-        super(message, args);
+    @Test
+    public void format() {
+        System.out.println(TextUtils.format(25));
     }
 
 }
