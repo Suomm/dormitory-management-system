@@ -55,6 +55,13 @@ public final class RedisAttribute {
 
     /**
      * <p>
+     * 任务完成之后整理任务时产生的警告，是一个 Redis List 集合。
+     * </p>
+     */
+    public static final String KEY_WARNINGS = "KEY_CAPTCHA";
+
+    /**
+     * <p>
      * 当前周任务的所有任务 ID，是一个 Redis Set 集合。当有任务完成时从中删除任务 ID，直到
      * 剩余最后一个元素即为任务菜单，表示当前周任务完成。回滚任务时再次插入任务菜单ID 和具体
      * 任务 ID 保证数据的不重复。
