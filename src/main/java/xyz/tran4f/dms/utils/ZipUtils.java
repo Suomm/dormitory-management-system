@@ -51,6 +51,15 @@ public final class ZipUtils {
         compress(filename, Arrays.asList(resources));
     }
 
+    /**
+     * <p>
+     * 生成一个压缩文件，并向其中添加需要压缩的文件。
+     * </p>
+     *
+     * @param filename 生成的压缩文件名
+     * @param resources 要进行压缩的资源
+     * @throws IOException 压缩失败抛出此异常
+     */
     public static void compress(String filename, Collection<String> resources) throws IOException {
         @Cleanup FileOutputStream fos = new FileOutputStream(filename);
         @Cleanup BufferedOutputStream bos = new BufferedOutputStream(fos);
