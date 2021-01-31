@@ -21,18 +21,12 @@ import org.springframework.context.NoSuchMessageException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 import xyz.tran4f.dms.exception.MessageException;
-import xyz.tran4f.dms.exception.RedirectException;
 import xyz.tran4f.dms.utils.I18nUtils;
 
 import javax.validation.ConstraintViolationException;
-
-import static xyz.tran4f.dms.attribute.ExceptionAttribute.MESSAGE_BAD_REQUEST;
-import static xyz.tran4f.dms.attribute.WebAttribute.WEB_LAST_EXCEPTION;
 
 /**
  * <p>
@@ -43,7 +37,7 @@ import static xyz.tran4f.dms.attribute.WebAttribute.WEB_LAST_EXCEPTION;
  * @since 1.0
  */
 @Slf4j
-@ControllerAdvice
+@RestControllerAdvice
 public class GlobalExceptionHandler {
 
     // Spring 依赖注入 I18nUtils 用于获取国际化异常信息
@@ -56,19 +50,6 @@ public class GlobalExceptionHandler {
 
     /**
      * <p>
-     * 消息需要回显的并且页面要进行重定向操作。
-     * </p>
-     */
-    @ExceptionHandler(RedirectException.class)
-    public String sendRedirect(RedirectAttributes attr, RedirectException e) {
-        String message = getMessage(e);
-        attr.addFlashAttribute(WEB_LAST_EXCEPTION, message);
-        log.info("处理异常：{} 重定向路径：{}", e.getClass().getName(), e.getRedirectUrl());
-        return "redirect:" + e.getRedirectUrl();
-    }
-
-    /**
-     * <p>
      * 处理自定义异常中，将异常的详细信息回显到前端界面。返回 HTTP 400 状态码，
      * 表示请求因出现异常而未被处理，并包含响应文本 responseText 表示异常的详
      * 细消息。
@@ -76,7 +57,6 @@ public class GlobalExceptionHandler {
      *
      * @see MessageException
      */
-    @ResponseBody
     @ExceptionHandler(MessageException.class)
     public ResponseEntity<String> sendMessage(MessageException exception) {
         // 获取异常键值指定的国际化消息
@@ -109,14 +89,14 @@ public class GlobalExceptionHandler {
      * 非法请求。
      * </p>
      */
-    @ResponseBody
     @ExceptionHandler({
             BindException.class,
             ConstraintViolationException.class,
             MethodArgumentNotValidException.class
     })
     public ResponseEntity<String> validExceptionHandler() {
-        return ResponseEntity.badRequest().body(i18nUtils.getMessage(MESSAGE_BAD_REQUEST));
+        return ResponseEntity.badRequest()
+                .body(i18nUtils.getMessage("GlobalExceptionHandler.incorrectRequest"));
     }
 
 }
