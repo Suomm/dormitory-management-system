@@ -16,6 +16,7 @@
 
 package xyz.tran4f.dms.controller;
 
+import io.swagger.annotations.ApiOperation;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 import xyz.tran4f.dms.pojo.Notice;
@@ -28,7 +29,7 @@ import static xyz.tran4f.dms.attribute.RedisAttribute.KEY_NOTICE;
 
 /**
  * <p>
- * 2021/1/20
+ * 公告模块的具体业务流程控制。
  * </p>
  *
  * @author 王帅
@@ -45,22 +46,48 @@ public class NoticeController {
         this.redisUtils = redisUtils;
     }
 
+    /**
+     * <p>
+     * 获取所有公告内容。
+     * </p>
+     *
+     * @return 所有公告
+     */
     @GetMapping("list")
+    @ApiOperation(value = "获取所有公告内容")
     public Set<Object> list() {
-        return redisUtils.setMembers(KEY_NOTICE);
+        return redisUtils.sMembers(KEY_NOTICE);
     }
 
+    /**
+     * <p>
+     * 保存或更新公告信息。
+     * </p>
+     *
+     * @param notice 公告信息
+     * @return 如果操作成功则返回 {@code 1}，否则操作失败。
+     */
     @PostMapping("save")
+    @ApiOperation(value = "保存或更新公告信息")
     public Long save(Notice notice) {
         if (notice.getDate() == null) {
             notice.setDate(new Date());
         }
-        return redisUtils.setAdd(KEY_NOTICE, notice);
+        return redisUtils.sSet(KEY_NOTICE, notice);
     }
 
+    /**
+     * <p>
+     * 批量删除删除公告信息。
+     * </p>
+     *
+     * @param notice 要删除的公告信息
+     * @return 删除的记录条数
+     */
     @DeleteMapping("delete")
+    @ApiOperation(value = "批量删除删除公告信息")
     public Long delete(@RequestBody Notice[] notice) {
-        return redisUtils.setRemove(KEY_NOTICE, notice);
+        return redisUtils.sRemove(KEY_NOTICE, notice);
     }
 
 }

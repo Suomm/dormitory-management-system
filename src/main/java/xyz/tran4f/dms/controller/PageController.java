@@ -18,20 +18,26 @@ package xyz.tran4f.dms.controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
+import springfox.documentation.annotations.ApiIgnore;
 import xyz.tran4f.dms.utils.RedisUtils;
+
+import javax.validation.constraints.NotNull;
 
 import static xyz.tran4f.dms.attribute.RedisAttribute.KEY_NOTICE;
 import static xyz.tran4f.dms.attribute.RedisAttribute.PREFIX_TASK_RECORD;
 
 /**
  * <p>
- * 2021/1/21
+ * 视图解析控制器，主要处理需要参数的模板。
  * </p>
  *
  * @author 王帅
  * @since 1.0
  */
+@ApiIgnore
+@Validated
 @Controller
 public class PageController {
 
@@ -43,13 +49,13 @@ public class PageController {
 
     @GetMapping("/welcome.html")
     public String welcome(Model model) {
-        model.addAttribute("notices", redisUtils.setMembers(KEY_NOTICE));
+        model.addAttribute("notices", redisUtils.sMembers(KEY_NOTICE));
         return "welcome";
     }
 
     @GetMapping("/page/user/note.html")
-    public String note(String building, Model model) {
-        model.addAttribute("notes", redisUtils.setMembers(PREFIX_TASK_RECORD + building));
+    public String note(@NotNull String building, Model model) {
+        model.addAttribute("notes", redisUtils.sMembers(PREFIX_TASK_RECORD.concat(building)));
         return "note";
     }
 

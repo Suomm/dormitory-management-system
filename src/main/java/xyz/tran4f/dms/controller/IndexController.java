@@ -26,7 +26,7 @@ import java.util.*;
 
 /**
  * <p>
- * 2021/1/12
+ * 加载 Layuimini 时所用到的 API。
  * </p>
  *
  * @author 王帅
@@ -38,9 +38,10 @@ public class IndexController {
 
     @GetMapping("/api/clear")
     public Map<String, Object> clear() {
+        System.gc(); // 显式调用垃圾回收器
         Map<String, Object> ret = new HashMap<>();
         ret.put("code", 1);
-        ret.put("msg", "服务端清理缓存成功清理缓存成功");
+        ret.put("msg", "服务端清理缓存成功");
         return ret;
     }
 

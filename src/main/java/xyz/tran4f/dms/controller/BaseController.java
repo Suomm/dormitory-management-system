@@ -35,12 +35,27 @@ import static xyz.tran4f.dms.attribute.RabbitAttribute.QUEUE_EMAIL;
  */
 public abstract class BaseController<S> {
 
+    /**
+     * <p>
+     * 引用的服务层对象。
+     * </p>
+     */
     @Autowired
     protected S service;
 
+    /**
+     * <p>
+     * Redis 缓存操作工具类。
+     * </p>
+     */
     @Autowired
     protected RedisUtils redisUtils;
 
+    /**
+     * <p>
+     * Rabbit MQ 消息队列模板。
+     * </p>
+     */
     @Autowired
     protected RabbitTemplate rabbitTemplate;
 

@@ -16,7 +16,6 @@
 
 package xyz.tran4f.dms.controller;
 
-import io.swagger.annotations.Api;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.ContentDisposition;
@@ -30,16 +29,17 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import springfox.documentation.annotations.ApiIgnore;
-import xyz.tran4f.dms.exception.ResourceNotFoundException;
 
 import javax.validation.constraints.NotNull;
 import java.io.File;
 import java.io.IOException;
 import java.net.URLEncoder;
 
+import static xyz.tran4f.dms.attribute.WebAttribute.WEB_PORTFOLIO_ASSETS;
+
 /**
  * <p>
- * 2021/1/6
+ * 文件模块的具体业务流程控制。
  * </p>
  *
  * @author 王帅
@@ -48,27 +48,43 @@ import java.net.URLEncoder;
 @ApiIgnore
 @Validated
 @RestController
-@Api(tags = "文件模块的程序接口")
 public class FileController {
 
+    /**
+     * <p>
+     * 上传查宿过程中拍摄的图片。
+     * </p>
+     *
+     * @param file 照片文件
+     * @param room 房间号
+     * @param index 照片索引
+     * @return 保存成功的图片名称
+     * @throws IOException 保存文件失败抛出此异常
+     */
     @PostMapping("/upload/{room}/{index}")
     public String upload(MultipartFile file,
-                       @PathVariable String room,
-                       @PathVariable String index) throws IOException {
+                         @PathVariable String room,
+                         @PathVariable String index) throws IOException {
         String filename = file.getOriginalFilename();
         assert filename != null;
         int begin = filename.lastIndexOf('.');
         filename = room + index + filename.substring(begin);
-        file.transferTo(new File("./portfolio/assets/" + room + "/" + filename));
+        file.transferTo(new File(WEB_PORTFOLIO_ASSETS + room + "/" + filename));
         return filename;
     }
 
+    /**
+     * <p>
+     * 下载项目下的资源。<b>默认路径：./portfolio/<b/>。
+     * </p>
+     *
+     * @param filename 文件名称
+     * @return 文件下载流
+     * @throws IOException 找不到文件或者生成流失败
+     */
     @GetMapping("/download")
     public ResponseEntity<InputStreamResource> download(@NotNull String filename) throws IOException {
         FileSystemResource resource = new FileSystemResource("./portfolio/" + filename);
-        if (!resource.exists()) {
-            throw new ResourceNotFoundException();
-        }
         int index = filename.lastIndexOf('/');
         filename = filename.substring(index + 1);
         HttpHeaders headers = new HttpHeaders();
