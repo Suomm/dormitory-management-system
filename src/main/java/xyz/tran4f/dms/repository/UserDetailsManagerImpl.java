@@ -21,6 +21,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import xyz.tran4f.dms.mapper.UserMapper;
 import xyz.tran4f.dms.pojo.SecurityUser;
 import xyz.tran4f.dms.pojo.User;
@@ -34,6 +35,7 @@ import xyz.tran4f.dms.utils.I18nUtils;
  * @author 王帅
  * @since 1.0
  */
+@Transactional
 @Service("userManager")
 public class UserDetailsManagerImpl implements UserDetailsManager {
 
