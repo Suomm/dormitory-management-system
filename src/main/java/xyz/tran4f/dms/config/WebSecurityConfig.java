@@ -30,8 +30,11 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.AuthenticationFailureHandler;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl;
 import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
+import xyz.tran4f.dms.handler.SimpleAuthenticationFailureHandler;
 import xyz.tran4f.dms.handler.SimpleAuthenticationSuccessHandler;
 
 import javax.sql.DataSource;
@@ -74,12 +77,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Bean
-    public SimpleAuthenticationSuccessHandler authenticationSuccessHandler() {
-        SimpleAuthenticationSuccessHandler handler = new SimpleAuthenticationSuccessHandler();
-        handler.setDefaultTargetUrl("/");
-        // 设置默认总是跳转到根目录
-        // handler.setAlwaysUseDefaultTargetUrl(true);
-        return handler;
+    public AuthenticationSuccessHandler authenticationSuccessHandler() {
+        return new SimpleAuthenticationSuccessHandler();
+    }
+
+    public AuthenticationFailureHandler authenticationFailureHandler() {
+        return new SimpleAuthenticationFailureHandler();
     }
 
     /**
@@ -114,7 +117,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .loginProcessingUrl("/user/login")
                 .loginPage("/login.html")
                 .successHandler(authenticationSuccessHandler())
-                .failureUrl("/login.html?error=true");
+                .failureHandler(authenticationFailureHandler());
         http.rememberMe()
                 .tokenRepository(persistentTokenRepository())
                 .userDetailsService(userDetailsService);
