@@ -1,15 +1,29 @@
-<div class="layuimini-container layuimini-page-anim">
-	<div class="layuimini-main">
-		<blockquote class="layui-elem-quote layui-text">
-			下载列表
-		</blockquote>
-		<div class="layui-btn-container">
-			<button type="button" class="layui-btn">下载新闻稿</button>
-			<button type="button" class="layui-btn">下载评分表</button>
-			<button type="button" class="layui-btn">下载图片</button>
-			<button type="button" class="layui-btn">下载最终文件</button>
-		</div>
+<div class="layuimini-main">
+	<blockquote class="layui-elem-quote">
+		本周查宿任务已经全部完成，可根据您的需要下载所需要的文件。
+	</blockquote>
+	<div id="warnings" class="layui-hide">
+		<fieldset class="layui-elem-field layui-field-title">
+			<legend>错误警告</legend>
+		</fieldset>
+		<blockquote class="layui-elem-quote layui-quote-nm layui-text"></blockquote>
 	</div>
+	<fieldset class="layui-elem-field layui-field-title">
+		<legend>文件下载</legend>
+	</fieldset>
+	<div id="list" class="layui-btn-container"></div>
 </div>
 <script type="text/javascript">
+	layui.use('jquery', function() {
+		var $ = layui.jquery;
+		$(document).ready(function () {
+			$.get("/task/get/warns", function (warns) {
+				var w = $('#warnings');
+				w.removeClass('layui-hide');
+				warns.forEach(function (v) {
+					w.append(v + '<br>');
+				});
+			});
+		});
+	});
 </script>
