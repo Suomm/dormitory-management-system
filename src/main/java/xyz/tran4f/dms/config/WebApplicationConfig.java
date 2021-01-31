@@ -100,7 +100,6 @@ public class WebApplicationConfig implements WebMvcConfigurer {
         registry.addViewController("/forget-password.html").setViewName("forget-password");
         registry.addViewController("/register.html").setViewName("register");
         registry.addViewController("/reset-password.html").setViewName("reset-password");
-//        registry.addViewController("/welcome.html").setViewName("welcome");
     }
 
 }
