@@ -27,7 +27,7 @@
 				</div>
 			</div>
 			<div class="layui-form-item">
-				<button class="layui-btn layui-btn layui-btn-normal layui-btn-fluid" lay-submit="" lay-filter="login">登 录</button>
+				<button class="layui-btn layui-btn layui-btn-normal layui-btn-fluid" lay-submit lay-filter="login">登 录</button>
 			</div>
         </form>
     </div>
@@ -44,11 +44,15 @@
                 dotColor:'#7ec7fd',
                 lineColor:'#7ec7fd'
             });
-			// 登陆失败提示
-			let err = [[${param.error}]];
-			let msg = [[${session?.SPRING_SECURITY_LAST_EXCEPTION?.message}]];
-			if (err && msg) layer.msg(msg, {icon: 5, shift: 6, area: ['260px', '60px']});
         });
+		form.on('submit(login)', function (data) {
+			$.post('/user/login', data.field).done(function (msg, status, xhr) {
+				status = xhr.status;
+				if (status === 200) window.location.href = '/';
+				else if (status === 202) layer.msg(msg, {icon: 5, shift: 6});
+			});
+			return false;
+		});
     });
 </script>
 </body>
