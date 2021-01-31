@@ -146,6 +146,19 @@ public class TaskController extends BaseController<TaskService> {
 
     /**
      * <p>
+     * 获取任务完成之后，处理上传图片的警告信息。
+     * </p>
+     *
+     * @return 警告信息
+     */
+    @GetMapping("get/warns")
+    @ApiOperation(value = "获取任务开始日期")
+    public List<String> getWarns() {
+        return redisUtils.orElseThrow(KEY_WARNINGS);
+    }
+
+    /**
+     * <p>
      * 保存新闻稿内容，并生成新闻稿文件。
      * </p>
      *
@@ -246,7 +259,7 @@ public class TaskController extends BaseController<TaskService> {
     @ApiOperation(value = "删除任务菜单和历史记录")
     public void delete(@PathVariable Integer taskId) {
         service.delete(taskId);
-        redisUtils.delete(Arrays.asList(KEY_ACTIVE_WEEK, KEY_ACTIVE_TASK, KEY_BUILDING_LIST));
+        redisUtils.delete(Arrays.asList(KEY_ACTIVE_WEEK, KEY_ACTIVE_TASK, KEY_BUILDING_LIST, KEY_WARNINGS));
         FileUtils.deleteQuietly(new File(WEB_PORTFOLIO_STORES + taskId));
     }
 
