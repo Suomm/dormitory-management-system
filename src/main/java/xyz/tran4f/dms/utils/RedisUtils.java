@@ -20,10 +20,9 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
+import xyz.tran4f.dms.exception.MissingAttributeException;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -94,10 +93,26 @@ public final class RedisUtils {
      * @param <T> 值的类型
      * @return 值
      */
+    @SuppressWarnings("unchecked")
     @Nullable
     @Contract(value = "null -> fail", pure = true)
     public <T> T get(String key) {
-        return get(key, null);
+        return (T) redisTemplate.opsForValue().get(key);
+    }
+
+    @SuppressWarnings("unchecked")
+    @Contract(value = "null,_,_ -> fail", pure = true)
+    public <T> T orElseThrow(String key, String msg, Object... args) {
+        Object o = redisTemplate.opsForValue().get(key);
+        if (o == null) {
+            throw new MissingAttributeException(msg, args);
+        }
+        return (T) o;
+    }
+
+    @Contract(value = "null -> fail", pure = true)
+    public <T> T orElseThrow(String key) {
+        return orElseThrow(key, "RedisUtils.incorrectKey", key);
     }
 
     /**
@@ -139,30 +154,60 @@ public final class RedisUtils {
         return redisTemplate.delete(keys);
     }
 
-    public boolean listPush(String key, Object... values) {
-        return redisTemplate.opsForList().rightPushAll(key, values) != null;
+    /**
+     * <p>
+     * 向 Redis List 中存入数据
+     * </p>
+     *
+     * @param key 键
+     * @param values 值
+     */
+    public void lPush(String key, Object... values) {
+        redisTemplate.opsForList().rightPushAll(key, values);
     }
 
-    public void listRemove(String key, Object value) {
-        redisTemplate.opsForList().remove(key, 1, value);
-    }
-
-    public int listSize(String key) {
-        Long size = redisTemplate.opsForList().size(key);
+    /**
+     * <p>
+     * 获取 Redis Set 集合中元素的数量。
+     * </p>
+     *
+     * @param key 键
+     * @return 数量
+     */
+    public int sSize(String key) {
+        Long size = redisTemplate.opsForSet().size(key);
         if (size == null) { return 0; }
         return size.intValue();
     }
 
+    /**
+     * <p>
+     * 获取 Redis List 集合中的全部元素。
+     * </p>
+     *
+     * @param key 键
+     * @param <T> 元素类型
+     * @return 全部元素集合
+     */
     @SuppressWarnings("unchecked")
-    public <T> List<T> listGet(String key) {
+    @Contract(value = "null -> fail", pure = true)
+    public <T> List<T> lRange(String key) {
         return (List<T>) redisTemplate.opsForList().range(key, 0, -1);
     }
 
+    /**
+     * <p>
+     * 当 Redis Set 集合中只有一个元素时，获取这个元素。
+     * </p>
+     *
+     * @param key 键
+     * @param <T> 元素类型
+     * @return 集合中的唯一元素
+     */
     @SuppressWarnings("unchecked")
-    public <T> T listFirst(String key) {
-        List<T> v = (List<T>) redisTemplate.opsForList().leftPop(key);
-        assert v != null;
-        return v.get(0);
+    @Contract(value = "null -> fail", pure = true)
+    public <T> T sPop(String key) {
+        return (T) redisTemplate.opsForSet().pop(key);
     }
 
     /**
@@ -172,13 +217,22 @@ public final class RedisUtils {
      *
      * @param key 键
      * @param value 值
-     * @return {@code null} 插入失败
+     * @return 插入元素的个数
      */
     @Contract("null,_ -> fail")
-    public Long setAdd(String key, Object... value) {
+    public Long sSet(String key, Object... value) {
         return redisTemplate.opsForSet().add(key, value);
     }
 
+    /**
+     * <p>
+     * 创建 Redis Set 集合之前会先删除具有相同键的集合。
+     * </p>
+     *
+     * @param key 键
+     * @param values 值
+     */
+    @Contract(value = "null,_ -> fail")
     public void unmodifiableSet(String key, Object... values) {
         redisTemplate.delete(key);
         redisTemplate.opsForSet().add(key, values);
@@ -191,11 +245,24 @@ public final class RedisUtils {
      *
      * @param key 键
      * @param values 值
-     * @return {@code null} 插入失败
+     * @return 删除的数据条数
      */
     @Contract("null,_ -> fail")
-    public Long setRemove(String key, Object[] values) {
+    public Long sRemove(String key, Object[] values) {
         return redisTemplate.opsForSet().remove(key, values);
+    }
+
+    /**
+     * <p>
+     * 从 Redis Set 集合中删除数据。
+     * </p>
+     *
+     * @param key 键
+     * @param value 值
+     */
+    @Contract("null,_ -> fail")
+    public void sRemove(String key, Object value) {
+        redisTemplate.opsForSet().remove(key, value);
     }
 
     /**
@@ -207,8 +274,8 @@ public final class RedisUtils {
      * @return 集合中的值
      */
     @Contract(value = "null -> fail", pure = true)
-    public Set<Object> setMembers(String key) {
-        return redisTemplate.opsForSet().members(key);
+    public Set<Object> sMembers(String key) {
+        return Optional.ofNullable(redisTemplate.opsForSet().members(key)).orElse(Collections.emptySet());
     }
 
     /**
@@ -220,8 +287,8 @@ public final class RedisUtils {
      * @return 合并之后的集合
      */
     @SuppressWarnings("unchecked")
-    @Contract(pure = true)
-    public <T> Set<T> setUnion(Collection<String> keys) {
+    @Contract(value = "null -> fail", pure = true)
+    public <T> Set<T> sUnion(Collection<String> keys) {
         return (Set<T>) redisTemplate.opsForSet().union(keys);
     }
 

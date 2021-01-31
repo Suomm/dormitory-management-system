@@ -16,12 +16,14 @@
 
 package xyz.tran4f.dms.utils;
 
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.Calendar;
 
 /**
  * <p>
- * 2021/1/25
+ * 处理日期的工具类。
  * </p>
  *
  * @author 王帅
@@ -33,9 +35,46 @@ public final class DateUtils {
     }
 
     private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+    private static final long MILLISECOND = 1000 * 60 * 60 * 24 * 7;
 
+    /**
+     * <p>
+     * 按照<b>yyyy-MM-dd</b>的格式格式化日期。
+     * </p>
+     *
+     * @return 日期格式化字符串
+     */
     public static String now() {
         return FORMATTER.format(LocalDate.now());
+    }
+
+    public static String format(long epochMilli) {
+        return FORMATTER.format(Instant.ofEpochMilli(epochMilli));
+    }
+
+    /**
+     * <p>
+     * 截取当前年份的前两位数。
+     * </p>
+     *
+     * @return 世纪数减一
+     */
+    public static String subYear() {
+        return Integer.toString(LocalDate.now().getYear()).substring(0, 2);
+    }
+
+    public static long parse(CharSequence text) {
+        return FORMATTER.parse(text, LocalDate::from).toEpochDay();
+    }
+
+    public static String weekOfSemester(long begin) {
+        long now = System.currentTimeMillis();
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(begin);
+        calendar.setFirstDayOfWeek(Calendar.MONDAY);
+        calendar.add(Calendar.DATE, -calendar.get(Calendar.DAY_OF_WEEK));
+        begin = calendar.getTime().getTime();
+        return TextUtils.format((int) ((now - begin) / MILLISECOND + 1));
     }
 
 }

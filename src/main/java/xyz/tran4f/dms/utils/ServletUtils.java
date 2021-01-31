@@ -42,6 +42,13 @@ public final class ServletUtils {
         return (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
     }
 
+    /**
+     * <p>
+     * 用户登陆成功之后获取 SESSION 域中的用户信息。
+     * </p>
+     *
+     * @return 用户信息
+     */
     public static User getUser() {
         return (User) servletRequestAttributes().getAttribute(WEB_SESSION_USER, RequestAttributes.SCOPE_SESSION);
     }
@@ -51,10 +58,8 @@ public final class ServletUtils {
      * 获取浏览器地址栏的根目录。满足：{@code http://localhost:8080/dms} 样式。
      * 具体参考以下代码：
      * <blockquote><pre>
-     *     request.getScheme() +
-     *     "://" +
-     *     request.getServerName() +
-     *     ":" +
+     *     request.getScheme() + "://" +
+     *     request.getServerName() + ":" +
      *     request.getServerPort() +
      *     request.getContextPath()
      * </pre></blockquote>

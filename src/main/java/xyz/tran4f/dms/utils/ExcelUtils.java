@@ -270,6 +270,11 @@ public final class ExcelUtils {
         return pdfCell;
     }
 
+    /**
+     * <p>
+     * 创建 PDF 文档表格元素中的空单元格。
+     * </p>
+     */
     private static Cell fillEmptyCell(boolean isOdd, float colWidth) {
         return createPdfBody(StringUtils.EMPTY, isOdd, colWidth);
     }

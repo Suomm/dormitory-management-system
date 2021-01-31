@@ -24,7 +24,7 @@ import java.lang.reflect.Method;
 
 /**
  * <p>
- * 2021/1/20
+ * Wrapper 条件构造工具类。
  * </p>
  *
  * @author 王帅

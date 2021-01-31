@@ -16,12 +16,10 @@
 
 package xyz.tran4f.dms.utils;
 
-import xyz.tran4f.dms.exception.CaptchaException;
+import xyz.tran4f.dms.exception.InvalidOrOverdueException;
 import xyz.tran4f.dms.pojo.Captcha;
 
 import java.util.Random;
-
-import static xyz.tran4f.dms.attribute.ExceptionAttribute.*;
 
 /**
  * <p>
@@ -65,7 +63,7 @@ public final class CaptchaUtils {
      * 该验证码的过期时间。
      * </p>
      *
-     * @param length 生成验证码的长度
+     * @param length 验证码的长度
      * @param time 验证码过期时间
      * @return 验证码封装类
      */
@@ -73,6 +71,14 @@ public final class CaptchaUtils {
         return new Captcha(getCode(length), System.currentTimeMillis() + time);
     }
 
+    /**
+     * <p>
+     * 根据指定的长度生成一个随机包含数字、小写字母、大写字母的验证码。
+     * </p>
+     *
+     * @param length 验证码的长度
+     * @return 生成的验证码
+     */
     public static String getCode(int length) {
         // 随机数生成器，用于取出字符数组中的元素
         Random random = new Random();
@@ -90,20 +96,13 @@ public final class CaptchaUtils {
      *
      * @param before 之前保存的验证码
      * @param after 之后要比对的验证码
-     * @exception CaptchaException 检查失败抛出此异常
+     * @exception InvalidOrOverdueException 检查失败抛出此异常
      */
-    public static void checkCaptcha(Captcha before, Captcha after) throws CaptchaException {
-        // 验证码为空，用户还未发送验证码
-        if (before == null) {
-            throw new CaptchaException(USER_CAPTCHA_MISSING);
-        }
-        // 比对验证码过期时间
-        if (before.getOutDate() <= after.getOutDate()) {
-            throw new CaptchaException(USER_CAPTCHA_OVERDUE);
-        }
-        // 比对验证码是否正确
-        if (!before.getCode().equals(after.getCode())) {
-            throw new CaptchaException(USER_CAPTCHA_WRONG);
+    public static void checkCaptcha(Captcha before, Captcha after) throws InvalidOrOverdueException {
+        if (before == null ||
+                before.getOutDate() <= after.getOutDate() ||
+                !before.getCode().equals(after.getCode())) {
+            throw new InvalidOrOverdueException("CaptchaUtils.incorrectKey");
         }
     }
 
