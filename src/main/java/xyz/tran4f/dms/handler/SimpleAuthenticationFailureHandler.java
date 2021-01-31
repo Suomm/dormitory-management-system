@@ -16,11 +16,9 @@
 
 package xyz.tran4f.dms.handler;
 
-import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
-import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
-import xyz.tran4f.dms.attribute.WebAttribute;
-import xyz.tran4f.dms.pojo.SecurityUser;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -29,23 +27,21 @@ import java.io.IOException;
 
 /**
  * <p>
- * 授权成功后将用户信息保存到 Session 域中。
+ * 授权失败处理。
  * </p>
  *
  * @author 王帅
  * @since 1.0
  */
-public class SimpleAuthenticationSuccessHandler implements AuthenticationSuccessHandler {
+public class SimpleAuthenticationFailureHandler implements AuthenticationFailureHandler {
 
     @Override
-    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
-            Authentication authentication) {
-        // 获取 SecurityUser 对象，里面有封装好的 User 对象
-        SecurityUser principal = (SecurityUser) authentication.getPrincipal();
-        // 将 User 对象存入 Session 域中，命名为 WEB_SESSION_USER
-        request.getSession().setAttribute(WebAttribute.WEB_SESSION_USER, principal.getUser());
-        // 设置相应状态码
-        response.setStatus(HttpServletResponse.SC_OK);
+    public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response,
+            AuthenticationException exception) throws IOException {
+        // 发送 202 状态码和详细信息
+        response.setContentType("text/html;charset=utf-8");
+        response.setStatus(HttpServletResponse.SC_ACCEPTED);
+        response.getWriter().print(exception.getMessage());
     }
 
 }
