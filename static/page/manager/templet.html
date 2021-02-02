@@ -4,9 +4,9 @@
 	</blockquote>
 	<div id="warnings" class="layui-hide">
 		<fieldset class="layui-elem-field layui-field-title">
-			<legend>错误警告</legend>
+			<legend>注意</legend>
 		</fieldset>
-		<blockquote class="layui-elem-quote layui-quote-nm layui-text"></blockquote>
+		<blockquote id="message" class="layui-elem-quote layui-quote-nm layui-text"></blockquote>
 	</div>
 	<fieldset class="layui-elem-field layui-field-title">
 		<legend>文件下载</legend>
@@ -18,10 +18,11 @@
 		var $ = layui.jquery;
 		$(document).ready(function () {
 			$.get("/task/get/warns", function (warns) {
-				var w = $('#warnings');
-				w.removeClass('layui-hide');
-				warns.forEach(function (v) {
-					w.append(v + '<br>');
+				if (warns.length > 0)
+					$('#warnings').removeClass('layui-hide');
+				var m = $('#message');
+				warns.forEach(function (v, i) {
+					m.append(`(${i + 1}) ${v}<br>`);
 				});
 			});
 		});

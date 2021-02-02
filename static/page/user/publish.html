@@ -28,6 +28,7 @@
 		$(document).ready(function () {
 			$.get('/task/draft', function (values) {
 				var editor = $('#LAY_demo_editor');
+				// 编辑器初始化
 				values.forEach(function (e) {
 					editor.append(`&lt;p&gt;&nbsp;&nbsp;&nbsp;&nbsp;${e}&lt;/p&gt;`);
 					// 渲染表单

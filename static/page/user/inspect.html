@@ -43,7 +43,7 @@
 				layer.confirm('确认完成么', function(index) {
 					$.post('/task/finish/' + obj.data.taskId, function (status) {
 						if (status) {
-							table.reload('#currentTableId');
+							table.reload('currentTableId');
 							layer.msg("操作成功", {icon: 1});
 						} else {
 							layer.msg("操作失败", {icon: 5, shift: 6});

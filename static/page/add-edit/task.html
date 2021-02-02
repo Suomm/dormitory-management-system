@@ -1,21 +1,14 @@
 <div class="layuimini-main">
-	<div class="layui-form layuimini-form" style="margin-left: -90px;">
-		<div class="layui-form-item">
-			<label class="layui-form-label required">周次：</label>
-			<div class="layui-input-block">
-				<div id="week" class="layui-form-mid layui-word-aux"></div>
+	<blockquote class="layui-elem-quote layui-quote-nm layui-text" id="week"></blockquote>
+	<fieldset class="layui-elem-field">
+		<legend>宿舍列表</legend>
+		<div class="layui-form layuimini-form layui-field-box">
+			<div id="building-list" class="layui-form-item"></div>
+			<div class="layui-form-item">
+				<button class="layui-btn layui-btn layui-btn-normal" id="saveBtn">确认保存</button>
 			</div>
 		</div>
-		<div class="layui-form-item">
-			<label class="layui-form-label required">列表：</label>
-			<div class="layui-input-block" id="building-list"></div>
-		</div>
-		<div class="layui-form-item">
-			<div class="layui-input-block">
-			<button class="layui-btn layui-btn layui-btn-normal" lay-submit lay-filter="saveBtn">确认保存</button>
-			</div>
-		</div>
-	</div>
+	</fieldset>
 </div>
 <script>
 	layui.use('template', function() {
@@ -35,8 +28,7 @@
 			});
 		});
 		//监听提交
-		form.on('submit(saveBtn)', function(data) {
-			var data = data.field;
+		$('#saveBtn').click(function() {
 			var buildings = [];
 			$('input[type=checkbox]:checked').each(function() {
 				buildings.push($(this).val());
