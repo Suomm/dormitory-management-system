@@ -17,9 +17,17 @@
 package xyz.tran4f.dms.utils;
 
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import xyz.tran4f.dms.attribute.RedisAttribute;
 
+import javax.xml.transform.Source;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.util.Arrays;
+
+import static xyz.tran4f.dms.attribute.RedisAttribute.KEY_DRAFT;
 
 /**
  * <p>
@@ -36,6 +44,11 @@ public class DateUtilsTest {
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
         long start = format.parse("2020-12-31").getTime();
         System.out.println(DateUtils.weekOfSemester(start));
+    }
+
+    @Test
+    public void parse() {
+        System.out.println(DateUtils.format(DateUtils.parse("2020-02-02")));
     }
 
 }
