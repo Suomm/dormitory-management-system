@@ -33,7 +33,6 @@ import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static xyz.tran4f.dms.attribute.RedisAttribute.*;
 import static xyz.tran4f.dms.attribute.WebAttribute.WEB_PORTFOLIO_ASSETS;
@@ -79,7 +78,7 @@ public class TaskStatusListener {
      * 生成并保存的宿舍卫生检查表（本科生或研究生）。
      * </p>
      */
-    private static final String NOTES_FILE = WEB_PORTFOLIO_STORES.concat("化学学院宿舍卫生检查表{0}{1}.xlsx");
+    private static final String NOTES_FILE = WEB_PORTFOLIO_STORES.concat("{0,number,#}/化学学院宿舍卫生检查表{1}{2}.xlsx");
 
     /**
      * <p>
@@ -120,53 +119,43 @@ public class TaskStatusListener {
      */
     @RabbitListener(queues = {RabbitAttribute.QUEUE_TASK})
     public void accomplish(Integer taskId) throws IOException {
-        // 获取所有要检查的宿舍
-        List<String> buildings = redisUtils.lRange(KEY_BUILDING_LIST);
-        // 将获得的数组转换成流的形式
-        Stream<String> stream = buildings.stream();
         // 获取所有的查宿记录信息
-        Set<Note> notes = union(stream.map(PREFIX_TASK_RECORD::concat));
+        List<Note> notes = redisUtils.values(KEY_TASK_RECORD);
         // 生成检查时间
         String time = DateUtils.now();
         // 需要打包的文件
-        List<String> files = Arrays.asList(DIRTY_DIR, CLEAN_DIR);
+        List<String> files = new ArrayList<>();
+        files.add(DIRTY_DIR);
+        files.add(CLEAN_DIR);
         // 生成本周化学学院宿舍卫生检查表
         for (Type v : Type.values()) {
-            Stream<Note> s = notes.stream().filter(e -> e.getType() == v.type);
+            List<Note> collect = notes.stream()
+                    .filter(e -> e.getType() == v.type)
+                    .sorted()
+                    .collect(Collectors.toList());
             // 没有该类型宿舍跳过生成
-            if (s.count() == 0) { break; }
-            String filename = MessageFormat.format(NOTES_FILE, time, v.decl);
+            if (collect.size() == 0) { break; }
+            String filename = MessageFormat.format(NOTES_FILE, taskId, time, v.decl);
             files.add(filename);
-            ExcelUtils.writeWithTemplate(filename, s.sorted(Comparator.comparing(Note::getRoom)).collect(Collectors.toList()));
+            ExcelUtils.writeWithTemplate(filename, collect);
         }
         // 脏乱宿舍信息
-        Set<Dormitory> dirty = union(stream.map(PREFIX_DIRTY_SET::concat));
+        List<Dormitory> dirty = redisUtils.values(KEY_DIRTY);
         // 优秀宿舍信息
-        Set<Dormitory> clean = union(stream.map(PREFIX_CLEAN_SET::concat));
+        List<Dormitory> clean = redisUtils.values(KEY_CLEAN);
         // 分类归纳上传的图片
         List<String> message = new ArrayList<>();
         copyDirectory(dirty, "脏乱宿舍", message);
         copyDirectory(clean, "优秀宿舍", message);
         redisUtils.set(KEY_WARNINGS, message);
+        // 新闻稿图片名
+        String name = MessageFormat.format(IMAGE_FILE, taskId);
         // 生成新闻稿图片
-        ExcelUtils.data2Image(MessageFormat.format(IMAGE_FILE, taskId), dirty, clean);
+        ExcelUtils.data2Image(name, dirty, clean);
         // 生成压缩文件
         ZipUtils.compress(MessageFormat.format(CHART_ZIP, taskId, time), files);
         ZipUtils.compress(MessageFormat.format(PHOTO_ZIP, taskId), DIRTY_DIR, CLEAN_DIR);
-        ZipUtils.compress(MessageFormat.format(DRAFT_ZIP, taskId), IMAGE_FILE, DIRTY_DIR, CLEAN_DIR);
-    }
-
-    /**
-     * <p>
-     * 求 Redis Set 集合的交集。
-     * </p>
-     *
-     * @param stream 数据流
-     * @param <T> 数据类型
-     * @return 各集合的交集
-     */
-    private <T> Set<T> union(Stream<String> stream) {
-        return redisUtils.sUnion(stream.collect(Collectors.toList()));
+        ZipUtils.compress(MessageFormat.format(DRAFT_ZIP, taskId), name, DIRTY_DIR, CLEAN_DIR);
     }
 
     /**
@@ -178,7 +167,7 @@ public class TaskStatusListener {
      * @param name 文件夹名称
      * @param message 存放警告的集合
      */
-    private void copyDirectory(Set<Dormitory> dormitories, String name, List<String> message) {
+    private void copyDirectory(List<Dormitory> dormitories, String name, List<String> message) {
         File destFile = new File(WEB_PORTFOLIO_ASSETS.concat(name));
         FileUtils.deleteQuietly(destFile);
         dormitories.stream().map(Dormitory::getRoom).forEach(e -> {
@@ -187,11 +176,11 @@ public class TaskStatusListener {
                 message.add("宿舍" + e + "被标记为" + name + "，但未上传任何图片");
             } else {
                 int length = file.list().length;
-                if (length != 3) {
+                if (length < 3) {
                     message.add("宿舍" + e + "被标记为" + name + "，但只上传了" + length + "张图片");
                 }
                 try {
-                    FileUtils.copyDirectory(file, destFile);
+                    FileUtils.copyDirectoryToDirectory(file, destFile);
                 } catch (IOException ignored) {
                     // 忽略异常的抛出
                 }

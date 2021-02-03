@@ -25,7 +25,7 @@ import org.springframework.security.authentication.event.AuthenticationFailureBa
 import org.springframework.security.authentication.event.AuthenticationSuccessEvent;
 import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.stereotype.Component;
-import xyz.tran4f.dms.pojo.SecurityUser;
+import xyz.tran4f.dms.pojo.User;
 import xyz.tran4f.dms.utils.RedisUtils;
 
 import java.util.concurrent.TimeUnit;
@@ -111,9 +111,9 @@ public class UserLoginListener {
      * @param nonLock  {@code false} 锁定用户，{@code true} 解锁用户
      */
     private void setUserNonLocked(String username, boolean nonLock) {
-        SecurityUser securityUser = (SecurityUser) userDetailsManager.loadUserByUsername(username);
-        securityUser.setAccountNonLocked(nonLock);
-        userDetailsManager.updateUser(securityUser);
+        User user = (User) userDetailsManager.loadUserByUsername(username);
+        user.setAccountNonLocked(nonLock);
+        userDetailsManager.updateUser(user);
     }
 
     /**
