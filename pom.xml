@@ -58,10 +58,6 @@
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-thymeleaf</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-security</artifactId>
         </dependency>
         <dependency>
@@ -164,57 +160,6 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <version>2.4.0</version>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-javadoc-plugin</artifactId>
-                <version>3.2.0</version>
-                <configuration>
-                    <doclint>none</doclint>
-                </configuration>
-            </plugin>
-            <plugin>
-                <!-- YUI Compressor Maven 压缩插件 -->
-                <groupId>net.alchim31.maven</groupId>
-                <artifactId>yuicompressor-maven-plugin</artifactId>
-                <version>1.5.1</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>compress</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <!-- 读取 JS，CSS 文件采用 UTF-8 编码 -->
-                    <encoding>UTF-8</encoding>
-                    <!-- 不显示JS可能的错误 -->
-                    <jswarn>false</jswarn>
-                    <!-- 若存在已压缩的文件，会先对比源文件是否有改动，有改动便压缩，无改动就不压缩 -->
-                    <force>false</force>
-                    <!-- 在指定的列号后插入新行 -->
-                    <linebreakpos>-1</linebreakpos>
-                    <!-- 压缩之前先执行聚合文件操作 -->
-                    <preProcessAggregates>true</preProcessAggregates>
-                    <!-- 压缩后保存文件后缀 无后缀 -->
-                    <nosuffix>true</nosuffix>
-                    <!-- 源目录，即需压缩的根目录 -->
-                    <sourceDirectory>src/main/static</sourceDirectory>
-                    <!-- 输出目录，即压缩后的目录-->
-                    <outputDirectory>target/classes</outputDirectory>
-                    <!-- 强制压缩 -->
-                    <force>true</force>
-                    <!-- 压缩 JS 和 CSS 文件 -->
-                    <includes>
-                        <include>**/*.js</include>
-                        <include>**/*.css</include>
-                    </includes>
-                    <!-- 以下目录和文件不会被压缩 -->
-                    <excludes>
-                        <exclude>**/*.min.js</exclude>
-                        <exclude>**/*.min.css</exclude>
-                    </excludes>
-                </configuration>
             </plugin>
         </plugins>
     </build>
