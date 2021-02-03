@@ -18,22 +18,20 @@ package xyz.tran4f.dms.handler;
 
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
-import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 /**
  * <p>
- * 授权失败处理。
+ * Ajax 请求授权失败处理。
  * </p>
  *
  * @author 王帅
  * @since 1.0
  */
-public class SimpleAuthenticationFailureHandler implements AuthenticationFailureHandler {
+public class AjaxAuthenticationFailureHandler implements AuthenticationFailureHandler {
 
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response,
