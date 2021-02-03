@@ -21,9 +21,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import xyz.tran4f.dms.mapper.UserMapper;
-import xyz.tran4f.dms.pojo.SecurityUser;
 import xyz.tran4f.dms.pojo.User;
 import xyz.tran4f.dms.utils.I18nUtils;
 
@@ -35,7 +33,6 @@ import xyz.tran4f.dms.utils.I18nUtils;
  * @author 王帅
  * @since 1.0
  */
-@Transactional
 @Service("userManager")
 public class UserDetailsManagerImpl implements UserDetailsManager {
 
@@ -62,7 +59,7 @@ public class UserDetailsManagerImpl implements UserDetailsManager {
         if (user == null) {
             throw new UsernameNotFoundException(i18nUtils.getMessage("UserDetailsManagerImpl.userNotFound"));
         }
-        return new SecurityUser(user, AuthorityUtils.createAuthorityList(user.getRole()));
+        return user.setAuthorities(AuthorityUtils.createAuthorityList(user.getRole()));
     }
 
     @Override
@@ -71,9 +68,10 @@ public class UserDetailsManagerImpl implements UserDetailsManager {
 
     @Override
     public void updateUser(UserDetails user) {
+        User u = (User) user;
         userMapper.updateById(User.builder()
-                .id(user.getUsername())
-                .locked(!user.isAccountNonLocked())
+                .id(u.getId())
+                .accountNonLocked(u.isAccountNonLocked())
                 .build());
     }
 
