@@ -18,17 +18,16 @@ package xyz.tran4f.dms.controller;
 
 import io.swagger.annotations.*;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import xyz.tran4f.dms.exception.BadCredentialException;
 import xyz.tran4f.dms.exception.InvalidOrOverdueException;
 import xyz.tran4f.dms.pojo.Captcha;
 import xyz.tran4f.dms.pojo.User;
 import xyz.tran4f.dms.service.UserService;
 import xyz.tran4f.dms.utils.CaptchaUtils;
-import xyz.tran4f.dms.utils.I18nUtils;
 import xyz.tran4f.dms.utils.MD5Utils;
 import xyz.tran4f.dms.utils.ServletUtils;
 import xyz.tran4f.dms.validation.constraints.Id;
@@ -36,11 +35,12 @@ import xyz.tran4f.dms.validation.constraints.Password;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import java.util.Locale;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 import static xyz.tran4f.dms.attribute.RedisAttribute.*;
-import static xyz.tran4f.dms.attribute.WebAttribute.WEB_LAST_EXCEPTION;
 
 /**
  * <p>
@@ -52,7 +52,7 @@ import static xyz.tran4f.dms.attribute.WebAttribute.WEB_LAST_EXCEPTION;
  */
 @Slf4j
 @Validated
-@Controller
+@RestController
 @RequestMapping("/user")
 @Api(tags = "用户模块的程序接口")
 public class UserController extends BaseController<UserService> {
@@ -63,13 +63,6 @@ public class UserController extends BaseController<UserService> {
      * </p>
      */
     private static final String DELIMITER = "$";
-
-    private final I18nUtils i18nUtils;
-
-    public UserController(I18nUtils i18nUtils) {
-        super();
-        this.i18nUtils = i18nUtils;
-    }
 
     // === 注册用户以及忘记密码之后重置密码请求操作 ===
 
@@ -83,7 +76,6 @@ public class UserController extends BaseController<UserService> {
      * @param validateCode 邀请码
      * @return {@code true} 注册用户成功，{@code false} 注册用户失败
      */
-    @ResponseBody
     @PostMapping("register")
     @ApiOperation(value = "注册新用户", notes = "处理用户注册请求，将新用户信息写入数据库，并重定向到登陆界面。")
     public boolean register(@ApiParam(value = "用户信息", required = true) @Validated User user,
@@ -112,11 +104,10 @@ public class UserController extends BaseController<UserService> {
      * </p>
      *
      * @param id 学号
-     * @return 提示用户查看邮件的页面
      */
     @PostMapping("forget-password/{id}")
     @ApiOperation(value = "忘记密码操作", notes = "输入学号获取邮箱重置密码链接。")
-    public String forgetPassword(@PathVariable @ApiParam(value = "用户学号", required = true) @Id String id) {
+    public void forgetPassword(@PathVariable @ApiParam(value = "用户学号", required = true) @Id String id) {
         // 查询数据库中是否包含改用户
         User user = service.findUser(id);
         // 生成唯一密匙（UUID）
@@ -126,18 +117,16 @@ public class UserController extends BaseController<UserService> {
         // 生成密匙键 ID$TIME$UUID
         String key = user.getId() + DELIMITER + outDate + DELIMITER + secretKey;
         // 生成数字签名，加密 KEY
-        String digitalSignature = MD5Utils.encode(key);
+        String digitalSignature = MD5Utils.encode(key).toUpperCase();
         // 存入 Redis 缓存，设置十分钟后过期
         redisUtils.set(PREFIX_RESET_PASSWORD.concat(user.getId()), new Captcha(secretKey, outDate), 10, TimeUnit.MINUTES);
         // 拼接请求路径
-        String resetPassHref = ServletUtils.getBasePath() + "/user/reset-password/" + user.getId() + "/" + digitalSignature;
+        String resetPassHref = ServletUtils.getBasePath() + "/reset-password.html" + "?id=" + user.getId() + "&sid=" + digitalSignature;
         // 要发送的邮件内容，默认一 HTML 的格式发送
         String emailContent = "请勿回复本邮件.点击下面的链接,重设密码<br/><a href=" + resetPassHref +
                 " target='_BLANK'>点击我重新设置密码</a><br/>TIPS:本邮件超过10分钟,链接将会失效，需要重新申请'找回密码'";
         // 发送找回密码的邮件
         sendEmail("找回密码", emailContent, user.getEmail());
-        // 转到修改密码成功界面
-        return "success";
     }
 
     /**
@@ -149,26 +138,15 @@ public class UserController extends BaseController<UserService> {
      * @param sid 密匙
      * @return 重置密码界面
      */
-    @GetMapping("reset-password/{id}/{sid}")
+    @PostMapping("checkup")
     @ApiOperation(value = "重置密码检查", notes = "检查重置密码的密匙是否正确，正确则进入重置密码界面。")
-    public String checkup(@ApiParam(value = "密匙", required = true) @PathVariable @Id String id,
-                          @ApiParam(value = "学号", required = true) @PathVariable String sid,
-                          RedirectAttributes attr) {
+    public boolean checkup(@ApiParam(value = "密匙", required = true) @Id String id,
+                           @ApiParam(value = "学号", required = true) @NotNull String sid) {
         // 获取之前存入缓存的验证链接
         Captcha captcha = redisUtils.get(PREFIX_RESET_PASSWORD.concat(id));
-        // 无法找到匹配的用户
-        if (captcha == null) { return "redirect:/forget-password.html"; }
-        // 连接过期了
-        if (captcha.getOutDate() <= System.currentTimeMillis()) {
-            attr.addFlashAttribute(WEB_LAST_EXCEPTION, i18nUtils.getMessage("UserController.expired"));
-            return "redirect:/forget-password.html";
-        }
-        // 生成密匙进行比对
-        String digitalSignature = id + DELIMITER + captcha.getOutDate() + DELIMITER + captcha.getCode();
-        // 密匙不完整
-        if (!MD5Utils.matches(digitalSignature, sid)) { return "redirect:/forget-password.html"; }
-        // 解析成功转到重置密码界面
-        return "reset-password";
+        // 没有输入自己的学号以及链接过期了
+        return captcha != null && captcha.getOutDate() > System.currentTimeMillis() &&
+                MD5Utils.matches(id + DELIMITER + captcha.getOutDate() + DELIMITER + captcha.getCode(), sid);
     }
 
     /**
@@ -180,7 +158,6 @@ public class UserController extends BaseController<UserService> {
      * @param password 重置后的密码
      * @return {@code true} 更改密码成功，{@code false} 更改密码失败
      */
-    @ResponseBody
     @PostMapping("reset-password/{id}")
     @ApiOperation(value = "重置密码请求", notes = "重置密码操作，将新密码写入数据库，自动重定向到登陆界面")
     public boolean resetPassword(@ApiParam(value = "学号", required = true) @PathVariable @Id String id,
@@ -203,7 +180,6 @@ public class UserController extends BaseController<UserService> {
      * @param id 学号
      * @param email 邮箱
      */
-    @ResponseBody
     @PostMapping("getCaptcha")
     @ApiOperation(value = "获取邮箱验证码", notes = "发送注册验证码到邮箱")
     public void getCaptcha(@ApiParam(value = "学号", required = true) @Id String id,
@@ -220,6 +196,11 @@ public class UserController extends BaseController<UserService> {
 
     // === 用户登陆成功之后更改相关信息操作 ===
 
+    @GetMapping("principal")
+    public User principal() {
+        return ServletUtils.getUser();
+    }
+
     /**
      * <p>
      * 更改用户密码。
@@ -230,7 +211,6 @@ public class UserController extends BaseController<UserService> {
      * @param newPassword 新密码
      * @return {@code true} 更改密码成功，{@code false} 更改密码失败
      */
-    @ResponseBody
     @PutMapping("change-password/{id}")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "id", value = "学号", required = true, defaultValue = "2030070002"),
@@ -255,7 +235,6 @@ public class UserController extends BaseController<UserService> {
      * @param emailCode 邮箱验证码
      * @return {@code true} 更改邮箱成功，{@code false} 更改邮箱失败
      */
-    @ResponseBody
     @PutMapping("change-email/{id}")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "id", value = "学号", required = true, defaultValue = "2030070002"),

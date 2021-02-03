@@ -20,9 +20,7 @@ import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.*;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -73,10 +71,13 @@ public class ManagerController extends BaseController<UserService> {
      * @return 数据分页对象
      */
     @GetMapping("page")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "current", value = "页码", required = true, example = "1", paramType = "query"),
+            @ApiImplicitParam(name = "size", value = "每页数据量", required = true, example = "10", paramType = "query"),
+            @ApiImplicitParam(name = "params", value = "查询信息", paramType = "query")
+    })
     @ApiOperation(value = "分页展示用户信息", notes = "获取用户所属年级、性别、学号、邮箱地址等信息。")
-    public Page<User> page(@ApiParam(value = "页码", required = true, example = "1") long current,
-                           @ApiParam(value = "每页数据量", required = true, example = "10") long size,
-                           @ApiParam(value = "查询信息") String params) {
+    public Page<User> page(Long current, Long size, String params) {
         QueryWrapper<User> wrapper;
         if (params != null) {
             wrapper = WrapperUtils.allEq(JSON.parseObject(params, User.class));

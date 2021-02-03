@@ -29,6 +29,7 @@ import org.springframework.security.access.annotation.Secured;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import xyz.tran4f.dms.attribute.RabbitAttribute;
+import xyz.tran4f.dms.exception.MissingAttributeException;
 import xyz.tran4f.dms.pojo.Dormitory;
 import xyz.tran4f.dms.pojo.Note;
 import xyz.tran4f.dms.pojo.Response;
@@ -38,11 +39,13 @@ import xyz.tran4f.dms.utils.DateUtils;
 import xyz.tran4f.dms.utils.ServletUtils;
 import xyz.tran4f.dms.utils.WordUtils;
 
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static xyz.tran4f.dms.attribute.RedisAttribute.*;
@@ -126,6 +129,7 @@ public class TaskController extends BaseController<TaskService> {
     @ApiOperation(value = "设置任务开始日期")
     public void setDate(@ApiParam(value = "起始日期", required = true, example = "2020-09-24")
                             @NotNull String date) {
+        System.out.println(DateUtils.parse(date));
         redisUtils.set(KEY_SEMESTER_BEGIN, DateUtils.parse(date));
     }
 
@@ -152,7 +156,7 @@ public class TaskController extends BaseController<TaskService> {
      * @return 警告信息
      */
     @GetMapping("get/warns")
-    @ApiOperation(value = "获取任务开始日期")
+    @ApiOperation(value = "获取处理任务产生的警告")
     public List<String> getWarns() {
         return redisUtils.orElseThrow(KEY_WARNINGS);
     }
@@ -170,9 +174,11 @@ public class TaskController extends BaseController<TaskService> {
     @ApiOperation(value = "保存新闻稿内容，并生成新闻稿文件")
     public void publish(@RequestBody @NotEmpty String[] contents) throws IOException {
         String week = redisUtils.orElseThrow(KEY_ACTIVE_WEEK);
+        Integer taskId = redisUtils.orElseThrow(KEY_TASK_ID);
         redisUtils.set(KEY_DRAFT, Arrays.asList(contents));
         String name = "化学学院第" + week + "周宿舍文明检查周报";
-        WordUtils.create(WEB_PORTFOLIO_STORES + name + ".docx", "【" + name + "】", contents);
+        WordUtils.create(WEB_PORTFOLIO_STORES + taskId + "/" + name + ".docx",
+                "【" + name + "】", contents);
     }
 
     /**
@@ -187,7 +193,7 @@ public class TaskController extends BaseController<TaskService> {
     public Response getWeek() {
         Long begin = redisUtils.get(KEY_SEMESTER_BEGIN);
         if (begin == null) {
-            return Response.error("请设置学期开始时间");
+            return Response.error("请设置学期开始日期");
         }
         if (begin > System.currentTimeMillis()) {
             return Response.error("请在学期开始之后发布任务");
@@ -214,16 +220,15 @@ public class TaskController extends BaseController<TaskService> {
         // 取到周次信息
         String week = response.getMsg();
         // 保存任务信息并返回任务 ID 列表
-        List<Integer> idList = service.create(week, buildings);
+        List<Integer> idList = service.create("第" + week + "周", buildings);
         // 设置当前周次
         redisUtils.set(KEY_ACTIVE_WEEK, week);
+        // 设置当前周任务菜单 ID
+        redisUtils.set(KEY_TASK_ID, idList.remove(0));
         // 存放任务列表
         redisUtils.sSet(KEY_ACTIVE_TASK, idList.toArray());
         // 初始化查宿记录
-        buildings.forEach(e -> {
-            redisUtils.lPush(KEY_BUILDING_LIST, e);
-            redisUtils.sSet(PREFIX_TASK_RECORD.concat(e), service.notes(e));
-        });
+        buildings.forEach(e -> redisUtils.hash(KEY_TASK_RECORD, service.notes(e)));
         // 删除原有的临时资源文件夹
         FileUtils.deleteQuietly(new File(WEB_PORTFOLIO_ASSETS));
         // 创建历史记录文件夹
@@ -239,12 +244,22 @@ public class TaskController extends BaseController<TaskService> {
      * </p>
      *
      * @param taskId 任务 ID
-     * @return 回滚数据条数
      */
     @PutMapping("rollback/{taskId}")
     @ApiOperation(value = "任务意外结束时回滚任务")
-    public Long rollback(@PathVariable Integer taskId) {
-        return redisUtils.sSet(KEY_ACTIVE_TASK, service.rollback(taskId));
+    public void rollback(@PathVariable Integer taskId) {
+        Object[] ids = service.rollback(taskId);
+        redisUtils.set(KEY_TASK_ID, ids[0]);
+        redisUtils.sSet(KEY_ACTIVE_TASK, ids[1]);
+    }
+
+    @GetMapping("/scores")
+    public List<Note> scores(@NotBlank String building) {
+        List<Note> values = redisUtils.values(KEY_TASK_RECORD);
+        return values.stream()
+                .filter(e -> building.equals(e.getBuilding()))
+                .sorted()
+                .collect(Collectors.toList());
     }
 
     /**
@@ -259,7 +274,7 @@ public class TaskController extends BaseController<TaskService> {
     @ApiOperation(value = "删除任务菜单和历史记录")
     public void delete(@PathVariable Integer taskId) {
         service.delete(taskId);
-        redisUtils.delete(Arrays.asList(KEY_ACTIVE_WEEK, KEY_ACTIVE_TASK, KEY_BUILDING_LIST, KEY_WARNINGS));
+        redisUtils.delete(Arrays.asList(KEY_ACTIVE_WEEK, KEY_WARNINGS));
         FileUtils.deleteQuietly(new File(WEB_PORTFOLIO_STORES + taskId));
     }
 
@@ -303,14 +318,14 @@ public class TaskController extends BaseController<TaskService> {
         service.findTask(taskId, false);
         redisUtils.sRemove(KEY_ACTIVE_TASK, taskId);
         int size = redisUtils.sSize(KEY_ACTIVE_TASK);
-        if (size == 1) {
+        if (size == 0) {
             // 更新父任务
-            Integer parentId = redisUtils.sPop(KEY_ACTIVE_TASK);
+            Integer parentId = redisUtils.get(KEY_TASK_ID);
             service.lambdaUpdate()
                     .eq(Task::getTaskId, parentId)
                     .set(Task::getComplete, true)
                     .update();
-            rabbitTemplate.convertAndSend(RabbitAttribute.QUEUE_TASK, taskId);
+            rabbitTemplate.convertAndSend(RabbitAttribute.QUEUE_TASK, parentId);
         }
         // 更新子任务
         return service.lambdaUpdate()
@@ -325,20 +340,29 @@ public class TaskController extends BaseController<TaskService> {
      * </p>
      *
      * @param notes 成绩信息
-     * @return 更新数据条数
      */
     @PostMapping("notes")
     @ApiOperation(value = "记录宿舍成绩")
-    public Long setNotes(@ApiParam(value = "成绩", required = true) @RequestBody @NotEmpty List<Note> notes) {
+    public void setNotes(@ApiParam(value = "成绩", required = true) @RequestBody @NotEmpty List<Note> notes) {
         String week = redisUtils.orElseThrow(KEY_ACTIVE_WEEK);
-        Date date = new Date();
-        String building = notes.get(0).getBuilding();
-        Object[] values = notes.stream().map(e -> e.setDate(date).setWeek(week)).toArray();
-        redisUtils.unmodifiableSet(PREFIX_CLEAN_SET.concat(building), notes.stream().filter(e -> e.getScore() >= 90)
-                .map(e -> Dormitory.builder().grade(e.getGrade()).room(e.getRoom()).build()).toArray());
-        redisUtils.unmodifiableSet(PREFIX_DIRTY_SET.concat(building), notes.stream().filter(e -> e.getScore() < 60)
-                .map(e -> Dormitory.builder().grade(e.getGrade()).room(e.getRoom()).build()).toArray());
-        return redisUtils.sSet(PREFIX_TASK_RECORD.concat(building), values);
+        Date date = new Date(); // 设置当前时间
+        redisUtils.hash(KEY_TASK_RECORD, notes.stream()
+                .map(e -> e.setDate(date).setWeek(week))
+                .collect(Collectors.toMap(Note::getRoom, Function.identity())));
+        // 获取所有宿舍的宿舍号
+        Object[] hashKeys = notes.stream().map(Note::getRoom).toArray();
+        // 删除上一次存入的优秀宿舍记录，并记录新的值
+        redisUtils.remove(KEY_CLEAN, hashKeys);
+        redisUtils.hash(KEY_CLEAN, notes.stream()
+                .filter(e -> e.getScore() >= 90)
+                .map(e -> Dormitory.builder().grade(e.getGrade()).room(e.getRoom()).build())
+                .collect(Collectors.toMap(Dormitory::getRoom, Function.identity())));
+        // 删除上一次存入的脏乱宿舍记录，并记录新的值
+        redisUtils.remove(KEY_DIRTY, hashKeys);
+        redisUtils.hash(KEY_DIRTY, notes.stream()
+                .filter(e -> e.getScore() < 60)
+                .map(e -> Dormitory.builder().grade(e.getGrade()).room(e.getRoom()).build())
+                .collect(Collectors.toMap(Dormitory::getRoom, Function.identity())));
     }
 
     /**
@@ -349,6 +373,9 @@ public class TaskController extends BaseController<TaskService> {
     @Scheduled(cron = "0 0 0 1 2,8 ?")
     public void clear() {
         service.remove(new QueryWrapper<>());
+        redisUtils.delete(Arrays.asList(KEY_ACTIVE_WEEK, KEY_ACTIVE_TASK,
+                KEY_TASK_ID, KEY_TASK_RECORD, KEY_SEMESTER_BEGIN,
+                KEY_WARNINGS, KEY_CLEAN, KEY_DIRTY));
         FileUtils.deleteQuietly(new File(WEB_PORTFOLIO_STORES));
         FileUtils.deleteQuietly(new File(WEB_PORTFOLIO_ASSETS));
         log.info("清理一个学期的历史记录文件成功");

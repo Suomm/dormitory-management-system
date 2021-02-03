@@ -16,6 +16,9 @@
 
 package xyz.tran4f.dms.controller;
 
+import lombok.Cleanup;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.ContentDisposition;
@@ -29,10 +32,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import springfox.documentation.annotations.ApiIgnore;
+import xyz.tran4f.dms.pojo.Response;
 
 import javax.validation.constraints.NotNull;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.net.URLEncoder;
 
 import static xyz.tran4f.dms.attribute.WebAttribute.WEB_PORTFOLIO_ASSETS;
@@ -62,15 +65,22 @@ public class FileController {
      * @throws IOException 保存文件失败抛出此异常
      */
     @PostMapping("/upload/{room}/{index}")
-    public String upload(MultipartFile file,
-                         @PathVariable String room,
-                         @PathVariable String index) throws IOException {
+    public Response upload(MultipartFile file,
+                           @PathVariable String room,
+                           @PathVariable String index) throws IOException {
         String filename = file.getOriginalFilename();
+        // TODO 上传文件过大处理
         assert filename != null;
         int begin = filename.lastIndexOf('.');
         filename = room + index + filename.substring(begin);
-        file.transferTo(new File(WEB_PORTFOLIO_ASSETS + room + "/" + filename));
-        return filename;
+        @Cleanup InputStream in = file.getInputStream();
+        // TODO 是否包含同名文件（不含后缀名）
+        File dest = new File(WEB_PORTFOLIO_ASSETS + room + "/" + filename);
+        FileUtils.forceMkdirParent(dest);
+        @Cleanup FileOutputStream fos = new FileOutputStream(dest);
+        @Cleanup BufferedOutputStream bos = new BufferedOutputStream(fos);
+        IOUtils.copy(in, bos);
+        return Response.ok(filename.substring(0, filename.lastIndexOf('.')));
     }
 
     /**

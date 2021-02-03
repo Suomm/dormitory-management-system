@@ -76,7 +76,7 @@ public class IndexController {
         }
 
         home.put("title", "首页");
-        home.put("href", "welcome.html");
+        home.put("href", "page/user/welcome.html");
 
         logo.put("title", "权益保障部");
         logo.put("image", "images/logo.png");

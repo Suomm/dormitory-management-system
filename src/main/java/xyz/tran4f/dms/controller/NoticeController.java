@@ -16,6 +16,7 @@
 
 package xyz.tran4f.dms.controller;
 
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
@@ -23,7 +24,7 @@ import xyz.tran4f.dms.pojo.Notice;
 import xyz.tran4f.dms.utils.RedisUtils;
 
 import java.util.Date;
-import java.util.Set;
+import java.util.List;
 
 import static xyz.tran4f.dms.attribute.RedisAttribute.KEY_NOTICE;
 
@@ -37,6 +38,7 @@ import static xyz.tran4f.dms.attribute.RedisAttribute.KEY_NOTICE;
  */
 @RestController
 @RequestMapping("/notice")
+@Api(tags = "公告模块的程序接口")
 @Secured({"ROLE_MANAGER","ROLE_ROOT"})
 public class NoticeController {
 
@@ -55,8 +57,8 @@ public class NoticeController {
      */
     @GetMapping("list")
     @ApiOperation(value = "获取所有公告内容")
-    public Set<Object> list() {
-        return redisUtils.sMembers(KEY_NOTICE);
+    public List<Object> list() {
+        return redisUtils.values(KEY_NOTICE);
     }
 
     /**
@@ -65,15 +67,16 @@ public class NoticeController {
      * </p>
      *
      * @param notice 公告信息
-     * @return 如果操作成功则返回 {@code 1}，否则操作失败。
+     * @return 总是 {@code true}
      */
     @PostMapping("save")
     @ApiOperation(value = "保存或更新公告信息")
-    public Long save(Notice notice) {
+    public boolean save(Notice notice) {
         if (notice.getDate() == null) {
             notice.setDate(new Date());
         }
-        return redisUtils.sSet(KEY_NOTICE, notice);
+        redisUtils.hash(KEY_NOTICE, notice.getDate(), notice);
+        return true;
     }
 
     /**
@@ -86,8 +89,8 @@ public class NoticeController {
      */
     @DeleteMapping("delete")
     @ApiOperation(value = "批量删除删除公告信息")
-    public Long delete(@RequestBody Notice[] notice) {
-        return redisUtils.sRemove(KEY_NOTICE, notice);
+    public Long delete(@RequestBody List<Notice> notice) {
+        return redisUtils.remove(KEY_NOTICE, notice.stream().map(Notice::getDate).toArray());
     }
 
 }
