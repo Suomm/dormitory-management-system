@@ -86,20 +86,4 @@ public class WebApplicationConfig implements WebMvcConfigurer {
         registry.addInterceptor(localeChangeInterceptor());
     }
 
-    /**
-     * <p>
-     * 注册视图解析器，路径参数一定要以 {@code /} 开头，表示绝对路径；视图名被视图解析器解析，
-     * 一定不能以 {@code /} 开头。不然打成 JAR 文件后运行，请求路径后会报
-     * {@link org.thymeleaf.exceptions.TemplateInputException} 异常！
-     * </p>
-     */
-    @Override
-    public void addViewControllers(ViewControllerRegistry registry) {
-        registry.addViewController("/").setViewName("dashboard");
-        registry.addViewController("/login.html").setViewName("login");
-        registry.addViewController("/forget-password.html").setViewName("forget-password");
-        registry.addViewController("/register.html").setViewName("register");
-        registry.addViewController("/reset-password.html").setViewName("reset-password");
-    }
-
 }

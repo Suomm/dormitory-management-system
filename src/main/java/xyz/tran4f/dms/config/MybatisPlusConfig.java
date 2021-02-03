@@ -17,6 +17,7 @@
 package xyz.tran4f.dms.config;
 
 import com.baomidou.mybatisplus.annotation.DbType;
+import com.baomidou.mybatisplus.autoconfigure.ConfigurationCustomizer;
 import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
 import org.springframework.context.annotation.Bean;
@@ -44,6 +45,16 @@ public class MybatisPlusConfig {
         // 手动指定数据库类型：Maria DB
         interceptor.addInnerInterceptor(new PaginationInnerInterceptor(DbType.MARIADB));
         return interceptor;
+    }
+
+    /**
+     * <p>
+     * 设置 MybatisConfiguration#useDeprecatedExecutor = false 避免缓存出现问题。
+     * </p>
+     */
+    @Bean
+    public ConfigurationCustomizer configurationCustomizer() {
+        return configuration -> configuration.setUseDeprecatedExecutor(false);
     }
 
 }

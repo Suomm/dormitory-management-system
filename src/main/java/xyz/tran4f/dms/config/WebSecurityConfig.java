@@ -31,11 +31,10 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
-import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl;
 import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
-import xyz.tran4f.dms.handler.SimpleAuthenticationFailureHandler;
-import xyz.tran4f.dms.handler.SimpleAuthenticationSuccessHandler;
+import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
+import xyz.tran4f.dms.handler.AjaxAuthenticationFailureHandler;
 
 import javax.sql.DataSource;
 
@@ -76,13 +75,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         return new BCryptPasswordEncoder();
     }
 
-    @Bean
-    public AuthenticationSuccessHandler authenticationSuccessHandler() {
-        return new SimpleAuthenticationSuccessHandler();
-    }
-
     public AuthenticationFailureHandler authenticationFailureHandler() {
-        return new SimpleAuthenticationFailureHandler();
+        return new AjaxAuthenticationFailureHandler();
     }
 
     /**
@@ -110,15 +104,18 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
+        http.csrf()
+                .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse());
         http.sessionManagement()
                 .maximumSessions(1)
                 .maxSessionsPreventsLogin(true);
         http.formLogin()
                 .loginProcessingUrl("/user/login")
                 .loginPage("/login.html")
-                .successHandler(authenticationSuccessHandler())
+//                .successHandler(authenticationSuccessHandler())
                 .failureHandler(authenticationFailureHandler());
         http.rememberMe()
+//                .authenticationSuccessHandler(authenticationSuccessHandler())
                 .tokenRepository(persistentTokenRepository())
                 .userDetailsService(userDetailsService);
         http.logout()
