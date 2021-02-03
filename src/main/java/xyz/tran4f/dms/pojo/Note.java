@@ -22,6 +22,7 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
 import lombok.experimental.Accessors;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -41,7 +42,7 @@ import java.util.Date;
 @Accessors(chain = true)
 @EqualsAndHashCode(of = "room")
 @ApiModel(value = "宿舍检查的成绩信息")
-public class Note implements Serializable {
+public class Note implements Serializable, Comparable<Note> {
 
     private static final long serialVersionUID = 5736959954440581339L;
 
@@ -70,5 +71,10 @@ public class Note implements Serializable {
 
     @ApiModelProperty(value = "宿舍类型")
     private Integer type;
+
+    @Override
+    public int compareTo(@NotNull Note o) {
+        return this.room.compareTo(o.room);
+    }
 
 }

@@ -17,11 +17,14 @@
 package xyz.tran4f.dms.pojo;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
 import lombok.experimental.Accessors;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 import xyz.tran4f.dms.validation.constraints.Gender;
 import xyz.tran4f.dms.validation.constraints.Id;
 import xyz.tran4f.dms.validation.constraints.Password;
@@ -29,6 +32,7 @@ import xyz.tran4f.dms.validation.constraints.Password;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
+import java.util.Collection;
 
 /**
  * <p>
@@ -45,7 +49,7 @@ import java.io.Serializable;
 @Accessors(chain = true)
 @EqualsAndHashCode(of = "id")
 @ApiModel(value = "用户实体类", description = "封装学号、姓名、性别、密码、邮箱等用户信息")
-public class User implements Serializable {
+public class User implements Serializable, UserDetails {
 
     private static final long serialVersionUID = -5246550721989479832L;
 
@@ -75,7 +79,27 @@ public class User implements Serializable {
     private String role; // 角色
     @ApiModelProperty(hidden = true)
     private String grade; // 年级
+    @Getter(AccessLevel.NONE)
     @ApiModelProperty(hidden = true)
-    private Boolean locked; // 锁定
+    private Boolean accountNonLocked; // 锁定
+    @TableField(exist = false)
+    private boolean enabled = true;
+    @TableField(exist = false)
+    private boolean credentialsNonExpired = true;
+    @TableField(exist = false)
+    private boolean accountNonExpired = true;
+
+    @TableField(exist = false)
+    private Collection<GrantedAuthority> authorities;
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return this.authorities;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return this.accountNonLocked;
+    }
 
 }
