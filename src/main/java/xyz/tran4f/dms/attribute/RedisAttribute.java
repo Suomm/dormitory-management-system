@@ -40,6 +40,13 @@ public final class RedisAttribute {
 
     /**
      * <p>
+     * 当前周任务菜单 ID，是一个 {@code Integer} 类型的数字。
+     * </p>
+     */
+    public static final String KEY_TASK_ID = "KEY_TASK_ID";
+
+    /**
+     * <p>
      * 公告信息，是一个 Redis Set 集合，以公告的创建日期为依据判断元素是否重复。
      * </p>
      */
@@ -58,7 +65,7 @@ public final class RedisAttribute {
      * 任务完成之后整理任务时产生的警告，是一个 Redis List 集合。
      * </p>
      */
-    public static final String KEY_WARNINGS = "KEY_CAPTCHA";
+    public static final String KEY_WARNINGS = "KEY_WARNINGS";
 
     /**
      * <p>
@@ -78,40 +85,33 @@ public final class RedisAttribute {
 
     /**
      * <p>
-     * 本周任务所要查的宿舍楼，是一个 Redis List 集合。
-     * </p>
-     */
-    public static final String KEY_BUILDING_LIST = "KEY_RECORD_LIST";
-
-    /**
-     * <p>
      * 学期开始日期，用于计算任务周数，是一个 {@code Long} 类型。
      * </p>
      */
     public static final String KEY_SEMESTER_BEGIN = "KEY_SEMESTER_BEGIN";
 
+    /**
+     * <p>
+     * 检查完一栋宿舍楼后根据成绩筛选出来的脏乱宿舍，存放在 Redis Hash 中。
+     * </p>
+     */
+    public static final String KEY_DIRTY = "KEY_DIRTY";
+
+    /**
+     * <p>
+     * 检查完一栋宿舍楼后根据成绩筛选出来的优秀宿舍，存放在 Redis Hash 中。
+     * </p>
+     */
+    public static final String KEY_CLEAN = "KEY_CLEAN";
+
+    /**
+     * <p>
+     * 所有宿舍楼宿舍成绩集合，存放在 Redis Hash 中。
+     * </p>
+     */
+    public static final String KEY_TASK_RECORD = "KEY_TASK_RECORD";
+
     // 常用的键前缀
-
-    /**
-     * <p>
-     * 检查完一栋宿舍楼后根据成绩筛选出来的脏乱宿舍集合前缀，并以宿舍楼名称作为后缀标识。
-     * </p>
-     */
-    public static final String PREFIX_DIRTY_SET = "DIRTY_SET_";
-
-    /**
-     * <p>
-     * 检查完一栋宿舍楼后根据成绩筛选出来的优秀宿舍集合前缀，并以宿舍楼名称作为后缀标识。
-     * </p>
-     */
-    public static final String PREFIX_CLEAN_SET = "CLEAN_SET_";
-
-    /**
-     * <p>
-     * 检查完一栋宿舍楼后各个宿舍成绩集合前缀，并以宿舍楼名称作为后缀标识。
-     * </p>
-     */
-    public static final String PREFIX_TASK_RECORD = "TASK_RECORD_";
 
     /**
      * <p>
