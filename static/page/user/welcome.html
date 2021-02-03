@@ -28,41 +28,11 @@
                 <div class="layui-card">
                     <div class="layui-card-header"><i class="fa fa-fire icon"></i>基本信息</div>
                     <div class="layui-card-body layui-text">
-                        <table class="layui-table" th:object="${session?.WEB_SESSION_USER}">
+                        <table class="layui-table">
                             <colgroup>
                                 <col width="100">
                                 <col>
                             </colgroup>
-                            <tbody>
-							<tr>
-								<td>学号</td>
-								<td>[[*{id}]]</td>
-							</tr>
-                            <tr>
-                                <td>姓名</td>
-                                <td>[[*{username}]]</td>
-                            </tr>
-							<tr>
-							    <td>年级</td>
-							    <td>[[*{grade}]]级</td>
-							</tr>
-                            <tr>
-                                <td>性别</td>
-                                <td th:if="*{gender == 1}">男</td>
-                                <td th:if="*{gender == 0}">女</td>
-                            </tr>
-                            <tr>
-                                <td>邮箱</td>
-                                <td>[[*{email}]]</td>
-                            </tr>
-                            <tr th:switch="*{role}">
-                                <td>角色</td>
-                                <td th:case="ROLE_USER">常驻志愿者</td>
-                                <td th:case="ROLE_GUEST">流动志愿者</td>
-                                <td th:case="ROLE_MANAGER">部门管理员</td>
-                                <td th:case="ROLE_ROOT">超级管理员</td>
-                            </tr>
-                            </tbody>
                         </table>
                     </div>
                 </div>
@@ -72,9 +42,9 @@
 
                 <div class="layui-card">
                     <div class="layui-card-header"><i class="fa fa-bullhorn icon icon-tip"></i>系统公告</div>
-                    <div class="layui-card-body layui-text">
-                        <p th:if="${notices.size() == 0}" style="text-align: center;">暂无公告</p>
-                        <div class="layuimini-notice" th:each="notice : ${notices}">
+                    <div id="notice" class="layui-card-body layui-text">
+
+                        <div class="layuimini-notice">
                             <div class="layuimini-notice-title" th:text="${notice.title}"></div>
                             <div class="layuimini-notice-extra" th:text="${#dates.format(notice.date,'yyyy-MM-dd HH:mm:ss')}"></div>
                             <div class="layuimini-notice-content layui-hide" th:utext="${#strings.unescapeJava(#strings.replace(#strings.escapeJava(notice.content),'\n','&lt;br/&gt;'))}">
@@ -98,6 +68,32 @@
     layui.use(['layer'], function () {
         var $ = layui.jquery,
             layer = layui.layer;
+        var getRole = function (name) {
+            switch (name) {
+                case 'ROLE_USER': return '常驻志愿者';
+                case 'ROLE_MANAGER': return '部门管理员';
+                case 'ROLE_GUEST': return '流动志愿者';
+                case 'ROLE_ROOT': return '超级管理员';
+            }
+        };
+        $(document).ready(function () {
+           $.get("/user/principal", function (user) {
+               $('.layui-table').append(`<tbody><tr><td>学号</td><td>${user.id}</td></tr>
+                <tr><td>姓名</td><td>${user.username}</td></tr>
+                <tr><td>年级</td><td>${user.grade}级</td></tr>
+                <tr><td>性别</td><td>${user.gender == 0 ? '女' : '男'}</td></tr>
+                <tr><td>邮箱</td><td>${user.email}</td></tr>
+                <tr><td>角色</td><td>${getRole(user.role)}</td></tr></tbody>`);
+           });
+           $.get("/notice/list", function (vs) {
+               if (vs.length === 0) $('#notice').append('<p style="text-align: center;">暂无公告</p>');
+               else vs.forEach(function (e) {
+                   $('#notice').append(`<div class="layuimini-notice">
+                    <div class="layuimini-notice-title">${e.title}</div><div class="layuimini-notice-extra">${e.date}</div>
+                    <div class="layuimini-notice-content layui-hide">${e.content.replace(new RegExp("\n","gm"), '<br>')}</div></div>`);
+               })
+           });
+        });
 
         /*
          * 查看公告信息

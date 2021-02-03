@@ -4,14 +4,35 @@ window.rootPath = (function (src) {
 })();
 
 layui.config({
-    base: rootPath + "lay-module/",
+    base: rootPath,
     version: true
 }).extend({
-    miniAdmin: "layuimini/miniAdmin", // layuimini后台扩展
-    miniMenu: "layuimini/miniMenu", // layuimini菜单扩展
-    miniPage: "layuimini/miniPage", // layuimini 单页扩展
-	miniTheme: "layuimini/miniTheme", // layuimini 主题扩展
-    step: 'step-lay/step', // 分步表单扩展
-    treetable: 'treetable-lay/treetable', //table树形扩展
-	template: 'template/template' //  Layui 数据表格模板
+    "miniAdmin": "lay-module/layuimini/miniAdmin",
+    "miniMenu": "lay-module/layuimini/miniMenu",
+    "miniPage": "lay-module/layuimini/miniPage",
+	"miniTheme": "lay-module/layuimini/miniTheme",
+    "step": 'lay-module/step-lay/step',
+    "treetable": 'lay-module/treetable-lay/treetable',
+	"template": 'lay-module/templet-lay/template',
+	"jquery.cookie": 'jq-module/jquery.cookie',
+	"jquery.particleground": 'jq-module/jquery.particleground',
+});
+
+layui.use('jquery.cookie', function () {
+    var $ = layui.jquery;
+    $.ajaxSetup({
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader("X-XSRF-TOKEN", $.cookie('XSRF-TOKEN'));
+        },
+        error: function(xhr, status, error) {
+            switch (xhr.status) {
+                case 400:
+                    layer.msg(xhr.responseText, {icon: 5, shift: 6});
+                    break;
+                case 500:
+                    layer.msg(xhr.responseJSON.message, {icon: 5, shift: 6});
+                    break;
+            }
+        }
+    });
 });

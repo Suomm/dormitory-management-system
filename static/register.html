@@ -1,7 +1,15 @@
 <!DOCTYPE html>
-<html lang="zh" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="templet/mould :: header(~{::title}, ~{}, ~{::style})">
+<html lang="zh">
+<head>
+	<meta charset="utf-8">
 	<title>权益保障部-注册</title>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="format-detection" content="telephone=no">
+	<link rel="icon" href="images/favicon.ico">
+	<link rel="stylesheet" href="lib/layui-v2.5.5/css/layui.css" media="all">
 	<style type="text/css">
 		html, body {width: 100%;height: 100%;overflow: hidden}
 		body {background: #1E9FFF}
@@ -23,25 +31,25 @@
 			<div class="layui-form-item">
 				<label class="layui-form-label">学号：</label>
 				<div class="layui-input-block">
-					<input type="text" id="id" value="2030070006" name="id" lay-verify="required|id" lay-reqtext="请输入学号" placeholder="请输入学号" class="layui-input">
+					<input type="text" id="id" name="id" lay-verify="required|id" lay-reqtext="请输入学号" placeholder="请输入学号" class="layui-input">
 				</div>
 			</div>
 			<div class="layui-form-item">
 				<label class="layui-form-label">姓名：</label>
 				<div class="layui-input-block">
-					<input type="text" value="王帅" name="username" lay-verify="required" lay-reqtext="请输入姓名" placeholder="请输入姓名" class="layui-input">
+					<input type="text" name="username" lay-verify="required" lay-reqtext="请输入姓名" placeholder="请输入姓名" class="layui-input">
 				</div>
 			</div>
 			<div class="layui-form-item">
 				<label class="layui-form-label">密码：</label>
 				<div class="layui-input-block">
-					<input type="password" value="59741wangshuai" name="password" lay-verify="required|password" lay-reqtext="请输入密码" placeholder="请输入密码" class="layui-input">
+					<input type="password" name="password" lay-verify="required|password" lay-reqtext="请输入密码" placeholder="请输入密码" class="layui-input">
 				</div>
 			</div>
 			<div class="layui-form-item">
 				<label class="layui-form-label">确认密码：</label>
 				<div class="layui-input-block">
-					<input type="password" value="59741wangshuai" name="pwd" lay-verify="required|password" lay-reqtext="请再次输入密码" placeholder="请输入密码" class="layui-input">
+					<input type="password" name="pwd" lay-verify="required|password" lay-reqtext="请再次输入密码" placeholder="请输入密码" class="layui-input">
 				</div>
 			</div>
 			<div class="layui-form-item">
@@ -54,13 +62,13 @@
 			<div class="layui-form-item">
 				<label class="layui-form-label">邮箱：</label>
 				<div class="layui-input-block">
-					<input type="email" id="email" name="email" value="1474983351@abc.com" lay-verify="required|email" lay-reqtext="请输入邮箱" placeholder="请输入邮箱" class="layui-input">
+					<input type="email" id="email" name="email" lay-verify="required|email" lay-reqtext="请输入邮箱" placeholder="请输入邮箱" class="layui-input">
 				</div>
 			</div>
 			<div class="layui-form-item">
 				<label class="layui-form-label">验证码：</label>
 				<div class="layui-input-block">
-					<input type="text" name="emailCode" value="123456" lay-verify="required" lay-reqtext="请输入验证码" placeholder="请输入验证码" class="layui-input">
+					<input type="text" name="emailCode" lay-verify="required|emailCode" lay-reqtext="请输入验证码" placeholder="请输入验证码" class="layui-input">
 				</div>
 			</div>
 			<div class="layui-form-item">
@@ -69,7 +77,7 @@
 			<div class="layui-form-item">
 				<label class="layui-form-label">邀请码：</label>
 				<div class="layui-input-block">
-					<input type="text" name="validateCode" value="123456" lay-verify="required" lay-reqtext="请输入邀请码" placeholder="请输入邀请码" class="layui-input">
+					<input type="text" name="validateCode" lay-verify="required" lay-reqtext="请输入邀请码" placeholder="请输入邀请码" class="layui-input">
 				</div>
 			</div>
 			<div class="layui-form-item">
@@ -78,8 +86,10 @@
         </div>
     </div>
 </div>
-<script>
-    layui.use(['form'], function () {
+<script src="lib/layui-v2.5.5/layui.js" charset="utf-8"></script>
+<script src="js/lay-config.js?v=2.0.0" charset="utf-8"></script>
+<script type="text/javascript">
+    layui.use(['form', 'jquery.particleground'], function () {
         var form = layui.form,
             layer = layui.layer;
         // 粒子线条背景
@@ -98,26 +108,41 @@
 			password: [
 				/^[\S]{6,32}$/, 
 				'密码必须6到32位，且不能出现空格'
+			],
+			captcha: [
+				/^[0-9a-zA-Z]{6}$/,
+				'邀请码格式不正确'
+			],
+			emailCode: [
+				/^[0-9a-zA-Z]{6}$/,
+				'邮箱验证码格式不正确'
 			]
 		});
 		var code = $('#emailCode');
 		code.click(function () {
-			$.post("/user/getCaptcha", {
-				"id": $('#id').val(),
-				"email": $('#email').val()
-			}, function () {
-				code.attr('disabled', true);
-				var time = 60;
-				var timer = setInterval(function () {
-					time--;
-					code.text(time + " 秒后重新发送");
-					if (time === 0) {
-						clearInterval(timer);
-						code.text("获取验证码");
-						code.attr('disabled', false);
-					}
-				}, 1000);
-			});
+			if (!$('#id').val()) {
+				layer.msg('请输入学号', {icon: 5, shift: 6});
+				return;
+			} else if(!$('#email').val()) {
+				layer.msg('请输入邮箱', {icon: 5, shift: 6});
+			} else {
+				$.post("/user/getCaptcha", {
+					"id": $('#id').val(),
+					"email": $('#email').val()
+				}, function () {
+					code.attr('disabled', true);
+					var time = 60;
+					var timer = setInterval(function () {
+						time--;
+						code.text(time + " 秒后重新发送");
+						if (time === 0) {
+							clearInterval(timer);
+							code.text("获取验证码");
+							code.attr('disabled', false);
+						}
+					}, 1000);
+				});
+			}
 		});
         // 进行登录操作
         form.on('submit(register)', function (data) {
