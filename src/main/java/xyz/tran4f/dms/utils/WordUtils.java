@@ -17,12 +17,14 @@
 package xyz.tran4f.dms.utils;
 
 import lombok.Cleanup;
+import org.apache.commons.io.FileUtils;
 import org.apache.poi.xwpf.usermodel.ParagraphAlignment;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import org.apache.poi.xwpf.usermodel.XWPFRun;
 
 import java.io.BufferedOutputStream;
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
@@ -72,7 +74,9 @@ public final class WordUtils {
             run.setFontFamily("仿宋GB2312");
         }
         // 保存文档
-        @Cleanup FileOutputStream fos = new FileOutputStream(filename);
+        File file = new File(filename);
+        FileUtils.forceMkdirParent(file);
+        @Cleanup FileOutputStream fos = new FileOutputStream(file);
         @Cleanup BufferedOutputStream bos = new BufferedOutputStream(fos);
         document.write(bos);
     }

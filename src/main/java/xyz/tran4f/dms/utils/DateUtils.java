@@ -18,6 +18,8 @@ package xyz.tran4f.dms.utils;
 
 import java.time.Instant;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 
@@ -35,6 +37,7 @@ public final class DateUtils {
     }
 
     private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+    private static final ZoneOffset OFFSET = ZoneOffset.of("+8");
     private static final long MILLISECOND = 1000 * 60 * 60 * 24 * 7;
 
     /**
@@ -49,7 +52,7 @@ public final class DateUtils {
     }
 
     public static String format(long epochMilli) {
-        return FORMATTER.format(Instant.ofEpochMilli(epochMilli));
+        return LocalDateTime.ofInstant(Instant.ofEpochMilli(epochMilli), OFFSET).format(FORMATTER);
     }
 
     /**
@@ -64,7 +67,7 @@ public final class DateUtils {
     }
 
     public static long parse(CharSequence text) {
-        return FORMATTER.parse(text, LocalDate::from).toEpochDay();
+        return FORMATTER.parse(text, LocalDate::from).atStartOfDay().toInstant(OFFSET).toEpochMilli();
     }
 
     public static String weekOfSemester(long begin) {

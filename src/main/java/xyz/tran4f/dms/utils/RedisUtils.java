@@ -156,18 +156,6 @@ public final class RedisUtils {
 
     /**
      * <p>
-     * 向 Redis List 中存入数据
-     * </p>
-     *
-     * @param key 键
-     * @param values 值
-     */
-    public void lPush(String key, Object... values) {
-        redisTemplate.opsForList().rightPushAll(key, values);
-    }
-
-    /**
-     * <p>
      * 获取 Redis Set 集合中元素的数量。
      * </p>
      *
@@ -178,36 +166,6 @@ public final class RedisUtils {
         Long size = redisTemplate.opsForSet().size(key);
         if (size == null) { return 0; }
         return size.intValue();
-    }
-
-    /**
-     * <p>
-     * 获取 Redis List 集合中的全部元素。
-     * </p>
-     *
-     * @param key 键
-     * @param <T> 元素类型
-     * @return 全部元素集合
-     */
-    @SuppressWarnings("unchecked")
-    @Contract(value = "null -> fail", pure = true)
-    public <T> List<T> lRange(String key) {
-        return (List<T>) redisTemplate.opsForList().range(key, 0, -1);
-    }
-
-    /**
-     * <p>
-     * 当 Redis Set 集合中只有一个元素时，获取这个元素。
-     * </p>
-     *
-     * @param key 键
-     * @param <T> 元素类型
-     * @return 集合中的唯一元素
-     */
-    @SuppressWarnings("unchecked")
-    @Contract(value = "null -> fail", pure = true)
-    public <T> T sPop(String key) {
-        return (T) redisTemplate.opsForSet().pop(key);
     }
 
     /**
@@ -226,34 +184,6 @@ public final class RedisUtils {
 
     /**
      * <p>
-     * 创建 Redis Set 集合之前会先删除具有相同键的集合。
-     * </p>
-     *
-     * @param key 键
-     * @param values 值
-     */
-    @Contract(value = "null,_ -> fail")
-    public void unmodifiableSet(String key, Object... values) {
-        redisTemplate.delete(key);
-        redisTemplate.opsForSet().add(key, values);
-    }
-
-    /**
-     * <p>
-     * 从 Redis Set 集合中删除数据。
-     * </p>
-     *
-     * @param key 键
-     * @param values 值
-     * @return 删除的数据条数
-     */
-    @Contract("null,_ -> fail")
-    public Long sRemove(String key, Object[] values) {
-        return redisTemplate.opsForSet().remove(key, values);
-    }
-
-    /**
-     * <p>
      * 从 Redis Set 集合中删除数据。
      * </p>
      *
@@ -265,31 +195,21 @@ public final class RedisUtils {
         redisTemplate.opsForSet().remove(key, value);
     }
 
-    /**
-     * <p>
-     * 获取 Set 集合中的所有成员。
-     * </p>
-     *
-     * @param key 键
-     * @return 集合中的值
-     */
-    @Contract(value = "null -> fail", pure = true)
-    public Set<Object> sMembers(String key) {
-        return Optional.ofNullable(redisTemplate.opsForSet().members(key)).orElse(Collections.emptySet());
+    public void hash(String key, Object hashKey, Object value) {
+        redisTemplate.opsForHash().put(key, hashKey, value);
     }
 
-    /**
-     * <p>
-     * 合并指定键的集合。
-     * </p>
-     *
-     * @param keys 键
-     * @return 合并之后的集合
-     */
+    public void hash(String key, Map<String, ?> m) {
+        redisTemplate.opsForHash().putAll(key, m);
+    }
+
+    public Long remove(String key, Object... hasKeys) {
+        return redisTemplate.opsForHash().delete(key, hasKeys);
+    }
+
     @SuppressWarnings("unchecked")
-    @Contract(value = "null -> fail", pure = true)
-    public <T> Set<T> sUnion(Collection<String> keys) {
-        return (Set<T>) redisTemplate.opsForSet().union(keys);
+    public <T> List<T> values(String key) {
+        return (List<T>) redisTemplate.opsForHash().values(key);
     }
 
 }

@@ -76,7 +76,7 @@ public final class ZipUtils {
         // 递归方式寻找文件
         if (source.isDirectory()) {
             for (File listFile : source.listFiles()) {
-                copy(listFile, out, source.getName() + "/");
+                copy(listFile, out, base + source.getName() + "/");
             }
         } else {
             // 添加文件到 ZIP 压缩包

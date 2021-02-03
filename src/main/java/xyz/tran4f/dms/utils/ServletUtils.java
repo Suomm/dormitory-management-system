@@ -16,6 +16,7 @@
 
 package xyz.tran4f.dms.utils;
 
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -50,7 +51,7 @@ public final class ServletUtils {
      * @return 用户信息
      */
     public static User getUser() {
-        return (User) servletRequestAttributes().getAttribute(WEB_SESSION_USER, RequestAttributes.SCOPE_SESSION);
+        return (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     }
 
     /**
