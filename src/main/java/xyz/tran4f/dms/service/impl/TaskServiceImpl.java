@@ -27,11 +27,14 @@ import xyz.tran4f.dms.mapper.TaskMapper;
 import xyz.tran4f.dms.pojo.Dormitory;
 import xyz.tran4f.dms.pojo.Note;
 import xyz.tran4f.dms.pojo.Task;
+import xyz.tran4f.dms.service.DormitoryService;
 import xyz.tran4f.dms.service.TaskService;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -45,10 +48,10 @@ import java.util.stream.Collectors;
 @Service
 public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements TaskService {
 
-    private final DormitoryMapper dormitoryMapper;
+    private final DormitoryService dormitoryService;
 
-    public TaskServiceImpl(DormitoryMapper dormitoryMapper) {
-        this.dormitoryMapper = dormitoryMapper;
+    public TaskServiceImpl(DormitoryService dormitoryService) {
+        this.dormitoryService = dormitoryService;
     }
 
     /**
@@ -77,7 +80,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements Ta
             wrapper.eq("building", itr.next()).or(itr.hasNext());
         }
         // 创建并插入子任务
-        dormitoryMapper.selectMaps(wrapper.groupBy("building")).forEach((map) -> {
+        dormitoryService.listMaps(wrapper.groupBy("building")).forEach((map) -> {
             Task child = new Task();
             child.setParentId(parent.getTaskId());
             map.forEach((key, value) -> {
@@ -129,19 +132,21 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements Ta
 
     /**
      * {@inheritDoc}
+     * @return
      */
     @Override
-    public Object[] notes(String building) {
-        return dormitoryMapper.selectList(Wrappers.lambdaQuery(Dormitory.class)
+    public Map<String, Note> notes(String building) {
+        return dormitoryService.lambdaQuery()
                 .eq(Dormitory::getBuilding, building)
-                .orderByAsc(Dormitory::getRoom))
+                .list()
                 .stream()
                 .map(e -> Note.builder()
-                .room(e.getRoom())
-                .type(e.getType())
-                .grade(e.getGrade())
-                .building(e.getBuilding())
-                .build()).toArray();
+                    .room(e.getRoom())
+                    .type(e.getType())
+                    .grade(e.getGrade())
+                    .building(e.getBuilding())
+                    .build())
+                .collect(Collectors.toMap(Note::getRoom, Function.identity()));
     }
 
     /**

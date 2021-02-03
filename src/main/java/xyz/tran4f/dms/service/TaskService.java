@@ -18,9 +18,11 @@ package xyz.tran4f.dms.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import xyz.tran4f.dms.exception.TaskSchedulingException;
+import xyz.tran4f.dms.pojo.Note;
 import xyz.tran4f.dms.pojo.Task;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -82,7 +84,7 @@ public interface TaskService extends IService<Task> {
      * @param building 要检查的宿舍楼
      * @return 该宿舍楼的宿舍信息
      */
-    Object[] notes(String building);
+    Map<String, Note> notes(String building);
 
     /**
      * <p>
