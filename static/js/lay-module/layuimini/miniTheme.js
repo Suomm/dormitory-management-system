@@ -470,5 +470,4 @@ layui.define(["jquery", "layer"], function (exports) {
 
     exports("miniTheme", miniTheme);
 
-})
-;
+});

@@ -51,7 +51,7 @@
 				</form>
 			</div>
 		</fieldset>
-		<blockquote id="captcha" class="layui-elem-quote layui-text"></blockquote>
+		<blockquote style="margin-top: 10px;" id="captcha" class="layui-elem-quote layui-text"></blockquote>
 		<table class="layui-hide" id="currentTableId" lay-filter="currentTableFilter"></table>
 		<script type="text/html" id="currentTableBar">
 			<a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="edit">编辑</a>
@@ -75,7 +75,7 @@
 			cols: [[
 				{type: "checkbox", width: 50, fixed: 'left'},
 				{field: 'id', width: 110, title: '学号', align: "center", sort: true, fixed: 'left'},
-				{field: 'username', title: '姓名', align: "center", sort: true},
+				{field: 'name', title: '姓名', align: "center", sort: true},
 				{field: 'grade', title: '年级', align: "center", sort: true},
 				{field: 'email', minWidth: 180, title: '邮箱', align: "center"},
 				{field: 'gender', title: '性别', templet: function(user) {
@@ -92,7 +92,7 @@
 			]]
 		});
 		template.binding({
-			url: 'page/add-edit/user.html',
+			url: 'edit/user.html',
 			add: '添加用户',
 			edit: '编辑用户',
 			remove: function (data) {

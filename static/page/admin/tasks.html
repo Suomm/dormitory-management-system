@@ -89,14 +89,14 @@
 					treetable.foldAll('#currentTableId');
 					break;
 				case 'set':
-					template.show('page/add-edit/setting.html', '设置任务');
+					template.show('edit/setting.html', '设置任务');
 					break;
 				case 'add':
 					$.get("/task/get/week", function (rep) {
 						if (rep.code === -1) {
 							layer.msg(rep.msg, {icon: 5, shift: 6});
 						} else {
-							template.show('page/add-edit/task.html', '添加任务');
+							template.show('edit/task.html', '添加任务');
 							$('#week').append('当前周次：第' + rep.msg + '周');
 						}
 					});
@@ -123,7 +123,7 @@
 					if (rep.code === -1) {
 						layer.msg(rep.msg, {icon: 5, shift: 6});
 					} else {
-						template.show('page/manager/templet.html', '任务详情');
+						template.show('admin/templet.html', '任务详情');
 						var $list = $('#list');
 						rep.data.forEach(function (v) {
 							$list.append(`<a href="/download?filename=${v}" class="layui-btn">${v.substring(v.lastIndexOf('/') + 1)}</a>`)
@@ -133,7 +133,7 @@
 			} else if (obj.event === 'reset') {
 				layer.confirm('真的重置么', function(index) {
 					$.ajax({
-						type: 'put',
+						type: 'PUT',
 						url: '/task/rollback/' + obj.data.id,
 						success: function (status) {
 							layer.msg("操作成功", {icon: 1});

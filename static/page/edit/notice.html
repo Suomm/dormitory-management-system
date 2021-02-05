@@ -22,7 +22,8 @@
 </div>
 <script>
 	layui.use('template', function() {
-		var template = layui.template;
-		template.save('/notice/save');
+		var layer = layui.layer,
+			template = layui.template;
+		template.save('/notice/save', layer.index);
 	});
 </script>

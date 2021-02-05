@@ -95,7 +95,7 @@
         }
     };
 
-    layui.link(layui.cache.base + 'lay-module/step-lay/step.css');
+    layui.link(layui.cache.base + 'lay-module/step-lay/step.min.css');
 
     exports('step', step);
 });

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="zh">
 	<head>
-		<meta charset="utf-8">
+		<meta charset="UTF-8">
 		<title>天津师范大学化学学院权益保障部</title>
 		<meta name="keywords" content="天津师范大学,化学学院,权益保障部,管理系统">
 		<meta name="description" content="天津师范大学化学学院权益保障部管理系统">
@@ -14,9 +14,9 @@
 		<link rel="icon" href="images/favicon.ico">
 		<link rel="stylesheet" href="lib/layui-v2.5.5/css/layui.css" media="all">
 		<link rel="stylesheet" href="lib/font-awesome-4.7.0/css/font-awesome.min.css" media="all">
-		<link rel="stylesheet" href="css/layuimini.css?v=2.0.1" media="all">
-		<link rel="stylesheet" href="css/themes/default.css" media="all">
-		<link rel="stylesheet" href="css/public.css" media="all">
+		<link rel="stylesheet" href="css/layuimini.min.css" media="all">
+		<link rel="stylesheet" href="css/themes/default.min.css" media="all">
+		<link rel="stylesheet" href="css/public.min.css" media="all">
 		<style id="layuimini-bg-color"></style>
 	</head>
 	<body class="layui-layout-body layuimini-all">
@@ -49,14 +49,14 @@
 							<a href="javascript:;" data-check-screen="full"><i class="fa fa-arrows-alt"></i></a>
 						</li>
 						<li class="layui-nav-item layuimini-setting">
-							<a href="javascript:;" id="studentName"></a>
-							<a href="javascript:;" id="studentId" class="layui-hide"></a>
+							<a href="javascript:;" id="name"></a>
+							<a href="javascript:;" id="id" class="layui-hide"></a>
 							<dl class="layui-nav-child">
 								<dd>
-									<a href="javascript:;" layuimini-content-href="page/user/user-email.html" data-title="修改邮箱" data-icon="fa fa-gears">修改邮箱</a>
+									<a href="javascript:;" layuimini-content-href="user/user-email.html" data-title="修改邮箱" data-icon="fa fa-gears">修改邮箱</a>
 								</dd>
 								<dd>
-									<a href="javascript:;" layuimini-content-href="page/user/user-password.html" data-title="修改密码" data-icon="fa fa-gears">修改密码</a>
+									<a href="javascript:;" layuimini-content-href="user/user-password.html" data-title="修改密码" data-icon="fa fa-gears">修改密码</a>
 								</dd>
 								<dd>
 									<hr>
@@ -86,8 +86,8 @@
 			<div class="layui-body">
 				<div class="layui-card layuimini-page-header layui-hide">
 					<div class="layui-breadcrumb layuimini-page-title">
-						<a lay-href="" href="/">主页</a><span lay-separator="">/</span>
-						<a><cite>常规管理</cite></a><span lay-separator="">/</span>
+						<a lay-href="" href="/">主页</a><span lay-separator>/</span>
+						<a><cite>常规管理</cite></a><span lay-separator>/</span>
 						<a><cite>系统设置</cite></a>
 					</div>
 				</div>
@@ -96,15 +96,17 @@
 			</div>
 		</div>
 		<script src="lib/layui-v2.5.5/layui.js" charset="utf-8"></script>
-		<script src="js/lay-config.js?v=2.0.0" charset="utf-8"></script>
-		<script>
+		<script src="js/lay-config.min.js" charset="utf-8"></script>
+		<script type="text/javascript">
 			layui.use(['jquery', 'layer', 'miniAdmin'], function() {
 				var $ = layui.jquery,
 					layer = layui.layer,
 					miniAdmin = layui.miniAdmin;
-				$.get("/user/principal", function (user) {
-					$('#studentId').append(user.id);
-					$('#studentName').append(user.username);
+				$(document).ready(function () {
+					$.get("/user/principal", function (user) {
+						$('#id').append(user.id);
+						$('#name').append(user.name);
+					});
 				});
 				var options = {
 					iniUrl: "/api/init", // 初始化接口
@@ -118,8 +120,10 @@
 				};
 				miniAdmin.render(options);
 				$('.login-out').on("click", function() {
+					layer.load();
 					$.post("/user/logout", function () {
 						window.location.href = 'login.html';
+						layer.closeAll('loading');
 					});
 				});
 			});

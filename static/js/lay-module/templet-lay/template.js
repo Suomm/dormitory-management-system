@@ -74,7 +74,7 @@ layui.define(['jquery', 'layer', 'form', 'table', 'miniPage'], function(exports)
 			});
 		},
 		// 保存或更新数据
-		save: function(url) {
+		save: function(url, parentIndex) {
 			// 初始化表单
 			form.render();
 			// 表单赋值
@@ -85,6 +85,7 @@ layui.define(['jquery', 'layer', 'form', 'table', 'miniPage'], function(exports)
 			form.on('submit(saveBtn)', function(data) {
 				$.post(url, data.field, function (status) {
 					tip(status);
+					if (parentIndex) layer.close(parentIndex);
 				});
 				return false;
 			});

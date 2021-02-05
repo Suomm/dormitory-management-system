@@ -1,26 +1,4 @@
-<style>
-    .welcome .layui-card {border:1px solid #f2f2f2;border-radius:5px;}
-    .welcome .icon {margin-right:10px;color:#1aa094;}
-    .welcome .icon-cray {color:#ffb800 !important;}
-    .welcome .icon-blue {color:#1e9fff !important;}
-    .welcome .icon-tip {color:#ff5722 !important;}
-    .welcome .layuimini-qiuck-module {text-align:center;margin-top:10px}
-    .welcome .layuimini-qiuck-module a i {display:inline-block;width:100%;height:60px;line-height:60px;text-align:center;border-radius:2px;font-size:30px;background-color:#F8F8F8;color:#333;transition:all .3s;-webkit-transition:all .3s;}
-    .welcome .layuimini-qiuck-module a cite {position:relative;top:2px;display:block;color:#666;text-overflow:ellipsis;overflow:hidden;white-space:nowrap;font-size:14px;}
-    .welcome .welcome-module {width:100%;height:210px;}
-    .welcome .panel {background-color:#fff;border:1px solid transparent;border-radius:3px;-webkit-box-shadow:0 1px 1px rgba(0,0,0,.05);box-shadow:0 1px 1px rgba(0,0,0,.05)}
-    .welcome .panel-body {padding:10px}
-    .welcome .panel-title {margin-top:0;margin-bottom:0;font-size:12px;color:inherit}
-    .welcome .label {display:inline;padding:.2em .6em .3em;font-size:75%;font-weight:700;line-height:1;color:#fff;text-align:center;white-space:nowrap;vertical-align:baseline;border-radius:.25em;margin-top:.3em;}
-    .welcome .layui-red {color:red}
-    .welcome .main_btn > p {height:40px;}
-    .welcome .layui-bg-number {background-color:#F8F8F8;}
-    .welcome .layuimini-notice:hover {background:#f6f6f6;}
-    .welcome .layuimini-notice {padding:7px 16px;clear:both;font-size:12px !important;cursor:pointer;position:relative;transition:background 0.2s ease-in-out;}
-    .welcome .layuimini-notice-title,.layuimini-notice-label {padding-right:70px !important;text-overflow:ellipsis !important;overflow:hidden !important;white-space:nowrap !important;}
-    .welcome .layuimini-notice-title {line-height:28px;font-size:14px;}
-    .welcome .layuimini-notice-extra {position:absolute;top:50%;margin-top:-8px;right:16px;display:inline-block;height:16px;color:#999;}
-</style>
+<link rel="stylesheet" href="css/home.min.css" media="all">
 <div class="layuimini-container layuimini-page-anim">
     <div class="layuimini-main welcome">
         <div class="layui-row layui-col-space15">
@@ -37,20 +15,10 @@
                     </div>
                 </div>
             </div>
-
             <div class="layui-col-md5">
-
                 <div class="layui-card">
                     <div class="layui-card-header"><i class="fa fa-bullhorn icon icon-tip"></i>系统公告</div>
-                    <div id="notice" class="layui-card-body layui-text">
-
-                        <div class="layuimini-notice">
-                            <div class="layuimini-notice-title" th:text="${notice.title}"></div>
-                            <div class="layuimini-notice-extra" th:text="${#dates.format(notice.date,'yyyy-MM-dd HH:mm:ss')}"></div>
-                            <div class="layuimini-notice-content layui-hide" th:utext="${#strings.unescapeJava(#strings.replace(#strings.escapeJava(notice.content),'\n','&lt;br/&gt;'))}">
-                            </div>
-                        </div>
-                    </div>
+                    <div id="notice" class="layui-card-body layui-text"></div>
                 </div>
                 <div class="layui-card">
                     <div class="layui-card-header"><i class="fa fa-paper-plane-o icon"></i>作者心语</div>
@@ -59,12 +27,11 @@
                         <p>喜欢此网站的可以给我的&nbsp;<a href="https://github.com/Suomm/dormitory-management-system" target="_blank">GitHub</a>&nbsp;加个 Star 支持一下</p>
                     </div>
                 </div>
-
             </div>
         </div>
     </div>
 </div>
-<script>
+<script type="text/javascript">
     layui.use(['layer'], function () {
         var $ = layui.jquery,
             layer = layui.layer;
@@ -79,8 +46,8 @@
         $(document).ready(function () {
            $.get("/user/principal", function (user) {
                $('.layui-table').append(`<tbody><tr><td>学号</td><td>${user.id}</td></tr>
-                <tr><td>姓名</td><td>${user.username}</td></tr>
-                <tr><td>年级</td><td>${user.grade}级</td></tr>
+                <tr><td>姓名</td><td>${user.name}</td></tr>
+                <tr><td>年级</td><td>${user.grade}</td></tr>
                 <tr><td>性别</td><td>${user.gender == 0 ? '女' : '男'}</td></tr>
                 <tr><td>邮箱</td><td>${user.email}</td></tr>
                 <tr><td>角色</td><td>${getRole(user.role)}</td></tr></tbody>`);

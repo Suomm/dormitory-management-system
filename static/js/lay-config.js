@@ -7,19 +7,20 @@ layui.config({
     base: rootPath,
     version: true
 }).extend({
-    "miniAdmin": "lay-module/layuimini/miniAdmin",
-    "miniMenu": "lay-module/layuimini/miniMenu",
-    "miniPage": "lay-module/layuimini/miniPage",
-	"miniTheme": "lay-module/layuimini/miniTheme",
-    "step": 'lay-module/step-lay/step',
-    "treetable": 'lay-module/treetable-lay/treetable',
-	"template": 'lay-module/templet-lay/template',
-	"jquery.cookie": 'jq-module/jquery.cookie',
-	"jquery.particleground": 'jq-module/jquery.particleground',
+    "miniAdmin": "lay-module/layuimini/miniAdmin.min",
+    "miniMenu": "lay-module/layuimini/miniMenu.min",
+    "miniPage": "lay-module/layuimini/miniPage.min",
+	"miniTheme": "lay-module/layuimini/miniTheme.min",
+    "step": 'lay-module/step-lay/step.min',
+    "treetable": 'lay-module/treetable-lay/treetable.min',
+	"template": 'lay-module/templet-lay/template.min',
+	"jquery.cookie": 'jq-module/jquery.cookie.min',
+	"jquery.particleground": 'jq-module/jquery.particleground.min',
 });
 
-layui.use('jquery.cookie', function () {
-    var $ = layui.jquery;
+layui.use(['layer', 'jquery.cookie'], function () {
+    var $ = layui.jquery,
+        layer = layui.layer;
     $.ajaxSetup({
         beforeSend: function (xhr) {
             xhr.setRequestHeader("X-XSRF-TOKEN", $.cookie('XSRF-TOKEN'));
@@ -30,7 +31,8 @@ layui.use('jquery.cookie', function () {
                     layer.msg(xhr.responseText, {icon: 5, shift: 6});
                     break;
                 case 500:
-                    layer.msg(xhr.responseJSON.message, {icon: 5, shift: 6});
+                    layer.closeAll('loading');
+                    layer.alert(xhr.responseJSON.message, {icon: 5});
                     break;
             }
         }
