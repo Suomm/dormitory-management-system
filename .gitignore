@@ -3,6 +3,10 @@ config/
 target/
 portfolio/
 
+### Compressed JS/CSS File ###
+*.min.js
+*.min.css
+
 ### IntelliJ IDEA ###
 .idea
 *.iws
