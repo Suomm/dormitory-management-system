@@ -35,7 +35,7 @@ public final class RegexAttribute {
      * 用于校验天津师范大学化学学院的学生学号。
      * </p>
      */
-    public static final String ID = "\\d{2}3007\\d{4}";
+    public static final String ID = "^\\d{2}3007\\d{4}$";
 
     /**
      * <p>
