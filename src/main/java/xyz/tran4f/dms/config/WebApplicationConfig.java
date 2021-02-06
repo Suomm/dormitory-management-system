@@ -22,7 +22,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.web.session.HttpSessionEventPublisher;
 import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
-import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 import org.springframework.web.servlet.i18n.SessionLocaleResolver;
@@ -84,6 +84,14 @@ public class WebApplicationConfig implements WebMvcConfigurer {
     public void addInterceptors(InterceptorRegistry registry) {
         // 注册 LocaleChangeInterceptor 拦截器
         registry.addInterceptor(localeChangeInterceptor());
+    }
+
+    @Override
+    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        // 静态资源映射，直接访问对应资源
+        registry.addResourceHandler("/user/**").addResourceLocations("/page/user/");
+        registry.addResourceHandler("/edit/**").addResourceLocations("/page/edit/");
+        registry.addResourceHandler("/admin/**").addResourceLocations("/page/admin/");
     }
 
 }
