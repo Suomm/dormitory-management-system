@@ -19,6 +19,8 @@ package xyz.tran4f.dms.config;
 import org.springframework.boot.web.servlet.ServletListenerRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.http.converter.ResourceHttpMessageConverter;
 import org.springframework.security.web.session.HttpSessionEventPublisher;
 import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
@@ -27,6 +29,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 
+import java.util.List;
 import java.util.Locale;
 
 /**
@@ -92,6 +95,11 @@ public class WebApplicationConfig implements WebMvcConfigurer {
         registry.addResourceHandler("/user/**").addResourceLocations("/page/user/");
         registry.addResourceHandler("/edit/**").addResourceLocations("/page/edit/");
         registry.addResourceHandler("/admin/**").addResourceLocations("/page/admin/");
+    }
+
+    @Override
+    public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
+        converters.add(new ResourceHttpMessageConverter());
     }
 
 }
