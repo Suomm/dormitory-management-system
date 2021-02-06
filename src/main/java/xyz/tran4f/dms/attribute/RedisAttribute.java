@@ -18,7 +18,7 @@ package xyz.tran4f.dms.attribute;
 
 /**
  * <p>
- * Redis 缓存的键。
+ * Redis 缓存的键或键的前缀。
  * </p>
  *
  * @author 王帅
@@ -47,7 +47,7 @@ public final class RedisAttribute {
 
     /**
      * <p>
-     * 公告信息，是一个 Redis Set 集合，以公告的创建日期为依据判断元素是否重复。
+     * 公告信息，是一个 Redis Hash 集合，以公告的创建日期为依据判断元素是否重复。
      * </p>
      */
     public static final String KEY_NOTICE = "KEY_NOTICE";
@@ -69,9 +69,8 @@ public final class RedisAttribute {
 
     /**
      * <p>
-     * 当前周任务的所有任务 ID，是一个 Redis Set 集合。当有任务完成时从中删除任务 ID，直到
-     * 剩余最后一个元素即为任务菜单，表示当前周任务完成。回滚任务时再次插入任务菜单ID 和具体
-     * 任务 ID 保证数据的不重复。
+     * 当前周任务的所有具体任务 ID，是一个 Redis Set 集合。当有任务完成时从中删除任务 ID，
+     * 直到集合为空表示当前周的所有任务已完成。回滚任务时再次插入任务菜单 ID 保证数据的不重复。
      * </p>
      */
     public static final String KEY_ACTIVE_TASK = "KEY_ACTIVE_TASK";
