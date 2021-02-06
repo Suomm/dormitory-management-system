@@ -34,20 +34,22 @@ import org.springframework.data.redis.serializer.RedisSerializer;
  * @author 王帅
  * @since 1.0
  */
-@Configuration
+@Configuration(proxyBeanMethods = false)
 public class RedisCacheConfig {
 
-	// Redis 缓存数据的序列化设置，统一使用JSON格式。
+	// Redis 缓存数据的序列化设置，统一使用 JSON 格式。
 
 	@Bean
 	public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory factory) {
 		RedisTemplate<String, Object> template = new RedisTemplate<>();
 		template.setConnectionFactory(factory);
-		// key序列化方式
+		// key 序列化方式
 		template.setKeySerializer(RedisSerializer.string());
-		// value序列化
+		// value 序列化
 		template.setValueSerializer(RedisSerializer.json());
-		// hash value序列化
+		// hash key 序列化
+		template.setHashKeySerializer(RedisSerializer.string());
+		// hash value 序列化
 		template.setHashValueSerializer(RedisSerializer.json());
 		return template;
 	}
