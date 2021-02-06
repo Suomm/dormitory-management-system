@@ -18,7 +18,7 @@ package xyz.tran4f.dms.attribute;
 
 /**
  * <p>
- * 消息队列 Rabbit MQ 的相关交换机、队列名称。
+ * 消息队列 Rabbit MQ 的交换机、队列名称。
  * </p>
  *
  * @author 王帅
@@ -33,7 +33,7 @@ public final class RabbitAttribute {
      * <p>
      * 设置用户解锁操作的死信队列，与交换机 {@value EXCHANGE_USER_DIRECT} 绑定。
      * 消息达到指定的时间之后，将发送到 {@value QUEUE_USER_LOCKED_PROCESS} 队列，
-     * 因此监听者无需监听该队列。
+     * 在进行用户的解锁操作，因此监听者无需监听该队列。
      * </p>
      */
     public static final String QUEUE_USER_LOCKED_DELAY = "user.locked.delay";
@@ -48,8 +48,10 @@ public final class RabbitAttribute {
 
     /**
      * <p>
-     * 用户发送邮件的有关信息将发送到该队列，监听该队列以实现邮件异步发送。
+     * 用户的邮箱信息将发送到该队列，监听该队列以实现邮件异步发送。
      * </p>
+     *
+     * @see xyz.tran4f.dms.listener.EmailSendListener
      */
     public static final String QUEUE_EMAIL = "email";
 
@@ -58,6 +60,8 @@ public final class RabbitAttribute {
      * 当最后一个具体任务完成时，会将任务菜单的 ID 发送到该队类中。系统后台将进行业务处理，
      * 根据信息生成各种文件并保存。
      * </p>
+     *
+     * @see xyz.tran4f.dms.listener.TaskStatusListener
      */
     public static final String QUEUE_TASK = "task";
 
