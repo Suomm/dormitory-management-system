@@ -25,7 +25,7 @@ import javax.validation.Validator;
 
 /**
  * <p>
- * javax.validation 的数据校验配置类。
+ * 数据校验配置类。
  * </p>
  *
  * @author 王帅
