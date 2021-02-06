@@ -22,4 +22,4 @@
 
 开源项目不容易，希望可以得到你们的好评，如果觉得项目对您有所帮助，不妨捐赠支持作者持续开发与维护。
 
-![捐赠](static/images/donate.gif)
+![捐赠](https://www.tran4f.xyz/images/donate.gif)
