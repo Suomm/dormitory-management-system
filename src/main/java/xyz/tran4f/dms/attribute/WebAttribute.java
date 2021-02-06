@@ -18,7 +18,7 @@ package xyz.tran4f.dms.attribute;
 
 /**
  * <p>
- * 管理 WEB 程序域中的属性。
+ * 管理 WEB 程序中的属性。
  * </p>
  *
  * @author 王帅
@@ -28,13 +28,6 @@ public final class WebAttribute {
 
     private WebAttribute() {
     }
-
-    /**
-     * <p>
-     * 登陆成功之后保存在 SESSION 域中的用户数据对象。
-     * </p>
-     */
-    public static final String WEB_SESSION_USER = "WEB_SESSION_USER";
 
     /**
      * <p>
