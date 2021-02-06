@@ -48,7 +48,7 @@ public class RabbitMQConfig implements RabbitListenerConfigurer {
         return QueueBuilder.durable(QUEUE_USER_LOCKED_DELAY)
                 .withArgument("x-dead-letter-exchange", EXCHANGE_USER_DIRECT)
                 .withArgument("x-dead-letter-routing-key", QUEUE_USER_LOCKED_PROCESS)
-                // 死信队列设置 24 小时后消息过期。
+                // 死信队列设置 12 小时后消息过期。
                 .withArgument("x-message-ttl", 12 * 60 * 60 * 1000)
                 .build();
     }
