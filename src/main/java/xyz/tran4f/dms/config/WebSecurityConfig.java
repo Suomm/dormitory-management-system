@@ -30,11 +30,11 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl;
 import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import xyz.tran4f.dms.handler.AjaxAuthenticationFailureHandler;
+import xyz.tran4f.dms.handler.AuthenticationExpiredHandler;
 
 import javax.sql.DataSource;
 
@@ -75,10 +75,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         return new BCryptPasswordEncoder();
     }
 
-    public AuthenticationFailureHandler authenticationFailureHandler() {
-        return new AjaxAuthenticationFailureHandler();
-    }
-
     /**
      * 解决异常 UsernameNotFoundException 不显示问题。
      */
@@ -108,14 +104,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse());
         http.sessionManagement()
                 .maximumSessions(1)
-                .maxSessionsPreventsLogin(true);
+                .expiredSessionStrategy(new AuthenticationExpiredHandler());
         http.formLogin()
                 .loginProcessingUrl("/user/login")
                 .loginPage("/login.html")
-//                .successHandler(authenticationSuccessHandler())
-                .failureHandler(authenticationFailureHandler());
+                .failureHandler(new AjaxAuthenticationFailureHandler());
         http.rememberMe()
-//                .authenticationSuccessHandler(authenticationSuccessHandler())
                 .tokenRepository(persistentTokenRepository())
                 .userDetailsService(userDetailsService);
         http.logout()
@@ -124,16 +118,20 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .deleteCookies("JSESSIONID")
                 .invalidateHttpSession(true);
         http.authorizeRequests()
-                .antMatchers("/swagger-ui.html", "/v2/api-docs")
-                .hasRole("ROOT")
-                .antMatchers("/page/manager/**", "/page/add-edit/**")
-                .hasAnyRole("MANAGER", "ROOT")
-                .antMatchers("/page/user/**", "/welcome.html")
-                .authenticated()
-                .antMatchers( "/login.html", "/register.html", "/user/register",
-                        "/forget-password.html", "/user/forget-password/*", "/user/getCaptcha",
-                        "/reset-password/*", "/reset-password/*/*")
-                .permitAll()
+                // Swagger2 文档只能 ROOT 权限用户访问
+                .antMatchers("/swagger-ui.html", "/v2/api-docs").hasRole("ROOT")
+                // 拒绝所有 /page/** 的请求
+                .antMatchers("/page/**").denyAll()
+                // 管理员与根用户能访问到的页面
+                .antMatchers("/admin/**", "/edit/**").hasAnyRole("MANAGER", "ROOT")
+                // 用户页面和首页需要认证
+                .antMatchers("/user/**", "/", "/index.html").authenticated()
+                // 放行登陆之前的页面与请求
+                .antMatchers("/login.html", "/register.html", "/user/register",
+                        "/forget-password.html", "/user/forget-password/*",
+                        "/reset-password.html", "/user/reset-password/*",
+                        "/user/getCaptcha", "/user/checkup").permitAll()
+                // 其他请求一律认证
                 .anyRequest().authenticated();
     }
 
