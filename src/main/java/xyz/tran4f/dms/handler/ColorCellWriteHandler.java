@@ -37,7 +37,6 @@ import java.util.List;
  * @author 王帅
  * @since 1.0
  */
-@Component
 public class ColorCellWriteHandler extends AbstractCellWriteHandler {
 
     @Override

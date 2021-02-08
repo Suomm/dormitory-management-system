@@ -36,7 +36,6 @@ import javax.validation.ConstraintViolationException;
  * @author 王帅
  * @since 1.0
  */
-@Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
@@ -59,10 +58,7 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(MessageException.class)
     public ResponseEntity<String> sendMessage(MessageException exception) {
-        // 获取异常键值指定的国际化消息
-        String message = getMessage(exception);
-        log.info("处理异常：{} 产生原因：{}", exception.getClass().getName(), message);
-        return ResponseEntity.badRequest().body(message);
+        return ResponseEntity.badRequest().body(getMessage(exception));
     }
 
     /**

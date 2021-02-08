@@ -25,7 +25,7 @@ import java.io.IOException;
 
 /**
  * <p>
- * Ajax 请求授权失败处理。
+ * Ajax 请求登录失败处理。
  * </p>
  *
  * @author 王帅
