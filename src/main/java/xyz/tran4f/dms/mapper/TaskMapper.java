@@ -24,7 +24,7 @@ import xyz.tran4f.dms.repository.MybatisRedisCache;
 
 /**
  * <p>
- * 对任务数据进行操作的 Mapper 接口。
+ * 对任务数据库进行操作的 Mapper 接口。
  * </p>
  *
  * @author 王帅
