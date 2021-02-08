@@ -16,7 +16,7 @@
 
 package xyz.tran4f.dms.validation.constraints;
 
-import xyz.tran4f.dms.validation.IdValidator;
+import xyz.tran4f.dms.validation.TypeValidator;
 
 import javax.validation.Constraint;
 import javax.validation.Payload;
@@ -30,21 +30,23 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
  * <p>
- * 校验天津师范大学化学学院的学生学号。
+ * 校验 {@code Integer} 所表示的类型取值。
  * </p>
  *
  * @author 王帅
  * @since 1.0
- * @see IdValidator
+ * @see TypeValidator
  */
 @Documented
 @Retention(RUNTIME)
-@Repeatable(Id.List.class)
-@Constraint(validatedBy = IdValidator.class)
+@Repeatable(Type.List.class)
+@Constraint(validatedBy = TypeValidator.class)
 @Target({ METHOD, FIELD, ANNOTATION_TYPE, CONSTRUCTOR, PARAMETER, TYPE_USE })
-public @interface Id {
+public @interface Type {
 
-    String message() default "{ xyz.tran4f.dms.validation.constraints.Id.message }";
+    String message() default "{ xyz.tran4f.dms.validation.constraints.Type.message }";
+
+    int[] value() default {0, 1};
 
     Class<?>[] groups() default { };
 
@@ -54,7 +56,7 @@ public @interface Id {
     @Retention(RUNTIME)
     @Documented
     public @interface List {
-        Id[] value();
+        Type[] value();
     }
 
 }

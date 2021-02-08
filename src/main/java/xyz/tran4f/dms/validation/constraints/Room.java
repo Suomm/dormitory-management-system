@@ -16,7 +16,7 @@
 
 package xyz.tran4f.dms.validation.constraints;
 
-import xyz.tran4f.dms.validation.IdValidator;
+import xyz.tran4f.dms.validation.RoomValidator;
 
 import javax.validation.Constraint;
 import javax.validation.Payload;
@@ -30,21 +30,21 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
  * <p>
- * 校验天津师范大学化学学院的学生学号。
+ * 校验房间号。
  * </p>
  *
  * @author 王帅
  * @since 1.0
- * @see IdValidator
+ * @see RoomValidator
  */
 @Documented
 @Retention(RUNTIME)
-@Repeatable(Id.List.class)
-@Constraint(validatedBy = IdValidator.class)
+@Repeatable(Room.List.class)
+@Constraint(validatedBy = RoomValidator.class)
 @Target({ METHOD, FIELD, ANNOTATION_TYPE, CONSTRUCTOR, PARAMETER, TYPE_USE })
-public @interface Id {
+public @interface Room {
 
-    String message() default "{ xyz.tran4f.dms.validation.constraints.Id.message }";
+    String message() default "{ xyz.tran4f.dms.validation.constraints.Room.message }";
 
     Class<?>[] groups() default { };
 
@@ -54,7 +54,7 @@ public @interface Id {
     @Retention(RUNTIME)
     @Documented
     public @interface List {
-        Id[] value();
+        Room[] value();
     }
 
 }

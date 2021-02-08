@@ -30,7 +30,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
  * <p>
- * 校验密码。
+ * 校验账户密码。
  * </p>
  *
  * @author 王帅

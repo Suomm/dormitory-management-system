@@ -16,8 +16,7 @@
 
 package xyz.tran4f.dms.validation.constraints;
 
-import xyz.tran4f.dms.validation.GenderValidator;
-import xyz.tran4f.dms.validation.IdValidator;
+import xyz.tran4f.dms.validation.BuildingValidator;
 
 import javax.validation.Constraint;
 import javax.validation.Payload;
@@ -31,21 +30,21 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
  * <p>
- * 校验学号。
+ * 校验学生公寓名称。
  * </p>
  *
  * @author 王帅
  * @since 1.0
- * @see IdValidator
+ * @see BuildingValidator
  */
 @Documented
 @Retention(RUNTIME)
-@Repeatable(Gender.List.class)
-@Constraint(validatedBy = GenderValidator.class)
+@Repeatable(Building.List.class)
+@Constraint(validatedBy = BuildingValidator.class)
 @Target({ METHOD, FIELD, ANNOTATION_TYPE, CONSTRUCTOR, PARAMETER, TYPE_USE })
-public @interface Gender {
+public @interface Building {
 
-    String message() default "{ xyz.tran4f.dms.validation.constraints.Gender.message }";
+    String message() default "{ xyz.tran4f.dms.validation.constraints.Building.message }";
 
     Class<?>[] groups() default { };
 
@@ -55,7 +54,7 @@ public @interface Gender {
     @Retention(RUNTIME)
     @Documented
     public @interface List {
-        Gender[] value();
+        Building[] value();
     }
 
 }
