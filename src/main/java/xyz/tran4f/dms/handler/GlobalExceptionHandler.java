@@ -16,7 +16,6 @@
 
 package xyz.tran4f.dms.handler;
 
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.NoSuchMessageException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindException;
