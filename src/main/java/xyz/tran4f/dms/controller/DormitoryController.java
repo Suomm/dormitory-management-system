@@ -20,15 +20,16 @@ import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.*;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import xyz.tran4f.dms.pojo.Dormitory;
 import xyz.tran4f.dms.service.DormitoryService;
 import xyz.tran4f.dms.utils.WrapperUtils;
 
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotEmpty;
 import java.util.List;
 
 /**
@@ -39,6 +40,7 @@ import java.util.List;
  * @author 王帅
  * @since 1.0
  */
+@Validated
 @RestController
 @Api(tags = "宿舍模块的程序接口")
 @RequestMapping("/dormitory")
@@ -53,7 +55,7 @@ public class DormitoryController extends BaseController<DormitoryService> {
      * @return 所有宿舍楼的楼号
      */
     @GetMapping("buildings")
-    @ApiOperation(value = "获取所有宿舍楼的楼号信息")
+    @ApiOperation("获取所有宿舍楼的楼号信息")
     public List<Object> getBuildings() {
         return service.listObjs(Wrappers.lambdaQuery(Dormitory.class)
                 .select(Dormitory::getBuilding)
@@ -71,10 +73,13 @@ public class DormitoryController extends BaseController<DormitoryService> {
      * @return 数据分页对象
      */
     @GetMapping("page")
-    @ApiOperation(value = "分页展示宿舍信息", notes = "获取宿舍所属年级、宿舍号、房间号的信息。")
-    public Page<Dormitory> page(@ApiParam(value = "页码", required = true, example = "1") long current,
-                                @ApiParam(value = "每页数据量", required = true, example = "10") long size,
-                                @ApiParam(value = "查询信息") String params) {
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "current", value = "页码", required = true, example = "1", paramType = "query"),
+            @ApiImplicitParam(name = "size", value = "每页数据量", required = true, example = "10", paramType = "query"),
+            @ApiImplicitParam(name = "params", value = "查询信息", paramType = "query")
+    })
+    @ApiOperation(value = "分页展示宿舍信息", notes = "获取宿舍所属年级、宿舍号、房间号等信息。")
+    public Page<Dormitory> page(@Min(1) long current, @Min(1) long size, String params) {
         QueryWrapper<Dormitory> wrapper;
         if (params != null) {
             wrapper = WrapperUtils.allEq(JSON.parseObject(params, Dormitory.class));
@@ -94,8 +99,8 @@ public class DormitoryController extends BaseController<DormitoryService> {
      * @return {@code true} 更新或保存数据成功，{@code false} 更新或保存数据失败
      */
     @PostMapping("save")
-    @ApiOperation(value = "保存或更新宿舍信息")
-    public boolean save(@ApiParam(value = "宿舍信息", required = true) Dormitory dormitory) {
+    @ApiOperation("保存或更新宿舍信息")
+    public boolean save(@ApiParam(value = "宿舍信息", required = true) @Validated Dormitory dormitory) {
         return service.saveOrUpdate(dormitory);
     }
 
@@ -108,7 +113,7 @@ public class DormitoryController extends BaseController<DormitoryService> {
      * @return {@code true} 删除宿舍信息成功，{@code false} 删除宿舍信息失败
      */
     @DeleteMapping("delete/{room}")
-    @ApiOperation(value = "根据指定的房间号删除一条宿舍信息")
+    @ApiOperation("根据指定的房间号删除一条宿舍信息")
     public boolean delete(@ApiParam(value = "房间号", required = true) @PathVariable String room) {
         return service.removeById(room);
     }
@@ -122,9 +127,9 @@ public class DormitoryController extends BaseController<DormitoryService> {
      * @return {@code true} 删除宿舍信息成功，{@code false} 删除宿舍信息失败
      */
     @DeleteMapping("deleteBatch")
-    @ApiOperation(value = "根据房间号批量删除宿舍信息")
+    @ApiOperation("根据房间号批量删除宿舍信息")
     public boolean deleteBatch(@ApiParam(value = "宿舍信息", required = true)
-                               @RequestBody List<String> rooms) {
+                               @RequestBody @NotEmpty List<String> rooms) {
         return service.removeByIds(rooms);
     }
 

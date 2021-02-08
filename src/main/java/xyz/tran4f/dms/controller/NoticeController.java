@@ -18,11 +18,14 @@ package xyz.tran4f.dms.controller;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import xyz.tran4f.dms.pojo.Notice;
 import xyz.tran4f.dms.utils.RedisUtils;
 
+import javax.validation.constraints.NotEmpty;
 import java.util.Date;
 import java.util.List;
 
@@ -36,10 +39,10 @@ import static xyz.tran4f.dms.attribute.RedisAttribute.KEY_NOTICE;
  * @author 王帅
  * @since 1.0
  */
+@Validated
 @RestController
 @RequestMapping("/notice")
 @Api(tags = "公告模块的程序接口")
-@Secured({"ROLE_MANAGER","ROLE_ROOT"})
 public class NoticeController {
 
     private final RedisUtils redisUtils;
@@ -56,7 +59,7 @@ public class NoticeController {
      * @return 所有公告
      */
     @GetMapping("list")
-    @ApiOperation(value = "获取所有公告内容")
+    @ApiOperation("获取所有公告内容")
     public List<Object> list() {
         return redisUtils.values(KEY_NOTICE);
     }
@@ -70,12 +73,13 @@ public class NoticeController {
      * @return 总是 {@code true}
      */
     @PostMapping("save")
-    @ApiOperation(value = "保存或更新公告信息")
-    public boolean save(Notice notice) {
+    @Secured({"ROLE_MANAGER","ROLE_ROOT"})
+    @ApiOperation("保存或更新公告信息")
+    public boolean save(@ApiParam(value = "公告信息", required = true) @Validated Notice notice) {
         if (notice.getDate() == null) {
             notice.setDate(new Date());
         }
-        redisUtils.hash(KEY_NOTICE, notice.getDate(), notice);
+        redisUtils.hash(KEY_NOTICE, notice.getDate().toString(), notice);
         return true;
     }
 
@@ -88,9 +92,10 @@ public class NoticeController {
      * @return 删除的记录条数
      */
     @DeleteMapping("delete")
-    @ApiOperation(value = "批量删除删除公告信息")
-    public Long delete(@RequestBody List<Notice> notice) {
-        return redisUtils.remove(KEY_NOTICE, notice.stream().map(Notice::getDate).toArray());
+    @Secured({"ROLE_MANAGER","ROLE_ROOT"})
+    @ApiOperation("批量删除删除公告信息")
+    public Long delete(@RequestBody @NotEmpty List<Notice> notice) {
+        return redisUtils.remove(KEY_NOTICE, notice.stream().map(e -> e.getDate().toString()).toArray());
     }
 
 }

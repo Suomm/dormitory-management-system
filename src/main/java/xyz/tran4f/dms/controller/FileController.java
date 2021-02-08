@@ -25,6 +25,7 @@ import org.springframework.http.ContentDisposition;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -32,13 +33,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import springfox.documentation.annotations.ApiIgnore;
+import xyz.tran4f.dms.attribute.WebAttribute;
 import xyz.tran4f.dms.pojo.Response;
 
 import javax.validation.constraints.NotNull;
 import java.io.*;
 import java.net.URLEncoder;
-
-import static xyz.tran4f.dms.attribute.WebAttribute.WEB_PORTFOLIO_ASSETS;
 
 /**
  * <p>
@@ -65,18 +65,17 @@ public class FileController {
      * @throws IOException 保存文件失败抛出此异常
      */
     @PostMapping("/upload/{room}/{index}")
+    @Secured({"ROLE_USER", "ROLE_MANAGER","ROLE_ROOT"})
     public Response upload(MultipartFile file,
                            @PathVariable String room,
                            @PathVariable String index) throws IOException {
         String filename = file.getOriginalFilename();
-        // TODO 上传文件过大处理
         assert filename != null;
         int begin = filename.lastIndexOf('.');
         filename = room + index + filename.substring(begin);
-        @Cleanup InputStream in = file.getInputStream();
-        // TODO 是否包含同名文件（不含后缀名）
-        File dest = new File(WEB_PORTFOLIO_ASSETS + room + "/" + filename);
+        File dest = new File(WebAttribute.WEB_PORTFOLIO_ASSETS + room + "/" + filename);
         FileUtils.forceMkdirParent(dest);
+        @Cleanup InputStream in = file.getInputStream();
         @Cleanup FileOutputStream fos = new FileOutputStream(dest);
         @Cleanup BufferedOutputStream bos = new BufferedOutputStream(fos);
         IOUtils.copy(in, bos);

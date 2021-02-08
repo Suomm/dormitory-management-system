@@ -30,6 +30,8 @@ import xyz.tran4f.dms.service.UserService;
 import xyz.tran4f.dms.utils.ServletUtils;
 import xyz.tran4f.dms.utils.WrapperUtils;
 
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotEmpty;
 import java.util.List;
 
 /**
@@ -55,7 +57,7 @@ public class ManagerController extends BaseController<UserService> {
      * @return 部门邀请码
      */
     @GetMapping("captcha")
-    @ApiOperation(value = "获取部门邀请码")
+    @ApiOperation("获取部门邀请码")
     public String captcha() {
         return redisUtils.get(RedisAttribute.KEY_CAPTCHA);
     }
@@ -77,7 +79,7 @@ public class ManagerController extends BaseController<UserService> {
             @ApiImplicitParam(name = "params", value = "查询信息", paramType = "query")
     })
     @ApiOperation(value = "分页展示用户信息", notes = "获取用户所属年级、性别、学号、邮箱地址等信息。")
-    public Page<User> page(Long current, Long size, String params) {
+    public Page<User> page(@Min(1) long current, @Min(1) long size, String params) {
         QueryWrapper<User> wrapper;
         if (params != null) {
             wrapper = WrapperUtils.allEq(JSON.parseObject(params, User.class));
@@ -101,8 +103,8 @@ public class ManagerController extends BaseController<UserService> {
      * @return {@code true} 更新或保存数据成功，{@code false} 更新或保存数据失败
      */
     @PostMapping("save")
-    @ApiOperation(value = "保存用户信息")
-    public boolean save(@ApiParam(value = "用户信息", required = true) User user) {
+    @ApiOperation("保存用户信息")
+    public boolean save(@ApiParam(value = "用户信息", required = true) @Validated User user) {
         return service.register(user.setPassword("123456"));
     }
 
@@ -115,7 +117,7 @@ public class ManagerController extends BaseController<UserService> {
      * @return {@code true} 删除用户信息成功，{@code false} 删除用户信息失败
      */
     @DeleteMapping("delete/{id}")
-    @ApiOperation(value = "根据学号删除一条用户信息")
+    @ApiOperation("根据学号删除一条用户信息")
     public boolean delete(@ApiParam(value = "学号", required = true) @PathVariable String id) {
         return service.removeById(id);
     }
@@ -129,9 +131,9 @@ public class ManagerController extends BaseController<UserService> {
      * @return {@code true} 删除用户信息成功，{@code false} 删除用户信息失败
      */
     @DeleteMapping("deleteBatch")
-    @ApiOperation(value = "根据学号批量删除用户信息")
+    @ApiOperation("根据学号批量删除用户信息")
     public boolean deleteBatch(@ApiParam(value = "用户信息", required = true)
-                               @RequestBody List<String> ids) {
+                               @RequestBody @NotEmpty List<String> ids) {
         return service.removeByIds(ids);
     }
 

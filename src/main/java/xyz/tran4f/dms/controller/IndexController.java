@@ -16,11 +16,12 @@
 
 package xyz.tran4f.dms.controller;
 
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 import springfox.documentation.annotations.ApiIgnore;
 import xyz.tran4f.dms.pojo.Menu;
+import xyz.tran4f.dms.pojo.Response;
+import xyz.tran4f.dms.utils.ServletUtils;
 
 import java.util.*;
 
@@ -37,12 +38,9 @@ import java.util.*;
 public class IndexController {
 
     @GetMapping("/api/clear")
-    public Map<String, Object> clear() {
-        System.gc(); // 显式调用垃圾回收器
-        Map<String, Object> ret = new HashMap<>();
-        ret.put("code", 1);
-        ret.put("msg", "服务端清理缓存成功");
-        return ret;
+    public Response clear() {
+        // 在这里进行清理缓存操作
+        return Response.ok("服务端清理缓存成功");
     }
 
     @GetMapping("/api/init")
@@ -52,31 +50,28 @@ public class IndexController {
         Map<String, Object> logo = new HashMap<>();
         List<Menu> menu = new ArrayList<>();
 
-        String role = SecurityContextHolder.getContext()
-                .getAuthentication()
-                .getAuthorities()
-                .toArray()[0].toString();
+        String role = ServletUtils.getUser().getRole();
 
-        menu.add(Menu.builder().href("").title("操作").child(Arrays.asList(
-                new Menu("宿舍检查", "fa fa-calendar", "page/user/inspect.html"),
-                new Menu("周报制作", "fa fa-file-text", "page/user/publish.html"),
-                new Menu("模板下载", "fa fa-cloud-download", "page/user/download.html")
-        )).icon("fa fa-address-book").build());
+        menu.add(Menu.builder().title("操作").child(Arrays.asList(
+                new Menu("宿舍检查", "fa fa-calendar", "user/release.html"),
+                new Menu("周报制作", "fa fa-file-text", "user/manuscript.html"),
+                new Menu("模板下载", "fa fa-cloud-download", "user/download.html")
+        )).icon("fa fa-wrench").build());
 
         switch (role) {
             case "ROLE_MANAGER":
             case "ROLE_ROOT":
-                menu.add(Menu.builder().href("").title("管理").child(Arrays.asList(
-                        new Menu("用户管理", "fa fa-dot-circle-o", "page/manager/user.html"),
-                        new Menu("宿舍管理", "fa fa-building", "page/manager/dormitory.html"),
-                        new Menu("任务管理", "fa fa-window-maximize", "page/manager/task.html"),
-                        new Menu("公告管理", "fa fa-tags", "page/manager/notice.html")
-                )).icon("fa fa-lemon-o").build());
+                menu.add(Menu.builder().title("管理").child(Arrays.asList(
+                        new Menu("用户管理", "fa fa-dot-circle-o", "admin/users.html"),
+                        new Menu("宿舍管理", "fa fa-building", "admin/dormitories.html"),
+                        new Menu("任务管理", "fa fa-window-maximize", "admin/tasks.html"),
+                        new Menu("公告管理", "fa fa-tags", "admin/notices.html")
+                )).icon("fa fa-cog").build());
                 break;
         }
 
         home.put("title", "首页");
-        home.put("href", "page/user/welcome.html");
+        home.put("href", "user/welcome.html");
 
         logo.put("title", "权益保障部");
         logo.put("image", "images/logo.png");

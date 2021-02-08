@@ -18,10 +18,9 @@ package xyz.tran4f.dms.controller;
 
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
+import xyz.tran4f.dms.attribute.RabbitAttribute;
 import xyz.tran4f.dms.pojo.Email;
 import xyz.tran4f.dms.utils.RedisUtils;
-
-import static xyz.tran4f.dms.attribute.RabbitAttribute.QUEUE_EMAIL;
 
 /**
  * <p>
@@ -29,7 +28,7 @@ import static xyz.tran4f.dms.attribute.RabbitAttribute.QUEUE_EMAIL;
  * 基本通用方法。
  * </p>
  *
- * @param <S> 引用的服务层对象
+ * @param <S> 服务层接口
  * @author 王帅
  * @since 1.0
  */
@@ -37,7 +36,7 @@ public abstract class BaseController<S> {
 
     /**
      * <p>
-     * 引用的服务层对象。
+     * 引用的服务层接口。
      * </p>
      */
     @Autowired
@@ -68,8 +67,8 @@ public abstract class BaseController<S> {
      * @param text      内容
      * @param to        收件人
      */
-    protected void sendEmail(String subject, String text, String to) {
-        rabbitTemplate.convertAndSend(QUEUE_EMAIL, new Email(subject, text, to));
+    protected final void sendEmail(String subject, String text, String to) {
+        rabbitTemplate.convertAndSend(RabbitAttribute.QUEUE_EMAIL, new Email(subject, text, to));
     }
 
 }

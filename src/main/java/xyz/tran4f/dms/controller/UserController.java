@@ -18,12 +18,10 @@ package xyz.tran4f.dms.controller;
 
 import io.swagger.annotations.*;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import xyz.tran4f.dms.exception.BadCredentialException;
 import xyz.tran4f.dms.exception.InvalidOrOverdueException;
+import xyz.tran4f.dms.exception.MissingAttributeException;
 import xyz.tran4f.dms.pojo.Captcha;
 import xyz.tran4f.dms.pojo.User;
 import xyz.tran4f.dms.service.UserService;
@@ -35,8 +33,6 @@ import xyz.tran4f.dms.validation.constraints.Password;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import java.util.Locale;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
@@ -81,8 +77,9 @@ public class UserController extends BaseController<UserService> {
     public boolean register(@ApiParam(value = "用户信息", required = true) @Validated User user,
                             @ApiParam(value = "邮箱验证码", required = true) @NotBlank String emailCode,
                             @ApiParam(value = "部门邀请码", required = true) @NotBlank String validateCode) {
+        String key = PREFIX_USER_CAPTCHA.concat(user.getId());
         // 获取缓存中的验证码对象
-        Captcha captcha = redisUtils.get(PREFIX_USER_CAPTCHA.concat(user.getId()));
+        Captcha captcha = redisUtils.get(key);
         // 校验邮箱验证码
         CaptchaUtils.checkCaptcha(captcha, Captcha.defaultCaptcha(emailCode));
         // 检验部门的邀请码是否正确
@@ -91,7 +88,7 @@ public class UserController extends BaseController<UserService> {
         }
         // 注册用户并在其成功之后删除验证码
         if (service.register(user)) {
-            redisUtils.delete(PREFIX_USER_CAPTCHA.concat(user.getId()));
+            redisUtils.delete(key);
             log.info("注册学号为 {} 的用户成功", user.getId());
             return true;
         }
@@ -140,8 +137,8 @@ public class UserController extends BaseController<UserService> {
      */
     @PostMapping("checkup")
     @ApiOperation(value = "重置密码检查", notes = "检查重置密码的密匙是否正确，正确则进入重置密码界面。")
-    public boolean checkup(@ApiParam(value = "密匙", required = true) @Id String id,
-                           @ApiParam(value = "学号", required = true) @NotNull String sid) {
+    public boolean checkup(@ApiParam(value = "密匙", required = true) @NotBlank String id,
+                           @ApiParam(value = "学号", required = true) @NotBlank String sid) {
         // 获取之前存入缓存的验证链接
         Captcha captcha = redisUtils.get(PREFIX_RESET_PASSWORD.concat(id));
         // 没有输入自己的学号以及链接过期了
@@ -162,12 +159,18 @@ public class UserController extends BaseController<UserService> {
     @ApiOperation(value = "重置密码请求", notes = "重置密码操作，将新密码写入数据库，自动重定向到登陆界面")
     public boolean resetPassword(@ApiParam(value = "学号", required = true) @PathVariable @Id String id,
                                  @ApiParam(value = "新密码", required = true) @Password String password) {
+        String key = PREFIX_RESET_PASSWORD.concat(id);
         // 获取不到用户学号，表明链接已经过期
-        if (!redisUtils.hasKey(PREFIX_RESET_PASSWORD.concat(id))) {
-            throw new BadCredentialException("UserController.badCredentials");
+        if (!redisUtils.hasKey(key)) {
+            throw new MissingAttributeException("UserController.badCredentials");
         }
         // 数据写入数据库失败
-        return service.changePassword(id, null, password);
+        if (service.changePassword(id, null, password)) {
+            redisUtils.delete(key);
+            log.info("用户 {} 找回密码成功", id);
+            return true;
+        }
+        return false;
     }
 
     // === 获取邮箱验证码请求 ===
@@ -213,7 +216,7 @@ public class UserController extends BaseController<UserService> {
      */
     @PutMapping("change-password/{id}")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "id", value = "学号", required = true, defaultValue = "2030070002"),
+            @ApiImplicitParam(name = "id", value = "学号", required = true),
             @ApiImplicitParam(name = "oldPassword", value = "旧密码", required = true, paramType = "query"),
             @ApiImplicitParam(name = "newPassword", value = "新密码", required = true, paramType = "query")
     })
@@ -237,7 +240,7 @@ public class UserController extends BaseController<UserService> {
      */
     @PutMapping("change-email/{id}")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "id", value = "学号", required = true, defaultValue = "2030070002"),
+            @ApiImplicitParam(name = "id", value = "学号", required = true),
             @ApiImplicitParam(name = "oldEmail", value = "旧邮箱", required = true, paramType = "query"),
             @ApiImplicitParam(name = "newEmail", value = "新邮箱", required = true, paramType = "query"),
             @ApiImplicitParam(name = "emailCode", value = "验证码", required = true, paramType = "query")
