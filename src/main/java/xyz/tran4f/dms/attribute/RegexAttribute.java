@@ -26,7 +26,6 @@ package xyz.tran4f.dms.attribute;
  */
 public final class RegexAttribute {
 
-
     private RegexAttribute() {
     }
 
@@ -36,6 +35,27 @@ public final class RegexAttribute {
      * </p>
      */
     public static final String ID = "^\\d{2}3007\\d{4}$";
+
+    /**
+     * <p>
+     * 用于校验天机师范大学学生公寓房间号。
+     * </p>
+     */
+    public static final String ROOM = "^\\d{1,2}(?:-\\d)?-\\d{3}$";
+
+    /**
+     * <p>
+     * 用于校验所属年级。
+     * </p>
+     */
+    public static final String GRADE = "^\\d{4}级$";
+
+    /**
+     * <p>
+     * 用于校验天津师范大学学生公寓名称。
+     * </p>
+     */
+    public static final String BUILDING = "^学生公寓\\d{1,2}号楼$";
 
     /**
      * <p>
