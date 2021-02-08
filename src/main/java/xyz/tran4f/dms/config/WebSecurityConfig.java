@@ -76,7 +76,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     /**
-     * 解决异常 UsernameNotFoundException 不显示问题。
+     * <p>
+     * 解决 {@code UsernameNotFoundException} 不显示问题。
+     * </p>
      */
     @Bean
     public AuthenticationProvider authenticationProvider() {
@@ -122,15 +124,15 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/swagger-ui.html", "/v2/api-docs").hasRole("ROOT")
                 // 拒绝所有 /page/** 的请求
                 .antMatchers("/page/**").denyAll()
-                // 管理员与根用户能访问到的页面
-                .antMatchers("/admin/**", "/edit/**").hasAnyRole("MANAGER", "ROOT")
-                // 用户页面和首页需要认证
-                .antMatchers("/user/**", "/", "/index.html").authenticated()
                 // 放行登陆之前的页面与请求
                 .antMatchers("/login.html", "/register.html", "/user/register",
                         "/forget-password.html", "/user/forget-password/*",
                         "/reset-password.html", "/user/reset-password/*",
                         "/user/getCaptcha", "/user/checkup").permitAll()
+                // 管理员与根用户能访问到的页面
+                .antMatchers("/admin/**", "/edit/**").hasAnyRole("MANAGER", "ROOT")
+                // 用户页面和首页需要认证
+                .antMatchers("/user/**", "/", "/index.html").authenticated()
                 // 其他请求一律认证
                 .anyRequest().authenticated();
     }
