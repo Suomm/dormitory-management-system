@@ -36,7 +36,6 @@ import com.itextpdf.layout.property.TextAlignment;
 import com.itextpdf.layout.property.VerticalAlignment;
 import lombok.Cleanup;
 import lombok.SneakyThrows;
-import org.apache.commons.io.FileUtils;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.rendering.PDFRenderer;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
