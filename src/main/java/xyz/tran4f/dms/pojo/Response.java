@@ -27,7 +27,7 @@ import java.io.Serializable;
 
 /**
  * <p>
- * 响应信息封装。
+ * 响应状态与数据的封装。
  * </p>
  *
  * @author 王帅

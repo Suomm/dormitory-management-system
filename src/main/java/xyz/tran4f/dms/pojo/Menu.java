@@ -45,6 +45,7 @@ public class Menu implements Serializable {
 
     private String title;
     private String icon;
+    @Builder.Default
     private String href = "";
     private final String target = "_self";
     private List<Menu> child;

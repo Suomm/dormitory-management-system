@@ -39,12 +39,16 @@ public class Captcha implements Serializable {
     private static final long serialVersionUID = -4483861236935426035L;
 
     /**
-     * 验证码内容
+     * <p>
+     * 验证码的文本内容。
+     * </p>
      */
     private String code;
 
     /**
-     * 过期时间
+     * <p>
+     * 验证码的过期时间。
+     * </p>
      */
     private long outDate;
 

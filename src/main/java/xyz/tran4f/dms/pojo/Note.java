@@ -22,8 +22,14 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
 import lombok.experimental.Accessors;
-import org.jetbrains.annotations.NotNull;
+import xyz.tran4f.dms.validation.constraints.Building;
+import xyz.tran4f.dms.validation.constraints.Grade;
+import xyz.tran4f.dms.validation.constraints.Room;
+import xyz.tran4f.dms.validation.constraints.Type;
 
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -47,33 +53,40 @@ public class Note implements Serializable, Comparable<Note> {
     private static final long serialVersionUID = 5736959954440581339L;
 
     @DateTimeFormat("yyyy-MM-dd")
-    @ApiModelProperty(value = "日期", example = "2020-12-12", required = true)
+    @ApiModelProperty(value = "日期", example = "2020-12-12", hidden = true)
     private Date date;
 
+    @Grade
     @ApiModelProperty(value = "所属年级", example = "2020级", required = true)
     private String grade;
 
+    @Building
     @ApiModelProperty(value = "楼号", example = "学生公寓3号楼", required = true)
     private String building;
 
+    @Room
     @ApiModelProperty(value = "房间号", example = "3-214", required = true)
     private String room;
 
+    @Min(0)
+    @Max(100)
     @NumberFormat("##")
     @ApiModelProperty(value = "分数", required = true, example = "60")
     private Integer score;
 
-    @ApiModelProperty(value = "周次", required = true, example = "十一")
+    @ApiModelProperty(value = "周次", example = "十一", hidden = true)
     private String week;
 
-    @ApiModelProperty(value = "备注")
+    @NotNull
+    @ApiModelProperty(value = "备注", required = true)
     private String details;
 
-    @ApiModelProperty(value = "宿舍类型")
+    @Type
+    @ApiModelProperty(value = "宿舍类型", example = "0", required = true, notes = "男生（女生）宿舍")
     private Integer type;
 
     @Override
-    public int compareTo(@NotNull Note o) {
+    public int compareTo(Note o) {
         return this.room.compareTo(o.room);
     }
 

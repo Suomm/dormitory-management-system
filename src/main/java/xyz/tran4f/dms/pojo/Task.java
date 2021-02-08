@@ -61,10 +61,10 @@ public class Task implements Serializable {
     @ApiModelProperty("所检查宿舍年级")
     private String grade;
 
-    @ApiModelProperty("所检查宿舍类别")
+    @ApiModelProperty(value = "所检查宿舍类型", notes = "0 女生宿舍 1 男生宿舍")
     private Integer category;
 
-    @ApiModelProperty("所检查宿舍类型")
+    @ApiModelProperty(value = "所检查宿舍类别", notes = "1 本科生 0 研究生")
     private Integer type;
 
     @ApiModelProperty("是否为任务菜单")

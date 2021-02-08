@@ -25,9 +25,9 @@ import lombok.*;
 import lombok.experimental.Accessors;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import xyz.tran4f.dms.validation.constraints.Gender;
 import xyz.tran4f.dms.validation.constraints.Id;
 import xyz.tran4f.dms.validation.constraints.Password;
+import xyz.tran4f.dms.validation.constraints.Type;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
@@ -56,40 +56,57 @@ public class User implements Serializable, UserDetails {
     @Id
     @TableId(value = "id", type = IdType.INPUT)
     @ApiModelProperty(value = "学号", required = true)
-    private String id; // 学号
+    private String id;
+
+    @TableField(exist = false)
+    @ApiModelProperty(hidden = true)
+    private String username;
 
     @NotBlank
     @ApiModelProperty(value = "姓名", required = true)
-    private String username; // 姓名
+    private String name;
 
     @Password
     @ApiModelProperty(value = "密码", required = true)
-    private String password; // 密码
+    private String password;
 
     @Email
     @NotBlank
     @ApiModelProperty(value = "邮箱", required = true)
-    private String email; // 邮箱
+    private String email;
 
-    @Gender
+    @Type
     @ApiModelProperty(value = "性别", required = true, example = "0")
-    private Integer gender; // 性别
+    private Integer gender;
 
     @ApiModelProperty(hidden = true)
-    private String role; // 角色
+    private String role;
+
     @ApiModelProperty(hidden = true)
-    private String grade; // 年级
+    private String grade;
+
+    @Builder.Default
     @Getter(AccessLevel.NONE)
     @ApiModelProperty(hidden = true)
-    private Boolean accountNonLocked; // 锁定
-    @TableField(exist = false)
-    private boolean enabled = true;
-    @TableField(exist = false)
-    private boolean credentialsNonExpired = true;
-    @TableField(exist = false)
-    private boolean accountNonExpired = true;
+    private Boolean enabled = true;
+
+    @Builder.Default
+    @Getter(AccessLevel.NONE)
+    @ApiModelProperty(hidden = true)
+    private Boolean accountNonLocked = true;
+
+    @Builder.Default
+    @Getter(AccessLevel.NONE)
+    @ApiModelProperty(hidden = true)
+    private Boolean accountNonExpired = true;
+
+    @Builder.Default
+    @Getter(AccessLevel.NONE)
+    @ApiModelProperty(hidden = true)
+    private Boolean credentialsNonExpired = true;
 
     @TableField(exist = false)
+    @ApiModelProperty(hidden = true)
     private Collection<GrantedAuthority> authorities;
 
     @Override
@@ -98,8 +115,23 @@ public class User implements Serializable, UserDetails {
     }
 
     @Override
+    public boolean isAccountNonExpired() {
+        return this.accountNonExpired;
+    }
+
+    @Override
     public boolean isAccountNonLocked() {
         return this.accountNonLocked;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return this.credentialsNonExpired;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return this.enabled;
     }
 
 }

@@ -25,6 +25,10 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
+import xyz.tran4f.dms.validation.constraints.Building;
+import xyz.tran4f.dms.validation.constraints.Grade;
+import xyz.tran4f.dms.validation.constraints.Room;
+import xyz.tran4f.dms.validation.constraints.Type;
 
 import java.io.Serializable;
 
@@ -46,20 +50,25 @@ public class Dormitory implements Serializable {
 
     private static final long serialVersionUID = -6765246421822725327L;
 
+    @Grade
     @ApiModelProperty(value = "所属年级", example = "2020级", required = true)
     private String grade;
 
+    @Building
     @ApiModelProperty(value = "楼号", example = "学生公寓3号楼", required = true)
     private String building;
 
+    @Room
     @TableId(value = "room", type = IdType.INPUT)
     @ApiModelProperty(value = "房间号", example = "3-214", required = true)
     private String room;
 
-    @ApiModelProperty(value = "宿舍类别", example = "0", required = true)
+    @Type
+    @ApiModelProperty(value = "宿舍类型", example = "1", required = true, notes = "0 女生宿舍 1 男生宿舍")
     private Integer category;
 
-    @ApiModelProperty(value = "宿舍类型", example = "0", required = true)
+    @Type
+    @ApiModelProperty(value = "宿舍类别", example = "1", required = true, notes = "1 本科生 0 研究生")
     private Integer type;
 
 }
