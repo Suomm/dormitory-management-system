@@ -81,7 +81,7 @@ layui.define(['jquery', 'layer', 'form', 'table', 'miniPage'], function(exports)
 			form.val('example', templet);
 			// 赋值完毕置对象为空
 			templet = null;
-			//监听提交
+			// 监听提交
 			form.on('submit(saveBtn)', function(data) {
 				layer.load();
 				$.post(url, data.field, function (status) {

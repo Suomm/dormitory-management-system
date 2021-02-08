@@ -73,11 +73,13 @@
             if (data.oldEmail === data.newEmail) {
                 layer.msg('旧邮箱与新邮箱一致', {icon: 5, shift: 6});
             } else {
+                layer.load();
                 $.ajax({
-                    type: 'put',
+                    type: 'PUT',
                     data: data,
                     url: '/user/change-email/' + $('#id').text(),
                     success: function (status) {
+                        layer.closeAll('loading');
                         if (status) {
                             layer.msg("更改邮箱成功", {icon: 1});
                         } else {

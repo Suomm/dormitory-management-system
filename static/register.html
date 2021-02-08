@@ -154,7 +154,9 @@
 						layer.msg('两次输入的密码不一致', {icon: 5, shift: 6});
 						return false;
 					}
+					layer.load();
 					$.post("/user/register", data).done(function (status) {
+						layer.closeAll('loading');
 						if (status) window.location.href = '/';
 						else layer.alert('注册用户失败', {icon: 5});
 					});

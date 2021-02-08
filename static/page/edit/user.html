@@ -1,5 +1,6 @@
 <div class="layuimini-main">
 	<div class="layui-form layuimini-form" lay-filter="example" style="margin-left: -90px;">
+		<input type="hidden" name="password">
 		<div class="layui-form-item">
 			<label class="layui-form-label required">学号：</label>
 			<div class="layui-input-block">
@@ -47,10 +48,12 @@
 </div>
 <script>
 	layui.use('template', function() {
-		var layer = layui.layer,
+		var $ = layui.jquery,
+			layer = layui.layer,
 			template = layui.template;
 		// 表单的校验
 		template.verify();
 		template.save('/manager/save', layer.index);
+		$('input[name="password"]').val('123456');
 	});
 </script>
