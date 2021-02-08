@@ -54,7 +54,7 @@ public final class RedisAttribute {
 
     /**
      * <p>
-     * 部门邀请码，是一个 {@code String} 类型的字符串，在项目启动时被创建刷新，
+     * 部门邀请码，是一个 {@code String} 类型的字符串，在项目启动时被创建，
      * 并在每天凌晨十二点刷新它的值。
      * </p>
      */

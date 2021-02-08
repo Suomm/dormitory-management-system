@@ -18,7 +18,7 @@ package xyz.tran4f.dms.attribute;
 
 /**
  * <p>
- * 管理 WEB 程序中的属性。
+ * 管理 WEB 程序中的全局属性。
  * </p>
  *
  * @author 王帅

@@ -29,6 +29,8 @@ public final class RabbitAttribute {
     private RabbitAttribute() {
     }
 
+    // ===== 队列名称 =====
+
     /**
      * <p>
      * 设置用户解锁操作的死信队列，与交换机 {@value EXCHANGE_USER_DIRECT} 绑定。
@@ -64,6 +66,8 @@ public final class RabbitAttribute {
      * @see xyz.tran4f.dms.listener.TaskStatusListener
      */
     public static final String QUEUE_TASK = "task";
+
+    // ===== 交换机名称 =====
 
     /**
      * <p>

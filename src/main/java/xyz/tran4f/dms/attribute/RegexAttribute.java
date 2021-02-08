@@ -18,7 +18,7 @@ package xyz.tran4f.dms.attribute;
 
 /**
  * <p>
- * 用于数据校验的正则表达式属性。
+ * 用于数据校验的正则表达式。
  * </p>
  *
  * @author 王帅
