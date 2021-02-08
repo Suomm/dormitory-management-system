@@ -16,24 +16,23 @@
 
 package xyz.tran4f.dms.validation;
 
-import xyz.tran4f.dms.validation.constraints.Gender;
-
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
+import xyz.tran4f.dms.attribute.RegexAttribute;
+import xyz.tran4f.dms.validation.constraints.Room;
 
 /**
  * <p>
- * 性别校验器，规定：0 表示女生，1 表示男生。
+ * 用于校验房间号是否符合要求。
  * </p>
  *
  * @author 王帅
  * @since 1.0
+ * @see RegexAttribute#ROOM
  */
-public class GenderValidator implements ConstraintValidator<Gender, Integer> {
+public class RoomValidator extends AbstractPatternConstraintValidator<Room> {
 
     @Override
-    public boolean isValid(Integer value, ConstraintValidatorContext context) {
-        return value != null && (value == 0 || value == 1);
+    public String regex() {
+        return RegexAttribute.ROOM;
     }
 
 }

@@ -16,36 +16,32 @@
 
 package xyz.tran4f.dms.validation;
 
-import xyz.tran4f.dms.utils.StringUtils;
+import xyz.tran4f.dms.validation.constraints.Type;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
-import java.lang.annotation.Annotation;
+import java.util.stream.IntStream;
 
 /**
  * <p>
- * 正则表达式约束的检验器抽象父类。只提供一个用于校验的正则表达式，即可完成数据的校验。
- * 被校验的对象不能为 {@code null} 并且不能为空白。
+ * 用于校验 {@code Integer} 表示的类型是否符合要求。
  * </p>
  *
  * @author 王帅
  * @since 1.0
  */
-public abstract class AbstractPatternConstraintValidator<A extends Annotation> implements ConstraintValidator<A, String> {
+public class TypeValidator implements ConstraintValidator<Type, Integer> {
+
+    private int[] ints;
 
     @Override
-    public boolean isValid(String value, ConstraintValidatorContext context) {
-        return StringUtils.notBlank(value) && value.matches(regex());
+    public void initialize(Type constraintAnnotation) {
+        this.ints = constraintAnnotation.value();
     }
 
-    /**
-     * <p>
-     * 用于校验数据的正则表达式。
-     * </p>
-     *
-     * @return 正则表达式
-     * @see xyz.tran4f.dms.attribute.RegexAttribute
-     */
-    public abstract String regex();
+    @Override
+    public boolean isValid(Integer value, ConstraintValidatorContext context) {
+        return value != null && IntStream.of(ints).anyMatch(i -> i == value);
+    }
 
 }
