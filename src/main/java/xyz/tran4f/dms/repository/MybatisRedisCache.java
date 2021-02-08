@@ -42,7 +42,7 @@ public class MybatisRedisCache implements Cache {
 
     private final String id;
 
-    public MybatisRedisCache(final String id) {
+    public MybatisRedisCache(String id) {
         if (id == null) {
             throw new IllegalArgumentException("Cache instances require an ID");
         }

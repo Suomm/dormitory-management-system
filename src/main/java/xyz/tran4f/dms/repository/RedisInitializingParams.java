@@ -25,7 +25,7 @@ import xyz.tran4f.dms.utils.CaptchaUtils;
 
 /**
  * <p>
- * 在项目启动时，初始化 Redis 缓存中的内容，并每隔一段时间更新其中内容。
+ * 在项目启动时，向 Redis 缓存中存入数据，并每隔一段时间更新其中内容。
  * </p>
  *
  * @author 王帅

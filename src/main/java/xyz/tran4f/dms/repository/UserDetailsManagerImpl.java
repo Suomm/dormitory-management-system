@@ -59,28 +59,32 @@ public class UserDetailsManagerImpl implements UserDetailsManager {
         if (user == null) {
             throw new UsernameNotFoundException(i18nUtils.getMessage("UserDetailsManagerImpl.userNotFound"));
         }
+        // 设置用户名即为学号
+        user.setUsername(user.getId());
         return user.setAuthorities(AuthorityUtils.createAuthorityList(user.getRole()));
     }
 
     @Override
     public void createUser(UserDetails user) {
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public void updateUser(UserDetails user) {
-        User u = (User) user;
-        userMapper.updateById(User.builder()
-                .id(u.getId())
-                .accountNonLocked(u.isAccountNonLocked())
-                .build());
+        User u = new User();
+        u.setId(user.getUsername());
+        u.setAccountNonLocked(user.isAccountNonLocked());
+        userMapper.updateById(u);
     }
 
     @Override
     public void deleteUser(String username) {
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public void changePassword(String oldPassword, String newPassword) {
+        throw new UnsupportedOperationException();
     }
 
     @Override
