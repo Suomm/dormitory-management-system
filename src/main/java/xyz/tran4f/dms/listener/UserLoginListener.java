@@ -45,6 +45,8 @@ import static xyz.tran4f.dms.attribute.RedisAttribute.PREFIX_USER_LOCKED;
 @Component
 public class UserLoginListener {
 
+    // ===== 通过构造器注入依赖 =====
+
     private final RedisUtils redisUtils;
     private final RabbitTemplate rabbitTemplate;
     private final UserDetailsManager userDetailsManager;

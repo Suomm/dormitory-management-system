@@ -42,7 +42,9 @@ import javax.mail.internet.MimeMessage;
 public class EmailSendListener {
 
     /**
+     * <p>
      * 注入邮件的发送者邮箱地址。
+     * </p>
      */
     @Value("${spring.mail.username}")
     private String from;

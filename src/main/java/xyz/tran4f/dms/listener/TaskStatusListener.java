@@ -31,7 +31,8 @@ import xyz.tran4f.dms.utils.ZipUtils;
 import java.io.File;
 import java.io.IOException;
 import java.text.MessageFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import static xyz.tran4f.dms.attribute.RedisAttribute.*;
@@ -121,6 +122,17 @@ public class TaskStatusListener {
     public void accomplish(Integer taskId) throws IOException {
         // 获取所有的查宿记录信息
         List<Note> notes = redisUtils.values(KEY_TASK_RECORD);
+        // 需要提示给前端的注意信息
+        List<String> message = new ArrayList<>();
+        // 删除未打分的宿舍
+        notes.stream()
+                .collect(Collectors.groupingBy(Note::getBuilding))
+                .forEach((k, v) -> {
+                    if (v.stream().anyMatch(e -> e.getScore() == null)) {
+                        notes.removeAll(v);
+                        message.add(k + "未检查就结束了任务");
+                    }
+                });
         // 生成检查时间
         String time = DateUtils.now();
         // 需要打包的文件
@@ -134,7 +146,7 @@ public class TaskStatusListener {
                     .sorted()
                     .collect(Collectors.toList());
             // 没有该类型宿舍跳过生成
-            if (collect.size() == 0) { break; }
+            if (collect.size() == 0) { continue; }
             String filename = MessageFormat.format(NOTES_FILE, taskId, time, v.decl);
             files.add(filename);
             ExcelUtils.writeWithTemplate(filename, collect);
@@ -144,10 +156,10 @@ public class TaskStatusListener {
         // 优秀宿舍信息
         List<Dormitory> clean = redisUtils.values(KEY_CLEAN);
         // 分类归纳上传的图片
-        List<String> message = new ArrayList<>();
         copyDirectory(dirty, "脏乱宿舍", message);
         copyDirectory(clean, "优秀宿舍", message);
-        redisUtils.set(KEY_WARNINGS, message);
+        // 存入需要注意的消息到缓存
+        redisUtils.hash(KEY_WARNINGS, taskId.toString(), message);
         // 新闻稿图片名
         String name = MessageFormat.format(IMAGE_FILE, taskId);
         // 生成新闻稿图片
