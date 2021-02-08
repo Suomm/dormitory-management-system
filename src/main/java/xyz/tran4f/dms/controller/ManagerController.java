@@ -105,7 +105,12 @@ public class ManagerController extends BaseController<UserService> {
     @PostMapping("save")
     @ApiOperation("保存用户信息")
     public boolean save(@ApiParam(value = "用户信息", required = true) @Validated User user) {
-        return service.register(user.setPassword("123456"));
+        if (service.getById(user.getId()) == null) {
+            return service.register(user);
+        } else {
+            user.setPassword(null);
+            return service.updateById(user);
+        }
     }
 
     /**
