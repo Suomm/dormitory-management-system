@@ -36,11 +36,10 @@ public class MissingAttributeException extends MessageException {
      * </p>
      *
      * @param message 需要回显的消息信息
-     * @param args 使用国际化消息时可设定的参数
      */
-    @Contract(value = "null,_ -> fail", pure = true)
-    public MissingAttributeException(String message, Object... args) {
-        super(message, args);
+    @Contract(value = "null -> fail", pure = true)
+    public MissingAttributeException(String message) {
+        super(message);
     }
 
 }

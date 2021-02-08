@@ -20,7 +20,7 @@ import org.jetbrains.annotations.Contract;
 
 /**
  * <p>
- * 用户注册时产生的异常。
+ * 重复注册用户时产生的异常。
  * </p>
  *
  * @author 王帅

@@ -20,7 +20,7 @@ import org.jetbrains.annotations.Contract;
 
 /**
  * <p>
- * 无效或者逾期异常。
+ * 验证码无效或者逾期异常。
  * </p>
  *
  * @author 王帅

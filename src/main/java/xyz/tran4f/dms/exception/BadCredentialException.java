@@ -20,7 +20,7 @@ import org.jetbrains.annotations.Contract;
 
 /**
  * <p>
- * 处理请求时传入的参数不正确异常。
+ * 更改账户邮箱或密码时，原邮箱或密码错误抛出异常。
  * </p>
  *
  * @author 王帅

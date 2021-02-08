@@ -20,7 +20,7 @@ import org.jetbrains.annotations.Contract;
 
 /**
  * <p>
- * 检测到用户不存在时抛出此异常。
+ * 数据库中没有用户信息时抛出此异常。
  * </p>
  *
  * @author 王帅

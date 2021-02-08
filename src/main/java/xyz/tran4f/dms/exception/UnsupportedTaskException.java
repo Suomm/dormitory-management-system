@@ -20,25 +20,25 @@ import org.jetbrains.annotations.Contract;
 
 /**
  * <p>
- * 任务调度异常。
+ * 不支持操作的任务异常。
  * </p>
  *
  * @author 王帅
  * @since 1.0
  */
-public class TaskSchedulingException extends MessageException {
+public class UnsupportedTaskException extends MessageException {
 
     private static final long serialVersionUID = -6427827007457767871L;
 
     /**
      * <p>
-     * 用指定的详细消息构建一个 {@code TaskSchedulingException} 实例。
+     * 用指定的详细消息构建一个 {@code UnsupportedTaskException} 实例。
      * </p>
      *
      * @param message 需要回显的消息信息
      */
     @Contract(value = "null -> fail", pure = true)
-    public TaskSchedulingException(String message) {
+    public UnsupportedTaskException(String message) {
         super(message);
     }
 
