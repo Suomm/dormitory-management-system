@@ -22,7 +22,9 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 import xyz.tran4f.dms.exception.MissingAttributeException;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -101,18 +103,13 @@ public final class RedisUtils {
     }
 
     @SuppressWarnings("unchecked")
-    @Contract(value = "null,_,_ -> fail", pure = true)
-    public <T> T orElseThrow(String key, String msg, Object... args) {
+    @Contract(value = "null,_ -> fail", pure = true)
+    public <T> T orElseThrow(String key, String msg) {
         Object o = redisTemplate.opsForValue().get(key);
         if (o == null) {
-            throw new MissingAttributeException(msg, args);
+            throw new MissingAttributeException(msg);
         }
         return (T) o;
-    }
-
-    @Contract(value = "null -> fail", pure = true)
-    public <T> T orElseThrow(String key) {
-        return orElseThrow(key, "RedisUtils.incorrectKey", key);
     }
 
     /**
@@ -175,11 +172,10 @@ public final class RedisUtils {
      *
      * @param key 键
      * @param value 值
-     * @return 插入元素的个数
      */
     @Contract("null,_ -> fail")
-    public Long sSet(String key, Object... value) {
-        return redisTemplate.opsForSet().add(key, value);
+    public void sSet(String key, Object... value) {
+        redisTemplate.opsForSet().add(key, value);
     }
 
     /**
@@ -195,7 +191,7 @@ public final class RedisUtils {
         redisTemplate.opsForSet().remove(key, value);
     }
 
-    public void hash(String key, Object hashKey, Object value) {
+    public void hash(String key, String hashKey, Object value) {
         redisTemplate.opsForHash().put(key, hashKey, value);
     }
 
@@ -203,8 +199,13 @@ public final class RedisUtils {
         redisTemplate.opsForHash().putAll(key, m);
     }
 
-    public Long remove(String key, Object... hasKeys) {
-        return redisTemplate.opsForHash().delete(key, hasKeys);
+    public Long remove(String key, Object... hashKeys) {
+        return redisTemplate.opsForHash().delete(key, hashKeys);
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T> T pop(String key, String hashKey) {
+        return (T) redisTemplate.opsForHash().get(key, hashKey);
     }
 
     @SuppressWarnings("unchecked")

@@ -18,18 +18,6 @@
  * <p>
  * 提供程序所使用到的工具类。
  * </p>
- * <p>
- * 该工具类封装一些常用的工具方法，应该满足以下模板样式：
- * <blockquote><pre>
- *     public final class Utils {
- *
- *         private Utils() {}
- *
- *         public static ...() {} 定义的静态方法
- *
- *     }
- * </pre></blockquote>
- * </p>
  *
  * @author 王帅
  * @since 1.0

@@ -46,12 +46,12 @@ public class SpringUtils implements ApplicationContextAware {
      * </p>
      *
      * @param name 名称
-     * @param clazz 类型
+     * @param requiredType 类型
      * @param <T> 类型
      * @return 容器中的对象
      */
-    public static <T> T getBean(String name, Class<T> clazz){
-        return applicationContext.getBean(name, clazz);
+    public static <T> T getBean(String name, Class<T> requiredType){
+        return applicationContext.getBean(name, requiredType);
     }
 
 }

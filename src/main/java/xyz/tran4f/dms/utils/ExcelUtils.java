@@ -36,6 +36,7 @@ import com.itextpdf.layout.property.TextAlignment;
 import com.itextpdf.layout.property.VerticalAlignment;
 import lombok.Cleanup;
 import lombok.SneakyThrows;
+import org.apache.commons.io.FileUtils;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.rendering.PDFRenderer;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
@@ -135,17 +136,17 @@ public final class ExcelUtils {
      * </p>
      *
      * @param imageFile 图片的路径
-     * @param first 优秀宿舍信息
-     * @param last 脏乱宿舍信息
+     * @param clean 优秀宿舍信息
+     * @param dirty 脏乱宿舍信息
      */
     @SuppressWarnings("rawtypes")
-    public static void data2Image(String imageFile, Collection first, Collection last) throws IOException {
+    public static void data2Image(String imageFile, Collection clean, Collection dirty) throws IOException {
         // 创建相应的临时文件，并在该方法执行（无论是否出现异常）之后删除这些临时文件。
         @Cleanup("delete") File excelFile = File.createTempFile("data2Excel", ".xlsx");
-        writeWithTemplate(excelFile, first, last);
+        writeWithTemplate(excelFile, clean, dirty);
         @Cleanup("delete") File pdfFile = File.createTempFile("excel2Pdf", ".pdf");
         // 以长度最长的集合为标准，并加上表头所需的两行，作为需要转换的最后行数。
-        excel2Pdf(excelFile, pdfFile, Math.max(first.size(), last.size()) + 2);
+        excel2Pdf(excelFile, pdfFile, Math.max(clean.size(), dirty.size()) + 2);
         pdf2Image(pdfFile, imageFile);
     }
 

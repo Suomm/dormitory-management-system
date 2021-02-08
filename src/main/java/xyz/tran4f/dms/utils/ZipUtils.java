@@ -27,7 +27,7 @@ import java.util.Collection;
 
 /**
  * <p>
- * 生成压缩文件的工具类。
+ * 生成 ZIP 压缩文件的工具类。
  * </p>
  *
  * @author 王帅

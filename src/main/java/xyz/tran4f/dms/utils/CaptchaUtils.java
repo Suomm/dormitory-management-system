@@ -50,7 +50,9 @@ public final class CaptchaUtils {
     };
 
     /**
+     * <p>
      * 所需字符数组的长度，用于生成随机数的边界。
+     * </p>
      */
     private static final int LENGTH = CHARS.length;
 

@@ -70,14 +70,14 @@ public final class DateUtils {
         return FORMATTER.parse(text, LocalDate::from).atStartOfDay().toInstant(OFFSET).toEpochMilli();
     }
 
-    public static String weekOfSemester(long begin) {
+    public static int weekOfSemester(long begin) {
         long now = System.currentTimeMillis();
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(begin);
         calendar.setFirstDayOfWeek(Calendar.MONDAY);
         calendar.add(Calendar.DATE, -calendar.get(Calendar.DAY_OF_WEEK));
         begin = calendar.getTime().getTime();
-        return TextUtils.format((int) ((now - begin) / MILLISECOND + 1));
+        return (int) ((now - begin) / MILLISECOND + 1);
     }
 
 }

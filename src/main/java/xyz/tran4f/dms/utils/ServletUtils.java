@@ -17,14 +17,11 @@
 package xyz.tran4f.dms.utils;
 
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import xyz.tran4f.dms.pojo.User;
 
 import javax.servlet.http.HttpServletRequest;
-
-import static xyz.tran4f.dms.attribute.WebAttribute.WEB_SESSION_USER;
 
 /**
  * <p>
@@ -45,7 +42,10 @@ public final class ServletUtils {
 
     /**
      * <p>
-     * 用户登陆成功之后获取 SESSION 域中的用户信息。
+     * 用户登陆成功之后获取用户信息。具体参考以下代码：
+     * <blockquote><pre>
+     *      SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+     * </pre></blockquote>
      * </p>
      *
      * @return 用户信息

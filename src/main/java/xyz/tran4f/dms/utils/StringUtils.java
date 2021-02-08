@@ -38,7 +38,7 @@ public final class StringUtils {
      * 判断一个字符串是否为空白（若果参数为 {@code null} 则返回 {@code false}）。
      * </p>
      *
-     * @param value 被判断的值
+     * @param value 需要判断的值
      * @return 是否为空或者空字符串
      */
     @Contract(value = "null -> false", pure = true)

@@ -27,7 +27,7 @@ import org.springframework.stereotype.Component;
 /**
  * <p>
  * 获取 i18n 国际化消息的工具类。使用时通过 Spring 依赖注入即可。
- * 消息内容详见：{@code resources/i18n/messages.properties} 国际化配置文件。
+ * 消息内容详见：{@code resources/messages.properties} 国际化配置文件。
  * </p>
  *
  * @author 王帅

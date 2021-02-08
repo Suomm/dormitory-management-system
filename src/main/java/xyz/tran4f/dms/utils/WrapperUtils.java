@@ -37,7 +37,7 @@ public final class WrapperUtils {
 
     /**
      * <p>
-     * 通过对象构建查询条件。
+     * 通过对象的属性值构建查询条件。
      * </p>
      *
      * @param value 对象

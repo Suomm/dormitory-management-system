@@ -20,7 +20,7 @@ import org.jetbrains.annotations.Contract;
 
 /**
  * <p>
- * 文本操作工具类。
+ * 文本相关操作的工具类。
  * </p>
  *
  * @author 王帅
@@ -44,7 +44,7 @@ public final class TextUtils {
      * </p>
      *
      * @param number 数字
-     * @return 汉字
+     * @return 如果参数 {@code number > 100} 则返回 {@code null}
      */
     @Contract(pure = true)
     public static String format(int number) {

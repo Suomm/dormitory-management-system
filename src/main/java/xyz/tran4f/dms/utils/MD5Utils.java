@@ -39,7 +39,7 @@ public final class MD5Utils {
      * </p>
      *
      * @param raw 未加密的字符串
-     * @return MD5 加密过的字符串
+     * @return MD5 加密之后的字符串
      */
     public static String encode(String raw) {
         return DigestUtils.md5DigestAsHex(raw.getBytes(StandardCharsets.UTF_8));
