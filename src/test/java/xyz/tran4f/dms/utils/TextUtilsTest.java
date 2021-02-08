@@ -20,11 +20,12 @@ import org.junit.jupiter.api.Test;
 
 /**
  * <p>
- * 2021/1/30
+ * {@link TextUtils} 的测试类。
  * </p>
  *
  * @author 王帅
  * @since 1.0
+ * @see TextUtils
  */
 public class TextUtilsTest {
 

@@ -25,30 +25,30 @@ import java.util.List;
 
 /**
  * <p>
- * 2021/1/7
+ * {@link ExcelUtils} 的测试类。
  * </p>
  *
  * @author 王帅
  * @since 1.0
+ * @see ExcelUtils
  */
 public class ExcelUtilsTest {
 
     @Test
     public void excel2Image() throws IOException {
-        List<Dormitory> first = new ArrayList<>(9);
+        List<Dormitory> clean = new ArrayList<>(9);
         for (int i = 0; i < 9; i++) {
             Dormitory dormitory = new Dormitory();
             dormitory.setGrade("202" + i + "级").setRoom(i + "-20" + i);
-            first.add(dormitory);
+            clean.add(dormitory);
         }
-
-        List<Dormitory> last = new ArrayList<>(14);
+        List<Dormitory> dirty = new ArrayList<>(14);
         for (int i = 0; i < 14; i++) {
             Dormitory dormitory = new Dormitory();
             dormitory.setGrade("202" + i + "级").setRoom(i + "-20" + i);
-            last.add(dormitory);
+            dirty.add(dormitory);
         }
-        ExcelUtils.data2Image("D:\\test.png", first, last);
+        ExcelUtils.data2Image("D:/test.png", clean, dirty);
     }
 
 }

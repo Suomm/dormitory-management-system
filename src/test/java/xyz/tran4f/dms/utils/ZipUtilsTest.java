@@ -22,18 +22,19 @@ import java.io.IOException;
 
 /**
  * <p>
- * 2021/1/7
+ * {@link ZipUtils} 的测试类。
  * </p>
  *
  * @author 王帅
  * @since 1.0
+ * @see ZipUtils
  */
 public class ZipUtilsTest {
 
     @Test
     public void compress() throws IOException {
-        ZipUtils.compress("D:\\Document\\1.zip",
-                "D:\\Document\\其他", "D:\\Document\\test.html");
+        ZipUtils.compress("D:/Document/1.zip",
+                "D:/Document/其他", "D:/Document/test.html");
     }
 
 }

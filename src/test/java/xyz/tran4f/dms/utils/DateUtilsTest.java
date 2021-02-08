@@ -17,32 +17,25 @@
 package xyz.tran4f.dms.utils;
 
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import xyz.tran4f.dms.attribute.RedisAttribute;
 
-import javax.xml.transform.Source;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.time.Instant;
-import java.util.Arrays;
-
-import static xyz.tran4f.dms.attribute.RedisAttribute.KEY_DRAFT;
+import java.util.Calendar;
 
 /**
  * <p>
- * 2021/1/29
+ * {@link DateUtils} 的测试类。
  * </p>
  *
  * @author 王帅
  * @since 1.0
+ * @see DateUtils
  */
 public class DateUtilsTest {
 
     @Test
-    public void weekOfSemester() throws ParseException {
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-        long start = format.parse("2020-12-31").getTime();
+    public void weekOfSemester() {
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(2021, Calendar.JANUARY, 1);
+        long start = calendar.getTime().getTime();
         System.out.println(DateUtils.weekOfSemester(start));
     }
 
