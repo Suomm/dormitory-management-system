@@ -83,7 +83,9 @@ layui.define(['jquery', 'layer', 'form', 'table', 'miniPage'], function(exports)
 			templet = null;
 			//监听提交
 			form.on('submit(saveBtn)', function(data) {
+				layer.load();
 				$.post(url, data.field, function (status) {
+					layer.closeAll('loading');
 					tip(status);
 					if (parentIndex) layer.close(parentIndex);
 				});

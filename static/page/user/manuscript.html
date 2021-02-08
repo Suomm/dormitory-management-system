@@ -1,7 +1,8 @@
 <div class="layuimini-container layuimini-page-anim">
 	<div class="layuimini-main">
 		<blockquote class="layui-elem-quote layui-text">
-			文本框内的内容是上一次的新闻稿内容哦~要改一改的哈！
+			请在下面的文本框内编辑查宿周报内容（文本框内的内容是上一次的新闻稿内容，可根据需要进行适当的更改），
+			只需要输入段落内容即可，无需添加任何的格式。
 		</blockquote>
 		<fieldset class="layui-elem-field">
 			<legend>新闻稿</legend>
@@ -51,8 +52,12 @@
 		//监听提交
 		form.on('submit(text)', function(data) {
 			var contents = data.field['content'].split(/<\/p>/).slice(0, -1).map(function (e) {
-				return e.replaceAll(/&nbsp;|\s+|<.+>/g, '');
+				return e.replaceAll(/&nbsp;|\s+|<.+?>/g, '');
 			});
+			if (contents.length === 0) {
+				layer.msg("段落太少了", {icon: 5, shift: 6});
+				return;
+			}
 			layer.load();
 			$.ajax({
 				type: 'POST',

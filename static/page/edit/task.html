@@ -37,12 +37,14 @@
 				layer.msg('请选择要检查的宿舍楼', {icon: 5, shift: 6});
 				return false;
 			}
+			layer.load();
 			$.ajax({
-				type: 'post',
+				type: 'POST',
 				url: '/task/save',
 				data: JSON.stringify(buildings),
 				contentType: "application/json",
 				success: function (status) {
+					layer.closeAll('loading');
 					status ? layer.msg("操作成功", {icon: 1}) : layer.msg("操作失败", {icon: 5, shift: 6});
 					parent.reloadTable();
 					layer.close(parentIndex);

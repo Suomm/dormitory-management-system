@@ -11,9 +11,11 @@
                     <div style="color: #666;margin-top: 30px;margin-bottom: 40px;padding-left: 30px;">
                         <h3>说明</h3><br>
                         <h4>宿舍打分</h4>
-                        <p>可根据对应的房间号为宿舍进行打分，并附带相应的描述信息。</p>
+                        <p>可根据对应的房间号为宿舍进行打分，并附带相应的描述信息。打过分数之后务必要点击“提交成绩”按钮保存成绩，
+                            如果第一次提交成绩之后再次检查成绩，如果没有成绩的改动可以不点击“提交成绩”按钮，直接返回任务列表。</p>
                         <br><h4>图片上传</h4>
-                        <p>脏乱（优秀）宿舍需要按要求上传三张图片，可在任务结束之前反复上传，上传成功后会显示图片的名称。</p>
+                        <p>脏乱（优秀）宿舍需要按要求上传三张图片，可在任务结束之前反复上传，上传成功后会显示图片的标号。
+                            建议先使用手机自带相机拍摄，在检查完宿舍核对成绩时再进行图片的上传，尽量做到所有图片一次性全部上传。</p>
                     </div>
                 </div>
             </div>
@@ -32,21 +34,21 @@
         $(document).ready(function () {
             var i = window.location.href.indexOf('?') + 1;
             if (i === 1) {
-                layer.msg('链接缺少参数');
+                layer.msg('链接缺少参数', {icon: 5, shift: 6});
                 window.location.href = '/#/user/release.html';
                 return;
             }
             var param = {}
             var v = window.location.href.substring(i).split('=');
-            param[v[0]] = v[1];
+            param[v[0]] = decodeURI(v[1]);
             if (!param.building) {
-                layer.msg('链接缺少参数');
+                layer.msg('链接缺少参数', {icon: 5, shift: 6});
                 window.location.href = '/#/user/release.html';
                 return;
             }
-            $.get("/task/scores?building=" + param, function (notes) {
+            $.get("/task/scores?building=" + param.building, function (notes) {
                 if (notes.length === 0) {
-                    layer.msg('任务中不包含该宿舍楼');
+                    layer.msg('任务中不包含该宿舍楼', {icon: 5, shift: 6});
                     window.location.href = '/#/user/release.html';
                     return;
                 }
@@ -79,9 +81,9 @@
                             <label class="layui-form-label">图片上传：</label>
                             <div class="layui-input-block">
                                 <div class="layui-btn-container">
-                                    <button class="layui-btn layui-btn-sm upload" lay-data="{url: '/upload/' + ${e.room} + '/(1)', accept: 'images', size: 50 * 1024}">门牌</button>
-                                    <button class="layui-btn layui-btn-sm upload" lay-data="{url: '/upload/' + ${e.room} + '/(2)', accept: 'images', size: 50 * 1024}">全景</button>
-                                    <button class="layui-btn layui-btn-sm upload" lay-data="{url: '/upload/' + ${e.room} + '/(3)', accept: 'images', size: 50 * 1024}">局部</button>
+                                    <button class="layui-btn layui-btn-sm upload" lay-data="{url: '/upload/${e.room}/(1)', accept: 'images', size: 50 * 1024}">门牌</button>
+                                    <button class="layui-btn layui-btn-sm upload" lay-data="{url: '/upload/${e.room}/(2)', accept: 'images', size: 50 * 1024}">全景</button>
+                                    <button class="layui-btn layui-btn-sm upload" lay-data="{url: '/upload/${e.room}/(3)', accept: 'images', size: 50 * 1024}">局部</button>
                                 </div>
                             </div>
                         </div>
@@ -89,7 +91,7 @@
                             <div class="layui-input-block">
                                 ${i == 0 ? '' : '<button type="button" class="layui-btn layui-btn-primary pre">上一步</button>'}
                                 <button class="layui-btn" lay-submit lay-filter="formStep">
-                                    ${i == notes.length ? '完成' : '下一步'}
+                                    ${i == notes.length - 1 ? '完成' : '下一步'}
                                 </button>
                             </div>
                         </div>
@@ -101,11 +103,12 @@
                         <div style="font-size: 24px;color: #333;font-weight: 500;margin-top: 30px;">
                             任务完成
                         </div>
-                        <div style="font-size: 14px;color: #666;margin-top: 20px;">请务必点击提交成绩保存查宿记录</div>
+                        <div style="font-size: 14px;color: #666;margin-top: 20px;">如果您修改了宿舍成绩，请务必点击提交成绩保存查宿记录</div>
                     </div>
-                    <div style="text-align: center;margin-top: 50px;">
+                    <div class="layui-btn-container" style="text-align: center;margin-top: 50px;">
                         <button class="layui-btn next">再次核查</button>
-                        <button class="layui-btn layui-btn-primary" id="submit">提交成绩</button>
+                        <button class="layui-btn layui-btn-normal" id="submit">提交成绩</button>
+                        <button class="layui-btn layui-btn-primary" layuimini-content-href="user/release.html">返回列表</button>
                     </div></div>`);
 
                 // 初始化表单与校验

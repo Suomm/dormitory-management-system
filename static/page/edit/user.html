@@ -10,7 +10,7 @@
 		<div class="layui-form-item">
 			<label class="layui-form-label required">姓名：</label>
 			<div class="layui-input-block">
-				<input type="text" name="username" lay-verify="required" lay-reqtext="请输入姓名" placeholder="请输入姓名" autocomplete="off"
+				<input type="text" name="name" lay-verify="required" lay-reqtext="请输入姓名" placeholder="请输入姓名" autocomplete="off"
 				 class="layui-input">
 			</div>
 		</div>
@@ -47,11 +47,10 @@
 </div>
 <script>
 	layui.use('template', function() {
-		var form = layui.form,
+		var layer = layui.layer,
 			template = layui.template;
 		// 表单的校验
 		template.verify();
-		template.save('/manager/save');
-
+		template.save('/manager/save', layer.index);
 	});
 </script>

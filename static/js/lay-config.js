@@ -26,12 +26,20 @@ layui.use(['layer', 'jquery.cookie'], function () {
             xhr.setRequestHeader("X-XSRF-TOKEN", $.cookie('XSRF-TOKEN'));
         },
         error: function(xhr, status, error) {
+            layer.closeAll('loading');
             switch (xhr.status) {
                 case 400:
                     layer.msg(xhr.responseText, {icon: 5, shift: 6});
                     break;
+                case 401:
+                    layer.alert(xhr.responseText, {icon: 5}, function () {
+                        window.location.href = "/login.html";
+                    });
+                    break;
+                case 403:
+                    layer.alert("您的权限不足", {icon: 5});
+                    break;
                 case 500:
-                    layer.closeAll('loading');
                     layer.alert(xhr.responseJSON.message, {icon: 5});
                     break;
             }

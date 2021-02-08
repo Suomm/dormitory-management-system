@@ -13,18 +13,3 @@
 	</fieldset>
 	<div id="list" class="layui-btn-container"></div>
 </div>
-<script type="text/javascript">
-	layui.use('jquery', function() {
-		var $ = layui.jquery;
-		$(document).ready(function () {
-			$.get("/task/get/warns", function (warns) {
-				if (warns.length > 0)
-					$('#warnings').removeClass('layui-hide');
-				var m = $('#message');
-				warns.forEach(function (v, i) {
-					m.append(`(${i + 1}) ${v}<br>`);
-				});
-			});
-		});
-	});
-</script>

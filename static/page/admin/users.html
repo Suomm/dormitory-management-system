@@ -14,13 +14,13 @@
 						<div class="layui-inline">
 							<label class="layui-form-label">姓名</label>
 							<div class="layui-input-inline">
-								<input type="text" name="username" autocomplete="off" class="layui-input">
+								<input type="text" name="name" autocomplete="off" class="layui-input">
 							</div>
 						</div>
 						<div class="layui-inline">
 							<label class="layui-form-label">年级</label>
 							<div class="layui-input-inline">
-								<input type="number" name="grade" autocomplete="off" class="layui-input">
+								<input type="text" name="grade" autocomplete="off" class="layui-input">
 							</div>
 						</div>
 						<div class="layui-inline">
@@ -66,7 +66,7 @@
 
 		$(document).ready(function () {
 			$.get('/manager/captcha', function (e) {
-				$('#captcha').append('今日邀请码：' + e);
+				$('#captcha').append('今日新用户注册邀请码：' + e);
 			});
 		});
 

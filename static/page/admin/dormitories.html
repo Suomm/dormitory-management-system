@@ -64,15 +64,15 @@
             url: '/dormitory/page',
             cols: [[
                 {type: "checkbox", width: 50, fixed: 'left'},
-                {field: 'building', width: 150, title: '宿舍楼', sort: true, fixed: 'left'},
-                {field: 'grade', title: '年级', sort: true},
-                {field: 'room', minWidth: 100, title: '房间号', sort: true},
-                {field: 'type', title: '类别', templet: function(dormitory) {
-					if (dormitory.type === 1) return '本科生'; else return '研究生';
-				}, sort: true},
+                {field: 'building', width: 150, title: '宿舍楼', align: 'center', sort: true, fixed: 'left'},
+                {field: 'grade', title: '年级', align: 'center', sort: true},
+                {field: 'room', minWidth: 100, title: '房间号', align: 'center', sort: true},
 				{field: 'category', minWidth: 100, templet: function(dormitory) {
 					if (dormitory.category === 0) return '女生宿舍'; else return '男生宿舍';
 				}, title: '类型', align: 'center', sort: true},
+                {field: 'type', title: '类别', templet: function(dormitory) {
+					if (dormitory.type === 1) return '本科生'; else return '研究生';
+				}, align: 'center', sort: true},
                 {title: '操作', minWidth: 130, toolbar: '#currentTableBar', align: "center"}
             ]]
         });

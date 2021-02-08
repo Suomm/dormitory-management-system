@@ -1,7 +1,8 @@
 <div class="layuimini-container layuimini-page-anim">
 	<div class="layuimini-main">
 		<blockquote class="layui-elem-quote layui-text">
-			任务系统
+			每周查宿任务管理，在发布任务之前请确保已点击“设置”按钮设置了开学日期，然后点击“发布”按钮选择所需要
+			检查的宿舍楼即可添加任务。
 		</blockquote>
 		<table id="currentTableId" class="layui-table" lay-filter="currentTableFilter"></table>
 		<script type="text/html" id="toolbarImpl">
@@ -9,7 +10,7 @@
 				<button class="layui-btn layui-btn-sm" lay-event="expand">展开</button>
 				<button class="layui-btn layui-btn-sm" lay-event="fold">折叠</button>
 				<button class="layui-btn layui-btn-sm" lay-event="set">设置</button>
-				<button class="layui-btn layui-btn-sm" lay-event="add">新增</button>
+				<button class="layui-btn layui-btn-sm" lay-event="add">发布</button>
 			</div>
 		</script>
 		<script type="text/html" id="currentTableBar">
@@ -31,6 +32,7 @@
 				template = layui.template;
 
 		parent.reloadTable = function () {
+			layer.load();
 			treetable.render({
 				treeColIndex: 1,
 				treeSpid: -1,
@@ -72,6 +74,7 @@
 				]],
 				done: function() {
 					treetable.foldAll('#currentTableId');
+					layer.closeAll('loading');
 				}
 			});
 		};
@@ -108,10 +111,12 @@
 		table.on('tool(currentTableFilter)', function(obj) {
 			if (obj.event === 'delete') {
 				layer.confirm('真的删除么', function(index) {
+					layer.load();
 					$.ajax({
 						type: 'delete',
 						url: '/task/delete/' + obj.data.id,
 						success: function (status) {
+							layer.closeAll('loading');
 							layer.msg("操作成功", {icon: 1});
 							parent.reloadTable();
 						}
@@ -119,23 +124,35 @@
 					layer.close(index);
 				});
 			} else if (obj.event === 'details') {
+				layer.load();
 				$.get("/task/details/" + obj.data.id, function (rep) {
 					if (rep.code === -1) {
 						layer.msg(rep.msg, {icon: 5, shift: 6});
 					} else {
 						template.show('admin/templet.html', '任务详情');
+						$.get("/task/get/warns/" + obj.data.id, function (warns) {
+							if (warns.length > 0)
+								$('#warnings').removeClass('layui-hide');
+							var m = $('#message');
+							warns.forEach(function (v, i) {
+								m.append(`(${i + 1}) ${v}<br>`);
+							});
+						});
 						var $list = $('#list');
 						rep.data.forEach(function (v) {
 							$list.append(`<a href="/download?filename=${v}" class="layui-btn">${v.substring(v.lastIndexOf('/') + 1)}</a>`)
 						});
 					}
+					layer.closeAll('loading');
 				});
 			} else if (obj.event === 'reset') {
 				layer.confirm('真的重置么', function(index) {
+					layer.load();
 					$.ajax({
 						type: 'PUT',
 						url: '/task/rollback/' + obj.data.id,
 						success: function (status) {
+							layer.closeAll('loading');
 							layer.msg("操作成功", {icon: 1});
 							parent.reloadTable();
 						}

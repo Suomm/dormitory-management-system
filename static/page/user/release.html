@@ -1,7 +1,8 @@
 <div class="layuimini-container layuimini-page-anim">
 	<div class="layuimini-main">
 		<blockquote class="layui-elem-quote layui-text">
-			任务列表
+			下面的列表展示的是本周的查宿任务信息，选择需要检查的宿舍楼点击“开始任务”即可进行宿舍的打分，
+			在上传完成绩与图片之后，点击“结束任务”即可完成对宿舍楼的检查。
 		</blockquote>
 		<table class="layui-hide" id="currentTableId" lay-filter="currentTableFilter"></table>
 		<script type="text/html" id="currentTableBar">
@@ -41,7 +42,9 @@
 		table.on('tool(currentTableFilter)', function(obj) {
 			if (obj.event === 'finish') {
 				layer.confirm('确认完成么', function(index) {
+					layer.load();
 					$.post('/task/finish/' + obj.data.taskId, function (status) {
+						layer.closeAll('loading');
 						if (status) {
 							table.reload('currentTableId');
 							layer.msg("操作成功", {icon: 1});
