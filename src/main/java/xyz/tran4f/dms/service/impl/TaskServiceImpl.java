@@ -21,8 +21,7 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import xyz.tran4f.dms.exception.TaskSchedulingException;
-import xyz.tran4f.dms.mapper.DormitoryMapper;
+import xyz.tran4f.dms.exception.UnsupportedTaskException;
 import xyz.tran4f.dms.mapper.TaskMapper;
 import xyz.tran4f.dms.pojo.Dormitory;
 import xyz.tran4f.dms.pojo.Note;
@@ -58,11 +57,11 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements Ta
      * {@inheritDoc}
      */
     @Override
-    @Transactional(noRollbackFor = TaskSchedulingException.class)
+    @Transactional(noRollbackFor = UnsupportedTaskException.class)
     public List<Integer> create(String name, List<String> buildings) {
         // 存在相同的任务菜单，抛出异常
         if (lambdaQuery().eq(Task::getName, name).count() != 0) {
-            throw new TaskSchedulingException("TaskServiceImpl.existed");
+            throw new UnsupportedTaskException("TaskServiceImpl.existed");
         }
         // 创建任务菜单
         List<Integer> idList = new ArrayList<>(buildings.size() + 1);
@@ -112,7 +111,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements Ta
      * {@inheritDoc}
      */
     @Override
-    @Transactional(noRollbackFor = TaskSchedulingException.class)
+    @Transactional(noRollbackFor = UnsupportedTaskException.class)
     public void delete(Integer taskId) {
         // 根据任务号查找对应的任务
         Task task = findTask(taskId, true);
@@ -153,7 +152,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements Ta
      * {@inheritDoc}
      */
     @Override
-    @Transactional(noRollbackFor = TaskSchedulingException.class)
+    @Transactional(noRollbackFor = UnsupportedTaskException.class)
     public Object[] rollback(Integer taskId) {
         Integer parentId = findTask(taskId, false).getParentId();
         lambdaUpdate().eq(Task::getTaskId, taskId).set(Task::getComplete, false).update();

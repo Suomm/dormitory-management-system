@@ -55,7 +55,7 @@ public interface UserService extends IService<User> {
      *
      * @param user 封装好的数据对象
      * @return {@code true} 注册用户成功，{@code false} 注册用户失败
-     * @exception RegisterException 注册用户失败抛出此异常
+     * @throws RegisterException 注册用户失败抛出此异常
      */
     boolean register(User user) throws RegisterException;
 

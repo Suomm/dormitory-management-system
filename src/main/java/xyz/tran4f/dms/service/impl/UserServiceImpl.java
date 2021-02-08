@@ -56,7 +56,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             throw new RegisterException("UserServiceImpl.existed");
         }
         // 设置年级信息
-        user.setGrade(DateUtils.subYear().concat(user.getId().substring(0, 2)));
+        user.setGrade(DateUtils.subYear() + user.getId().substring(0, 2) + "级");
         // 进行密码加密设置
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         // 插入用户信息

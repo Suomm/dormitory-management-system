@@ -17,7 +17,7 @@
 package xyz.tran4f.dms.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import xyz.tran4f.dms.exception.TaskSchedulingException;
+import xyz.tran4f.dms.exception.UnsupportedTaskException;
 import xyz.tran4f.dms.pojo.Note;
 import xyz.tran4f.dms.pojo.Task;
 
@@ -42,14 +42,14 @@ public interface TaskService extends IService<Task> {
      * @param taskId 任务 ID
      * @param menu 是否为任务菜单
      * @return 任务信息
-     * @throws TaskSchedulingException 不存在该任务时抛出此异常
+     * @throws UnsupportedTaskException 不存在该任务时抛出此异常
      */
-    default Task findTask(Integer taskId, boolean menu) throws TaskSchedulingException {
+    default Task findTask(Integer taskId, boolean menu) throws UnsupportedTaskException {
         return lambdaQuery()
                 .eq(Task::getTaskId, taskId)
                 .eq(Task::getMenu, menu)
                 .oneOpt()
-                .orElseThrow(() -> new TaskSchedulingException("TaskService.incorrectKey"));
+                .orElseThrow(() -> new UnsupportedTaskException("TaskService.incorrectKey"));
     }
 
     /**
@@ -62,9 +62,9 @@ public interface TaskService extends IService<Task> {
      * @param week 当前周数
      * @param buildings 宿舍楼
      * @return 创建成功之后的所有任务 ID
-     * @throws TaskSchedulingException 存在相同名称的任务菜单
+     * @throws UnsupportedTaskException 存在相同名称的任务菜单
      */
-    List<Integer> create(String week, List<String> buildings) throws TaskSchedulingException;
+    List<Integer> create(String week, List<String> buildings) throws UnsupportedTaskException;
 
     /**
      * <p>
@@ -72,9 +72,9 @@ public interface TaskService extends IService<Task> {
      * </p>
      *
      * @param taskId 任务 ID
-     * @throws TaskSchedulingException 如果 ID 对应的不是任务菜单抛出此异常
+     * @throws UnsupportedTaskException 如果 ID 对应的不是任务菜单抛出此异常
      */
-    void delete(Integer taskId) throws TaskSchedulingException;
+    void delete(Integer taskId) throws UnsupportedTaskException;
 
     /**
      * <p>
@@ -93,8 +93,8 @@ public interface TaskService extends IService<Task> {
      *
      * @param taskId 任务 ID
      * @return 回滚的任务和他的任务菜单 ID
-     * @throws TaskSchedulingException 如果 ID 对应的不是具体任务抛出此异常
+     * @throws UnsupportedTaskException 如果 ID 对应的不是具体任务抛出此异常
      */
-    Object[] rollback(Integer taskId) throws TaskSchedulingException;
+    Object[] rollback(Integer taskId) throws UnsupportedTaskException;
 
 }
