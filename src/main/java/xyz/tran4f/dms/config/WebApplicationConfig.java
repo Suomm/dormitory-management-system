@@ -34,7 +34,7 @@ import java.util.Locale;
 
 /**
  * <p>
- * Spring MVC 的主配置类。
+ * Spring MVC 配置类。
  * </p>
  *
  * @author 王帅

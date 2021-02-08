@@ -24,7 +24,7 @@ import org.springframework.context.annotation.Configuration;
 
 /**
  * <p>
- * MyBatis-Plus 的配置类。
+ * MyBatis-Plus 配置类。
  * <p/>
  *
  * @author 王帅

@@ -32,7 +32,7 @@ import static xyz.tran4f.dms.attribute.RabbitAttribute.*;
 
 /**
  * <p>
- * 消息队列 Rabbit MQ 的配置类。
+ * 消息队列 Rabbit MQ 配置类。
  * </p>
  *
  * @author 王帅

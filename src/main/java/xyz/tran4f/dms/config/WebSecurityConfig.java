@@ -39,6 +39,10 @@ import xyz.tran4f.dms.handler.AuthenticationExpiredHandler;
 import javax.sql.DataSource;
 
 /**
+ * <p>
+ * Spring Security 配置类。
+ * </p>
+ *
  * @author 王帅
  * @since 1.0
  */
