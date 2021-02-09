@@ -220,6 +220,8 @@ public class TaskController extends BaseController<TaskService> {
         Response response = getWeek();
         // 响应时发生错误
         if (response.getCode() == Response.ERROR) { return response; }
+        // 删除上次的成绩记录
+        redisUtils.delete(Arrays.asList(KEY_ACTIVE_TASK, KEY_TASK_RECORD, KEY_CLEAN, KEY_DIRTY));
         // 取到周次信息
         String week = response.getMsg();
         // 保存任务信息并返回任务 ID 列表
@@ -291,7 +293,6 @@ public class TaskController extends BaseController<TaskService> {
         service.delete(taskId);
         String str = taskId.toString();
         redisUtils.remove(KEY_WARNINGS, str);
-        redisUtils.delete(Arrays.asList(KEY_ACTIVE_WEEK, KEY_TASK_ID, KEY_ACTIVE_TASK));
         FileUtils.deleteQuietly(new File(WEB_PORTFOLIO_STORES.concat(str)));
     }
 
