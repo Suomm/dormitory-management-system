@@ -19,6 +19,7 @@ package xyz.tran4f.dms.pojo;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
@@ -58,6 +59,7 @@ public class User implements Serializable, UserDetails {
     @ApiModelProperty(value = "学号", required = true)
     private String id;
 
+    @JsonIgnore
     @TableField(exist = false)
     @ApiModelProperty(hidden = true)
     private String username;
@@ -107,12 +109,7 @@ public class User implements Serializable, UserDetails {
 
     @TableField(exist = false)
     @ApiModelProperty(hidden = true)
-    private Collection<GrantedAuthority> authorities;
-
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return this.authorities;
-    }
+    private Collection<? extends GrantedAuthority> authorities;
 
     @Override
     public boolean isAccountNonExpired() {
