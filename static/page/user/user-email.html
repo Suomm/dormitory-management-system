@@ -21,7 +21,7 @@
                 </div>
             </div>
             <div class="layui-form-item">
-				<div class="layui-input-block">
+				<div class="layui-input-block layui-btn-container">
 					<button class="layui-btn layui-btn-primary" id="captcha">获取验证码</button>
 					<button class="layui-btn layui-btn-normal" lay-submit lay-filter="saveBtn">确认保存</button>
 				</div>
@@ -51,7 +51,7 @@
                 return;
             }
             $.post("/user/getCaptcha", {
-                "id": $('#studentId').text(),
+                "id": $('#id').text(),
                 "email": $('input[name="newEmail"]').val()
             }, function () {
                 code.attr('disabled', true);
@@ -79,6 +79,7 @@
                     data: data,
                     url: '/user/change-email/' + $('#id').text(),
                     success: function (status) {
+                        $('#captcha').text("获取验证码");
                         layer.closeAll('loading');
                         if (status) {
                             layer.msg("更改邮箱成功", {icon: 1});
