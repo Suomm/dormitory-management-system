@@ -163,7 +163,7 @@ public class TaskStatusListener {
         // 新闻稿图片名
         String name = MessageFormat.format(IMAGE_FILE, taskId);
         // 生成新闻稿图片
-        ExcelUtils.data2Image(name, dirty, clean);
+        ExcelUtils.data2Image(name, clean, dirty);
         // 生成压缩文件
         ZipUtils.compress(MessageFormat.format(CHART_ZIP, taskId, time), files);
         ZipUtils.compress(MessageFormat.format(PHOTO_ZIP, taskId), DIRTY_DIR, CLEAN_DIR);
