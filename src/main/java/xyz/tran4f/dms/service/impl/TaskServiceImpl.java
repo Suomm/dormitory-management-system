@@ -152,12 +152,11 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements Ta
      * {@inheritDoc}
      */
     @Override
-    @Transactional(noRollbackFor = UnsupportedTaskException.class)
-    public Object[] rollback(Integer taskId) {
-        Integer parentId = findTask(taskId, false).getParentId();
-        lambdaUpdate().eq(Task::getTaskId, taskId).set(Task::getComplete, false).update();
-        lambdaUpdate().eq(Task::getTaskId, parentId).set(Task::getComplete, false).update();
-        return new Object[]{parentId, taskId};
+    public boolean rollback(Integer taskId, Integer parentId) {
+        return lambdaUpdate()
+                .set(Task::getComplete, false)
+                .in(Task::getTaskId, taskId, parentId)
+                .update();
     }
 
 }

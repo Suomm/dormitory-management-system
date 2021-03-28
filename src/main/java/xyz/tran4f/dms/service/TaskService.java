@@ -92,9 +92,9 @@ public interface TaskService extends IService<Task> {
      * </p>
      *
      * @param taskId 任务 ID
-     * @return 回滚的任务和他的任务菜单 ID
-     * @throws UnsupportedTaskException 如果 ID 对应的不是具体任务抛出此异常
+     * @param parentId 父任务 ID
+     * @return {@code true} 回滚成功，{@code false} 回滚失败
      */
-    Object[] rollback(Integer taskId) throws UnsupportedTaskException;
+    boolean rollback(Integer taskId, Integer parentId);
 
 }
