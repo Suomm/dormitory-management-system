@@ -22,6 +22,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 import xyz.tran4f.dms.exception.MissingAttributeException;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -147,8 +148,8 @@ public final class RedisUtils {
     }
 
     @Contract(value = "null -> fail")
-    public Long delete(Collection<String> keys) {
-        return redisTemplate.delete(keys);
+    public Long delete(String... keys) {
+        return redisTemplate.delete(Arrays.asList(keys));
     }
 
     /**
