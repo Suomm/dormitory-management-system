@@ -10,7 +10,7 @@
     </parent>
     <groupId>xyz.tran4f</groupId>
     <artifactId>dormitory-management-system</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>1.1-SNAPSHOT</version>
     <name>dormitory-management-system</name>
     <url>www.tran4f.xyz</url>
     <description>天津师范大学化学学院权益保障部宿舍管理系统</description>
