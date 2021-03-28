@@ -220,8 +220,8 @@ public class TaskController extends BaseController<TaskService> {
         Response response = getWeek();
         // 响应时发生错误
         if (response.getCode() == Response.ERROR) { return response; }
-        // 删除上次的成绩记录
-        redisUtils.delete(Arrays.asList(KEY_ACTIVE_TASK, KEY_TASK_RECORD, KEY_CLEAN, KEY_DIRTY));
+        // 删除缓存资源
+        deleteCaches();
         // 取到周次信息
         String week = response.getMsg();
         // 保存任务信息并返回任务 ID 列表
@@ -236,8 +236,6 @@ public class TaskController extends BaseController<TaskService> {
         redisUtils.sSet(KEY_ACTIVE_TASK, idList.toArray());
         // 初始化查宿记录
         buildings.forEach(e -> redisUtils.hash(KEY_TASK_RECORD, service.notes(e)));
-        // 删除原有的临时资源文件夹
-        FileUtils.deleteQuietly(new File(WEB_PORTFOLIO_ASSETS));
         // 创建历史记录文件夹
         if (!new File(WEB_PORTFOLIO_STORES.concat(parentId.toString())).mkdirs()) {
             return Response.error("创建历史记录文件夹失败");
@@ -256,9 +254,13 @@ public class TaskController extends BaseController<TaskService> {
     @ApiOperation("任务意外结束时回滚任务")
     @Secured({"ROLE_MANAGER","ROLE_ROOT"})
     public void rollback(@PathVariable Integer taskId) {
-        Object[] ids = service.rollback(taskId);
-        redisUtils.set(KEY_TASK_ID, ids[0]);
-        redisUtils.sSet(KEY_ACTIVE_TASK, ids[1]);
+        Integer parentId = service.findTask(taskId, false).getParentId();
+        // 只有本周发布的任务才能回滚
+        if (parentId.equals(redisUtils.get(KEY_TASK_ID))
+            && service.rollback(taskId, parentId)) {
+            redisUtils.set(KEY_TASK_ID, parentId);
+            redisUtils.sSet(KEY_ACTIVE_TASK, taskId);
+        }
     }
 
     /**
@@ -291,9 +293,25 @@ public class TaskController extends BaseController<TaskService> {
     @Secured({"ROLE_MANAGER","ROLE_ROOT"})
     public void delete(@PathVariable Integer taskId) {
         service.delete(taskId);
-        String str = taskId.toString();
-        redisUtils.remove(KEY_WARNINGS, str);
-        FileUtils.deleteQuietly(new File(WEB_PORTFOLIO_STORES.concat(str)));
+        String id = taskId.toString();
+        redisUtils.remove(KEY_WARNINGS, id);
+        // 如果删除当前周的任务，则一并删除当前周缓存
+        if (taskId.equals(redisUtils.get(KEY_TASK_ID))) deleteCaches();
+        FileUtils.deleteQuietly(new File(WEB_PORTFOLIO_STORES.concat(id)));
+    }
+
+    /**
+     * <p>
+     * 删除上次任务的缓存文件。
+     * </p>
+     *
+     * @since 1.1
+     */
+    private void deleteCaches() {
+        // 删除上次的成绩记录
+        redisUtils.delete(KEY_ACTIVE_WEEK, KEY_ACTIVE_TASK, KEY_TASK_RECORD, KEY_CLEAN, KEY_DIRTY);
+        // 删除原有的临时资源文件夹
+        FileUtils.deleteQuietly(new File(WEB_PORTFOLIO_ASSETS));
     }
 
     /**
@@ -394,9 +412,9 @@ public class TaskController extends BaseController<TaskService> {
     @Scheduled(cron = "0 0 0 1 2,8 ?")
     public void clear() {
         service.remove(new QueryWrapper<>());
-        redisUtils.delete(Arrays.asList(KEY_ACTIVE_WEEK, KEY_ACTIVE_TASK,
+        redisUtils.delete(KEY_ACTIVE_WEEK, KEY_ACTIVE_TASK,
                 KEY_TASK_ID, KEY_TASK_RECORD, KEY_SEMESTER_BEGIN,
-                KEY_WARNINGS, KEY_CLEAN, KEY_DIRTY));
+                KEY_WARNINGS, KEY_CLEAN, KEY_DIRTY);
         FileUtils.deleteQuietly(new File(WEB_PORTFOLIO_STORES));
         FileUtils.deleteQuietly(new File(WEB_PORTFOLIO_ASSETS));
     }
