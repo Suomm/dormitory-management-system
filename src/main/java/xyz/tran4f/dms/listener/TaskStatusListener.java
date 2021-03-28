@@ -32,6 +32,7 @@ import java.io.File;
 import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -155,6 +156,9 @@ public class TaskStatusListener {
         List<Dormitory> dirty = redisUtils.values(KEY_DIRTY);
         // 优秀宿舍信息
         List<Dormitory> clean = redisUtils.values(KEY_CLEAN);
+        // 将优秀宿舍和脏乱宿舍按照年级和宿舍号排序
+        dirty.sort(Comparator.comparing(Dormitory::getGrade).thenComparing(Dormitory::getBuildingNo));
+        clean.sort(Comparator.comparing(Dormitory::getGrade).thenComparing(Dormitory::getBuildingNo));
         // 分类归纳上传的图片
         copyDirectory(dirty, "脏乱宿舍", message);
         copyDirectory(clean, "优秀宿舍", message);
@@ -167,7 +171,7 @@ public class TaskStatusListener {
         // 生成压缩文件
         ZipUtils.compress(MessageFormat.format(CHART_ZIP, taskId, time), files);
         ZipUtils.compress(MessageFormat.format(PHOTO_ZIP, taskId), DIRTY_DIR, CLEAN_DIR);
-        ZipUtils.compress(MessageFormat.format(DRAFT_ZIP, taskId), name, DIRTY_DIR, CLEAN_DIR);
+        ZipUtils.compress(MessageFormat.format(DRAFT_ZIP, taskId), name, CLEAN_DIR);
     }
 
     /**
