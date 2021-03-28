@@ -71,4 +71,14 @@ public class Dormitory implements Serializable {
     @ApiModelProperty(value = "宿舍类别", example = "1", required = true, notes = "1 本科生 0 研究生")
     private Integer type;
 
+    /**
+     * 获取宿舍楼的楼号用于排序。
+     *
+     * @return 楼号
+     * @since 1.1
+     */
+    public int getBuildingNo() {
+        return Integer.parseInt(room.substring(0, room.indexOf('-')));
+    }
+
 }

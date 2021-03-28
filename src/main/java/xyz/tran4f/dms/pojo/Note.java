@@ -87,7 +87,28 @@ public class Note implements Serializable, Comparable<Note> {
 
     @Override
     public int compareTo(Note o) {
-        return this.room.compareTo(o.room);
+        int res = Integer.compare(this.getBuildingNo(), o.getBuildingNo());
+        return res != 0 ? res : Integer.compare(this.getRoomNo(), o.getRoomNo());
+    }
+
+    /**
+     * 获取宿舍楼的楼号用于排序。
+     *
+     * @return 楼号
+     * @since 1.1
+     */
+    public int getBuildingNo() {
+        return Integer.parseInt(room.substring(0, room.indexOf('-')));
+    }
+
+    /**
+     * 获取宿舍的房间门牌号用于排序。
+     *
+     * @return 门牌号
+     * @since 1.1
+     */
+    public int getRoomNo() {
+        return Integer.parseInt(room.substring(room.lastIndexOf('-') + 1));
     }
 
 }
