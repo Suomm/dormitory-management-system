@@ -56,12 +56,11 @@ public final class ServletUtils {
 
     /**
      * <p>
-     * 获取浏览器地址栏的根目录。满足：{@code http://localhost:8080/dms} 样式。
+     * 获取浏览器地址栏的根目录。满足：{@code http://localhost/dms} 样式。
      * 具体参考以下代码：
      * <blockquote><pre>
      *     request.getScheme() + "://" +
-     *     request.getServerName() + ":" +
-     *     request.getServerPort() +
+     *     request.getServerName() +
      *     request.getContextPath()
      * </pre></blockquote>
      * </p>
@@ -70,16 +69,10 @@ public final class ServletUtils {
      */
     public static String getBasePath() {
         HttpServletRequest request = servletRequestAttributes().getRequest();
-        StringBuilder builder = new StringBuilder();
-        builder.append(request.getScheme())
-                .append("://")
-                .append(request.getServerName());
-        int port = request.getServerPort();
-        if (port != 80) {
-            builder.append(":").append(port);
-        }
-        builder.append(request.getContextPath());
-        return builder.toString();
+        return request.getScheme() +
+                "://" +
+                request.getServerName() +
+                request.getContextPath();
     }
 
 }

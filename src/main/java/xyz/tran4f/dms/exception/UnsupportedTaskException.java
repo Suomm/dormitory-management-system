@@ -26,7 +26,7 @@ import org.jetbrains.annotations.Contract;
  * @author 王帅
  * @since 1.0
  */
-public class UnsupportedTaskException extends MessageException {
+public class UnsupportedTaskException extends AbstractMessageException {
 
     private static final long serialVersionUID = -6427827007457767871L;
 

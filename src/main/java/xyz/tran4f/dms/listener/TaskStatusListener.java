@@ -34,6 +34,7 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static xyz.tran4f.dms.attribute.RedisAttribute.*;
@@ -102,6 +103,13 @@ public class TaskStatusListener {
      * </p>
      */
     private static final String DRAFT_ZIP = WEB_PORTFOLIO_STORES.concat("{0,number,#}/新闻稿照片和表格.zip");
+
+    /**
+     * <p>
+     * 需要上传到服务器的图片的数量，用于检查上传的图片数量是否正确。
+     * </p>
+     */
+    private static final int UPLOAD_IMAGE_COUNT = 3;
 
     // 注入 RedisUtils 依赖
 
@@ -191,8 +199,8 @@ public class TaskStatusListener {
             if (!file.exists()) {
                 message.add("宿舍" + e + "被标记为" + name + "，但未上传任何图片");
             } else {
-                int length = file.list().length;
-                if (length < 3) {
+                int length = Objects.requireNonNull(file.list()).length;
+                if (length < UPLOAD_IMAGE_COUNT) {
                     message.add("宿舍" + e + "被标记为" + name + "，但只上传了" + length + "张图片");
                 }
                 try {
@@ -214,7 +222,9 @@ public class TaskStatusListener {
      */
     private enum Type {
 
+        /** 研究生 */
         POSTGRADUATE(0, "（研究生）"),
+        /** 本科生 */
         UNDERGRADUATE(1, "（本科生）");
 
         private final int type;

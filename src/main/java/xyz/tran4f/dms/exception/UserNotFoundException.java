@@ -26,7 +26,7 @@ import org.jetbrains.annotations.Contract;
  * @author 王帅
  * @since 1.0
  */
-public class UserNotFoundException extends MessageException {
+public class UserNotFoundException extends AbstractMessageException {
 
     private static final long serialVersionUID = -8639444066340783164L;
 

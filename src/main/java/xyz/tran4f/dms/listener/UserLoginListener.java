@@ -45,6 +45,8 @@ import static xyz.tran4f.dms.attribute.RedisAttribute.PREFIX_USER_LOCKED;
 @Component
 public class UserLoginListener {
 
+    private static final int MAX_LOGIN_COUNT = 10;
+
     // ===== 通过构造器注入依赖 =====
 
     private final RedisUtils redisUtils;
@@ -74,10 +76,10 @@ public class UserLoginListener {
         }
         // 根据键值获取对应的登录次数
         int limit = redisUtils.get(PREFIX_USER_LOCKED.concat(username), 1);
-        if (limit < 10) {
+        if (limit < MAX_LOGIN_COUNT) {
             // 登录次数小于极限，每次登陆失败都要记录，记录三十分钟之后失效
             redisUtils.set(PREFIX_USER_LOCKED.concat(username), limit + 1, 30, TimeUnit.MINUTES);
-        } else if (limit == 10){
+        } else if (limit == MAX_LOGIN_COUNT){
             // 登录次数等于极限值时锁定用户
             setUserNonLocked(username, false);
             // 取消缓存失效时间，手动删除缓存，为了时间一致性

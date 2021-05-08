@@ -28,6 +28,7 @@ import java.nio.charset.StandardCharsets;
  * @author 王帅
  * @since 1.0
  */
+@SuppressWarnings("AlibabaClassNamingShouldBeCamel")
 public final class MD5Utils {
 
     private MD5Utils() {

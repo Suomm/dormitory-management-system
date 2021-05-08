@@ -37,8 +37,11 @@ public class Email implements Serializable {
 
     private static final long serialVersionUID = 1247475962205104603L;
 
-    private String subject; // 邮件主题
-    private String text;    // 邮件内容
-    private String to;      // 收件人
+    /** 邮件主题 */
+    private String subject;
+    /** 邮件内容 */
+    private String text;
+    /** 收件人 */
+    private String to;
 
 }

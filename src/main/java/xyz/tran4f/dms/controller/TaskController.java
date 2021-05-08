@@ -196,9 +196,10 @@ public class TaskController extends BaseController<TaskService> {
         if (begin > System.currentTimeMillis()) {
             return Response.error("请在学期开始之后发布任务");
         }
-        // 如果一个学期的周数大于二十五周……/(ㄒoㄒ)/~~
+        // 如果一个学期的周数大于指定周数
+        int max = 25;
         int week = DateUtils.weekOfSemester(begin);
-        if (week > 25) {
+        if (week > max) {
             return Response.error("本学期的周数超过了最大周数");
         }
         return Response.ok(TextUtils.format(week));
@@ -296,7 +297,9 @@ public class TaskController extends BaseController<TaskService> {
         String id = taskId.toString();
         redisUtils.remove(KEY_WARNINGS, id);
         // 如果删除当前周的任务，则一并删除当前周缓存
-        if (taskId.equals(redisUtils.get(KEY_TASK_ID))) deleteCaches();
+        if (taskId.equals(redisUtils.get(KEY_TASK_ID))) {
+            deleteCaches();
+        }
         FileUtils.deleteQuietly(new File(WEB_PORTFOLIO_STORES.concat(id)));
     }
 
@@ -358,6 +361,7 @@ public class TaskController extends BaseController<TaskService> {
         if (size == 0) {
             // 更新父任务
             Integer parentId = redisUtils.get(KEY_TASK_ID);
+            assert parentId != null;
             service.lambdaUpdate()
                     .eq(Task::getTaskId, parentId)
                     .set(Task::getComplete, true)
@@ -383,7 +387,8 @@ public class TaskController extends BaseController<TaskService> {
     @Secured({"ROLE_USER", "ROLE_MANAGER","ROLE_ROOT"})
     public void setNotes(@ApiParam(value = "成绩", required = true) @RequestBody @NotEmpty @Valid List<Note> notes) {
         String week = redisUtils.orElseThrow(KEY_ACTIVE_WEEK, "TaskController.incorrectKey");
-        Date date = new Date(); // 设置当前时间
+        // 设置当前时间
+        Date date = new Date();
         // 获取所有宿舍的宿舍号
         Object[] hashKeys = notes.stream().map(Note::getRoom).toArray();
         // 删除之前的脏乱（优秀）宿舍信息

@@ -57,7 +57,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements Ta
      * {@inheritDoc}
      */
     @Override
-    @Transactional(noRollbackFor = UnsupportedTaskException.class)
+    @Transactional(rollbackFor = Exception.class)
     public List<Integer> create(String name, List<String> buildings) {
         // 存在相同的任务菜单，抛出异常
         if (lambdaQuery().eq(Task::getName, name).count() != 0) {
@@ -99,6 +99,8 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements Ta
                     case "category":
                         child.setCategory((Integer) value);
                         break;
+                    default:
+                        break;
                 }
             });
             baseMapper.insert(child);
@@ -111,7 +113,7 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements Ta
      * {@inheritDoc}
      */
     @Override
-    @Transactional(noRollbackFor = UnsupportedTaskException.class)
+    @Transactional(rollbackFor = Exception.class)
     public void delete(Integer taskId) {
         // 根据任务号查找对应的任务
         Task task = findTask(taskId, true);

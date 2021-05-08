@@ -178,7 +178,10 @@ public final class ExcelUtils {
         for (int i = 1; i < lastRow; i++) {
             Row row = sheet.getRow(i);
             boolean isOdd = i % 2 == 0;
-            for (int j = 0; j < 4; j++) {
+            // 表格的总列数
+            int total = 4;
+            // 填充表格内容
+            for (int j = 0; j < total; j++) {
                 org.apache.poi.ss.usermodel.Cell cell = row.getCell(j);
                 float width = sheet.getColumnWidthInPixels(j);
                 if (cell == null) {

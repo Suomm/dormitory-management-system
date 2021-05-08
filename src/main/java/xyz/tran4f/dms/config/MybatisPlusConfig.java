@@ -51,6 +51,7 @@ public class MybatisPlusConfig {
      * </p>
      */
     @Bean
+    @SuppressWarnings("deprecation")
     public ConfigurationCustomizer configurationCustomizer() {
         return configuration -> configuration.setUseDeprecatedExecutor(false);
     }

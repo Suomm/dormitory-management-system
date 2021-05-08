@@ -33,7 +33,7 @@ import java.util.Objects;
  */
 @Setter
 @Getter
-public abstract class MessageException extends RuntimeException {
+public abstract class AbstractMessageException extends RuntimeException {
 
     private static final long serialVersionUID = 8747711960406241674L;
 
@@ -55,7 +55,7 @@ public abstract class MessageException extends RuntimeException {
      * @exception NullPointerException 如果回显详细消息为 {@code null}
      */
     @Contract(value = "null,_ -> fail", pure = true)
-    public MessageException(String message, Object... args) {
+    public AbstractMessageException(String message, Object... args) {
         super(Objects.requireNonNull(message));
         setArgs(args);
     }

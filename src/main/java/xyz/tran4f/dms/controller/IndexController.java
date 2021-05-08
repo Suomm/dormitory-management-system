@@ -45,18 +45,12 @@ public class IndexController {
 
     @GetMapping("/api/init")
     public Map<String, Object> init() {
-        Map<String, Object> map = new HashMap<>();
-        Map<String, Object> home = new HashMap<>();
-        Map<String, Object> logo = new HashMap<>();
+        Map<String, Object> map = new HashMap<>(3);
+        Map<String, Object> home = new HashMap<>(2);
+        Map<String, Object> logo = new HashMap<>(3);
         List<Menu> menu = new ArrayList<>();
 
         String role = ServletUtils.getUser().getRole();
-
-        menu.add(Menu.builder().title("操作").child(Arrays.asList(
-                new Menu("宿舍检查", "fa fa-calendar", "user/release.html"),
-                new Menu("周报制作", "fa fa-file-text", "user/manuscript.html"),
-                new Menu("模板下载", "fa fa-cloud-download", "user/download.html")
-        )).icon("fa fa-wrench").build());
 
         switch (role) {
             case "ROLE_MANAGER":
@@ -67,6 +61,13 @@ public class IndexController {
                         new Menu("任务管理", "fa fa-window-maximize", "admin/tasks.html"),
                         new Menu("公告管理", "fa fa-tags", "admin/notices.html")
                 )).icon("fa fa-cog").build());
+                break;
+            default:
+                menu.add(Menu.builder().title("操作").child(Arrays.asList(
+                        new Menu("宿舍检查", "fa fa-calendar", "user/release.html"),
+                        new Menu("周报制作", "fa fa-file-text", "user/manuscript.html"),
+                        new Menu("模板下载", "fa fa-cloud-download", "user/download.html")
+                )).icon("fa fa-wrench").build());
                 break;
         }
 

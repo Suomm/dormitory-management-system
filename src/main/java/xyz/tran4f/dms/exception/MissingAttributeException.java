@@ -26,7 +26,7 @@ import org.jetbrains.annotations.Contract;
  * @author 王帅
  * @since 1.0
  */
-public class MissingAttributeException extends MessageException {
+public class MissingAttributeException extends AbstractMessageException {
 
     private static final long serialVersionUID = 5119539187946629143L;
 

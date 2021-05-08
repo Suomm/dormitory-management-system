@@ -39,6 +39,7 @@ import static xyz.tran4f.dms.attribute.RabbitAttribute.*;
  * @since 1.0
  */
 @Configuration
+@SuppressWarnings("AlibabaClassNamingShouldBeCamel")
 public class RabbitMQConfig implements RabbitListenerConfigurer {
 
     // 交换机、队列的声明

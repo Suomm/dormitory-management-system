@@ -22,7 +22,7 @@ import org.springframework.validation.BindException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import xyz.tran4f.dms.exception.MessageException;
+import xyz.tran4f.dms.exception.AbstractMessageException;
 import xyz.tran4f.dms.utils.I18nUtils;
 
 import javax.validation.ConstraintViolationException;
@@ -53,10 +53,10 @@ public class GlobalExceptionHandler {
      * 细消息。
      * </p>
      *
-     * @see MessageException
+     * @see AbstractMessageException
      */
-    @ExceptionHandler(MessageException.class)
-    public ResponseEntity<String> sendMessage(MessageException exception) {
+    @ExceptionHandler(AbstractMessageException.class)
+    public ResponseEntity<String> sendMessage(AbstractMessageException exception) {
         return ResponseEntity.badRequest().body(getMessage(exception));
     }
 
@@ -68,7 +68,7 @@ public class GlobalExceptionHandler {
      * @param exception 需要回显的详细信息的异常
      * @return 国际化消息
      */
-    private String getMessage(MessageException exception) {
+    private String getMessage(AbstractMessageException exception) {
         try {
             // 默认去本地查找 i18n 国际化消息
             return i18nUtils.getMessage(exception.getMessage(), exception.getArgs());

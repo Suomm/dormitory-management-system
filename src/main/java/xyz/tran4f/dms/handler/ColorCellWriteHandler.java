@@ -38,6 +38,13 @@ import java.util.List;
  */
 public class ColorCellWriteHandler extends AbstractCellWriteHandler {
 
+    /** 及格分数 */
+    private static final int PASS = 60;
+    /** 优秀分数 */
+    private static final int HIGH_DISTINCTION = 90;
+    /** 成绩列的索引 */
+    private static final int SCORE_COLUMN_INDEX = 4;
+
     @Override
     public void afterCellDispose(WriteSheetHolder writeSheetHolder,
                                  WriteTableHolder writeTableHolder,
@@ -47,13 +54,13 @@ public class ColorCellWriteHandler extends AbstractCellWriteHandler {
                                  Integer relativeRowIndex,
                                  Boolean isHead) {
         // 根据列的索引判断是不是成绩那一列
-        if (cell.getColumnIndex() == 4) {
+        if (cell.getColumnIndex() == SCORE_COLUMN_INDEX) {
             // 获取填入的成绩，并转换为 int 格式
             int cellValue = Integer.parseInt(cell.getStringCellValue());
-            if (cellValue >= 90) {
+            if (cellValue >= HIGH_DISTINCTION) {
                 // 大于等于 90 分设置背景色为绿色
                 setFillForegroundColor(writeSheetHolder, cell, IndexedColors.GREEN);
-            } else if (cellValue < 60) {
+            } else if (cellValue < PASS) {
                 // 小于 60 设置背景色为红色
                 setFillForegroundColor(writeSheetHolder, cell, IndexedColors.RED);
             }

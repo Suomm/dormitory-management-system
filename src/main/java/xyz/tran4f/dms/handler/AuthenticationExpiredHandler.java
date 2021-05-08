@@ -32,10 +32,17 @@ import java.io.IOException;
  */
 public class AuthenticationExpiredHandler implements SessionInformationExpiredStrategy {
 
+    // ===== 需要重复使用的常量 =====
+
+    private static final String XML_HTTP_REQUEST = "XMLHttpRequest";
+    private static final String X_REQUESTED_WITH = "X-Requested-With";
+
+    // ===== 处理业务逻辑的方法 =====
+
     @Override
     public void onExpiredSessionDetected(SessionInformationExpiredEvent event) throws IOException {
         HttpServletResponse response = event.getResponse();
-        if ("XMLHttpRequest".equals(event.getRequest().getHeader("X-Requested-With"))) {
+        if (XML_HTTP_REQUEST.equals(event.getRequest().getHeader(X_REQUESTED_WITH))) {
             // 发送 401 状态码和详细信息
             response.setContentType("text/html;charset=utf-8");
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);

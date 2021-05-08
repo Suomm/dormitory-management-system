@@ -26,7 +26,7 @@ import org.jetbrains.annotations.Contract;
  * @author 王帅
  * @since 1.0
  */
-public class BadCredentialException extends MessageException {
+public class BadCredentialException extends AbstractMessageException {
 
     private static final long serialVersionUID = -8340470497161439206L;
 

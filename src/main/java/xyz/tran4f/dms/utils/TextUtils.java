@@ -48,8 +48,13 @@ public final class TextUtils {
      */
     @Contract(pure = true)
     public static String format(int number) {
-        if (number > 100) { return null; }
-        if (number < 10) { return String.valueOf(NUMBERS[number]); }
+        // 最大支持转换的数字
+        int max = 100;
+        if (number >= max) { return null; }
+        // 所转换的数字小于零，可以直接取值使用
+        int min = 10;
+        if (number < min) { return String.valueOf(NUMBERS[number]); }
+        // 正常情况下的两位数字转换为中文
         StringBuilder builder = new StringBuilder();
         int unit = number / 10;
         if (unit != 1) { builder.append(NUMBERS[unit]); }
