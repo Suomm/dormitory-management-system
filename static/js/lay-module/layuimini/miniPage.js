@@ -10,7 +10,6 @@ layui.define(["element", "jquery"], function (exports) {
         // miniAdmin = layui.miniAdmin,
         layer = layui.layer;
 
-
     var miniPage = {
 
         /**

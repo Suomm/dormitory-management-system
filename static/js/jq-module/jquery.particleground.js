@@ -1,3 +1,4 @@
+// jquery.particleground 模块
 layui.define('jquery', function(exports) {
     var	jQuery = layui.jquery;
     !function (a) {

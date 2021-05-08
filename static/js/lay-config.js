@@ -40,6 +40,7 @@ layui.use(['layer', 'jquery.cookie'], function () {
                     layer.alert("您的权限不足", {icon: 5});
                     break;
                 case 500:
+                    // TODO 解决消息不显示问题
                     layer.alert(xhr.responseJSON.message, {icon: 5});
                     break;
             }

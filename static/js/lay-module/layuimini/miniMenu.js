@@ -244,6 +244,5 @@ layui.define(["element","laytpl" ,"jquery"], function (exports) {
 
     };
 
-
     exports("miniMenu", miniMenu);
 });

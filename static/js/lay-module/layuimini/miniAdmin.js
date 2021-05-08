@@ -327,6 +327,5 @@ layui.define(["jquery", "miniMenu", "element","miniPage", "miniTheme"], function
         }
     };
 
-
     exports("miniAdmin", miniAdmin);
 });

@@ -1,3 +1,4 @@
+// 自定义模板模块
 layui.define(['jquery', 'layer', 'form', 'table', 'miniPage'], function(exports) {
 	var	$ = layui.jquery,
 		form  = layui.form,
