@@ -23,9 +23,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import xyz.tran4f.dms.exception.UnsupportedTaskException;
 import xyz.tran4f.dms.mapper.TaskMapper;
-import xyz.tran4f.dms.pojo.Dormitory;
-import xyz.tran4f.dms.pojo.Note;
-import xyz.tran4f.dms.pojo.Task;
+import xyz.tran4f.dms.model.Dormitory;
+import xyz.tran4f.dms.model.Task;
 import xyz.tran4f.dms.service.DormitoryService;
 import xyz.tran4f.dms.service.TaskService;
 
@@ -37,9 +36,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
- * <p>
  * 任务相关操作的服务接口实现。
- * </p>
  *
  * @author 王帅
  * @since 1.0
@@ -136,18 +133,18 @@ public class TaskServiceImpl extends ServiceImpl<TaskMapper, Task> implements Ta
      * @return
      */
     @Override
-    public Map<String, Note> notes(String building) {
+    public Map<String, Dormitory> notes(String building) {
         return dormitoryService.lambdaQuery()
                 .eq(Dormitory::getBuilding, building)
                 .list()
                 .stream()
-                .map(e -> Note.builder()
+                .map(e -> Dormitory.builder()
                     .room(e.getRoom())
                     .type(e.getType())
                     .grade(e.getGrade())
                     .building(e.getBuilding())
                     .build())
-                .collect(Collectors.toMap(Note::getRoom, Function.identity()));
+                .collect(Collectors.toMap(Dormitory::getRoom, Function.identity()));
     }
 
     /**

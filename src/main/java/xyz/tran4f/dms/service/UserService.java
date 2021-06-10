@@ -20,14 +20,12 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import org.jetbrains.annotations.Nullable;
 import xyz.tran4f.dms.exception.RegisterException;
 import xyz.tran4f.dms.exception.UserNotFoundException;
-import xyz.tran4f.dms.pojo.User;
+import xyz.tran4f.dms.model.User;
 
 import java.util.Optional;
 
 /**
- * <p>
  * 用户相关操作的服务层接口。
- * </p>
  *
  * @author 王帅
  * @since 1.0
@@ -35,9 +33,7 @@ import java.util.Optional;
 public interface UserService extends IService<User> {
 
     /**
-     * <p>
      * 根据学号查找对应的学生信息，没有该学生的信息则抛出异常。
-     * </p>
      *
      * @param id 学号
      * @return 学生信息
@@ -49,9 +45,7 @@ public interface UserService extends IService<User> {
     }
 
     /**
-     * <p>
      * 注册用户操作，将封装好的用户信息保存到数据库。
-     * </p>
      *
      * @param user 封装好的数据对象
      * @return {@code true} 注册用户成功，{@code false} 注册用户失败
@@ -60,9 +54,7 @@ public interface UserService extends IService<User> {
     boolean register(User user) throws RegisterException;
 
     /**
-     * <p>
-     * 实现用户更改密码的操作（<b>可以不提供旧密码<b/>）。
-     * </p>
+     * 实现用户更改密码的操作（<b>可以不提供旧密码</b>）。
      *
      * @param id 学号
      * @param oldPassword 旧密码
@@ -72,9 +64,7 @@ public interface UserService extends IService<User> {
     boolean changePassword(String id, @Nullable String oldPassword, String newPassword);
 
     /**
-     * <p>
      * 实现用户更改邮箱地址的操作。
-     * </p>
      *
      * @param id 学号
      * @param oldEmail 旧邮箱地址

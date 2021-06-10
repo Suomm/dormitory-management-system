@@ -23,14 +23,12 @@ import org.springframework.stereotype.Service;
 import xyz.tran4f.dms.exception.BadCredentialException;
 import xyz.tran4f.dms.exception.RegisterException;
 import xyz.tran4f.dms.mapper.UserMapper;
-import xyz.tran4f.dms.pojo.User;
+import xyz.tran4f.dms.model.User;
 import xyz.tran4f.dms.service.UserService;
-import xyz.tran4f.dms.utils.DateUtils;
+import xyz.tran4f.dms.util.DateUtils;
 
 /**
- * <p>
  * 用户相关操作的服务接口实现。
- * </p>
  *
  * @author 王帅
  * @since 1.0

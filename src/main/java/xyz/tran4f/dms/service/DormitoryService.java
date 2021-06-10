@@ -17,12 +17,10 @@
 package xyz.tran4f.dms.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import xyz.tran4f.dms.pojo.Dormitory;
+import xyz.tran4f.dms.model.Dormitory;
 
 /**
- * <p>
  * 宿舍相关操作的服务层接口。
- * </p>
  *
  * @author 王帅
  * @since 1.0

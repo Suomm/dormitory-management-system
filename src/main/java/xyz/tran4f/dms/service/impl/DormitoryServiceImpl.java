@@ -19,13 +19,11 @@ package xyz.tran4f.dms.service.impl;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 import xyz.tran4f.dms.mapper.DormitoryMapper;
-import xyz.tran4f.dms.pojo.Dormitory;
+import xyz.tran4f.dms.model.Dormitory;
 import xyz.tran4f.dms.service.DormitoryService;
 
 /**
- * <p>
  * 宿舍相关操作的服务接口实现。
- * </p>
  *
  * @author 王帅
  * @since 1.0

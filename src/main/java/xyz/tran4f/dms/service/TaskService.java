@@ -18,16 +18,14 @@ package xyz.tran4f.dms.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import xyz.tran4f.dms.exception.UnsupportedTaskException;
-import xyz.tran4f.dms.pojo.Note;
-import xyz.tran4f.dms.pojo.Task;
+import xyz.tran4f.dms.model.Dormitory;
+import xyz.tran4f.dms.model.Task;
 
 import java.util.List;
 import java.util.Map;
 
 /**
- * <p>
  * 任务相关操作的服务层接口。
- * </p>
  *
  * @author 王帅
  * @since 1.0
@@ -35,9 +33,7 @@ import java.util.Map;
 public interface TaskService extends IService<Task> {
 
     /**
-     * <p>
      * 通过任务 ID 查找具体任务。
-     * </p>
      *
      * @param taskId 任务 ID
      * @param menu 是否为任务菜单
@@ -53,11 +49,9 @@ public interface TaskService extends IService<Task> {
     }
 
     /**
-     * <p>
      * 通过指定的当前周数和需要检查的宿舍楼，创建任务信息并写入数据库。生成任务菜单和具体任务，
      * 其中任务菜单是以当前周数为任务名称，具体任务是以需要检查的宿舍楼作为任务名称。任务菜单不
      * 能重复，即：如果存在以当前周数为任务名称的任务菜单则会抛出异常。
-     * </p>
      *
      * @param week 当前周数
      * @param buildings 宿舍楼
@@ -67,9 +61,7 @@ public interface TaskService extends IService<Task> {
     List<Integer> create(String week, List<String> buildings) throws UnsupportedTaskException;
 
     /**
-     * <p>
      * 根据任务 ID 删除任务菜单及其子任务。
-     * </p>
      *
      * @param taskId 任务 ID
      * @throws UnsupportedTaskException 如果 ID 对应的不是任务菜单抛出此异常
@@ -77,19 +69,15 @@ public interface TaskService extends IService<Task> {
     void delete(Integer taskId) throws UnsupportedTaskException;
 
     /**
-     * <p>
      * 根据宿舍楼初始化所要检查的宿舍信息。
-     * </p>
      *
      * @param building 要检查的宿舍楼
      * @return 该宿舍楼的宿舍信息
      */
-    Map<String, Note> notes(String building);
+    Map<String, Dormitory> notes(String building);
 
     /**
-     * <p>
      * 回滚具体任务
-     * </p>
      *
      * @param taskId 任务 ID
      * @param parentId 父任务 ID
