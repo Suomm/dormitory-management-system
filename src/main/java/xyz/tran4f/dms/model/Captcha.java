@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package xyz.tran4f.dms.pojo;
+package xyz.tran4f.dms.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -23,9 +23,7 @@ import lombok.NoArgsConstructor;
 import java.io.Serializable;
 
 /**
- * <p>
- * 封装发送邮件相关信息的实体类。
- * <p/>
+ * 验证码实体类。
  *
  * @author 王帅
  * @since 1.0
@@ -33,15 +31,14 @@ import java.io.Serializable;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Email implements Serializable {
+public class Captcha implements Serializable {
 
-    private static final long serialVersionUID = 1247475962205104603L;
+    private static final long serialVersionUID = -4483861236935426035L;
 
-    /** 邮件主题 */
-    private String subject;
-    /** 邮件内容 */
-    private String text;
-    /** 收件人 */
-    private String to;
+    /** 验证码的文本内容。 */
+    private String code;
+
+    /** 验证码的过期时间。 */
+    private long outDate;
 
 }

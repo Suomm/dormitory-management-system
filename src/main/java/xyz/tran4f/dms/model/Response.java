@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package xyz.tran4f.dms.pojo;
+package xyz.tran4f.dms.model;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -26,9 +26,7 @@ import org.jetbrains.annotations.Contract;
 import java.io.Serializable;
 
 /**
- * <p>
  * 响应状态与数据的封装。
- * </p>
  *
  * @author 王帅
  * @since 1.0
@@ -41,18 +39,10 @@ public class Response implements Serializable {
 
     private static final long serialVersionUID = -419758422553049745L;
 
-    /**
-     * <p>
-     * 相应成功状态码。
-     * </p>
-     */
+    /** 响应成功状态码。 */
     public static final int OK = 1;
 
-    /**
-     * <p>
-     * 相应失败状态码。
-     * </p>
-     */
+    /** 响应失败状态码。 */
     public static final int ERROR = -1;
 
     @ApiModelProperty(value = "响应状态码", required = true)
@@ -65,9 +55,7 @@ public class Response implements Serializable {
     private Object data;
 
     /**
-     * <p>
      * 根据响应信息构建一个成功的响应。
-     * </p>
      *
      * @param msg 响应信息
      * @return 响应实体
@@ -78,9 +66,7 @@ public class Response implements Serializable {
     }
 
     /**
-     * <p>
      * 根据响应数据构建一个成功的响应。
-     * </p>
      *
      * @param data 响应数据
      * @return 响应实体
@@ -91,9 +77,7 @@ public class Response implements Serializable {
     }
 
     /**
-     * <p>
      * 根据响应信息构建一个失败的响应。
-     * </p>
      *
      * @param msg 响应信息
      * @return 响应实体

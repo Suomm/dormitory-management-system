@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package xyz.tran4f.dms.pojo;
+package xyz.tran4f.dms.model;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
@@ -26,9 +26,7 @@ import lombok.experimental.Accessors;
 import java.io.Serializable;
 
 /**
- * <p>
- * 2021/1/16
- * </p>
+ * 任务信息。
  *
  * @author 王帅
  * @since 1.0
@@ -44,11 +42,7 @@ public class Task implements Serializable {
 
     private static final long serialVersionUID = -447370729695464083L;
 
-    /**
-     * <p>
-     * 任务菜单图标。
-     * </p>
-     */
+    /** 任务菜单图标。 */
     public static final String ICON = "layui-icon-set";
 
     @TableId(type = IdType.AUTO)

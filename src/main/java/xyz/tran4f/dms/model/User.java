@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package xyz.tran4f.dms.pojo;
+package xyz.tran4f.dms.model;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
@@ -36,9 +36,7 @@ import java.io.Serializable;
 import java.util.Collection;
 
 /**
- * <p>
  * 用户实体类，保存用户有关的信息。
- * </p>
  *
  * @author 王帅
  * @since 1.0
@@ -110,6 +108,8 @@ public class User implements Serializable, UserDetails {
     @TableField(exist = false)
     @ApiModelProperty(hidden = true)
     private Collection<? extends GrantedAuthority> authorities;
+
+    // Implementation method
 
     @Override
     public boolean isAccountNonExpired() {

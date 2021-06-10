@@ -14,10 +14,13 @@
  * limitations under the License.
  */
 
-package xyz.tran4f.dms.pojo;
+package xyz.tran4f.dms.model;
 
 import com.alibaba.excel.annotation.format.DateTimeFormat;
 import com.alibaba.excel.annotation.format.NumberFormat;
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
@@ -29,14 +32,11 @@ import xyz.tran4f.dms.validation.constraints.Type;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Date;
 
 /**
- * <p>
- * 检查宿舍的相关信息记录。
- * </p>
+ * 宿舍的相关信息。
  *
  * @author 王帅
  * @since 1.0
@@ -48,13 +48,9 @@ import java.util.Date;
 @Accessors(chain = true)
 @EqualsAndHashCode(of = "room")
 @ApiModel(value = "宿舍检查的成绩信息")
-public class Note implements Serializable, Comparable<Note> {
+public class Dormitory implements Serializable, Comparable<Dormitory> {
 
     private static final long serialVersionUID = 5736959954440581339L;
-
-    @DateTimeFormat("yyyy-MM-dd")
-    @ApiModelProperty(value = "日期", example = "2020-12-12", hidden = true)
-    private Date date;
 
     @Grade
     @ApiModelProperty(value = "所属年级", example = "2020级", required = true)
@@ -65,50 +61,68 @@ public class Note implements Serializable, Comparable<Note> {
     private String building;
 
     @Room
+    @TableId(value = "room", type = IdType.INPUT)
     @ApiModelProperty(value = "房间号", example = "3-214", required = true)
     private String room;
-
-    @Min(0)
-    @Max(100)
-    @NumberFormat("##")
-    @ApiModelProperty(value = "分数", required = true, example = "60")
-    private Integer score;
-
-    @ApiModelProperty(value = "周次", example = "十一", hidden = true)
-    private String week;
-
-    @NotNull
-    @ApiModelProperty(value = "备注", required = true)
-    private String details;
 
     @Type
     @ApiModelProperty(value = "宿舍类型", example = "0", required = true, notes = "男生（女生）宿舍")
     private Integer type;
 
+    @Type
+    @ApiModelProperty(value = "宿舍类型", example = "1", required = true, notes = "0 女生宿舍 1 男生宿舍")
+    private Integer category;
+
+    @TableField(exist = false)
+    @DateTimeFormat("yyyy-MM-dd")
+    @ApiModelProperty(value = "日期", example = "2020-12-12", hidden = true)
+    private Date date;
+
+    @Min(0)
+    @Max(100)
+    @NumberFormat("##")
+    @TableField(exist = false)
+    @ApiModelProperty(value = "分数", required = true, example = "60")
+    private Integer score;
+
+    @TableField(exist = false)
+    @ApiModelProperty(value = "周次", example = "十一", hidden = true)
+    private String week;
+
+    @TableField(exist = false)
+    @ApiModelProperty(value = "备注", required = true)
+    private String details;
+
+
+    @TableField(exist = false)
+    @ApiModelProperty(hidden = true)
+    private String buildingNo;
+
+    @TableField(exist = false)
+    @ApiModelProperty(hidden = true)
+    private String roomNo;
+
+    /**
+     * 生成一些必要的属性。
+     *
+     * @since 1.1
+     */
+    public void generate() {
+        if (this.details == null) {
+            this.details = "";
+        }
+        this.buildingNo = room.substring(0, room.indexOf('-'));
+        this.roomNo     = room.substring(room.lastIndexOf('-') + 1);
+    }
+
     @Override
-    public int compareTo(Note o) {
-        int res = Integer.compare(this.getBuildingNo(), o.getBuildingNo());
-        return res != 0 ? res : Integer.compare(this.getRoomNo(), o.getRoomNo());
-    }
-
-    /**
-     * 获取宿舍楼的楼号用于排序。
-     *
-     * @return 楼号
-     * @since 1.1
-     */
-    public int getBuildingNo() {
-        return Integer.parseInt(room.substring(0, room.indexOf('-')));
-    }
-
-    /**
-     * 获取宿舍的房间门牌号用于排序。
-     *
-     * @return 门牌号
-     * @since 1.1
-     */
-    public int getRoomNo() {
-        return Integer.parseInt(room.substring(room.lastIndexOf('-') + 1));
+    public int compareTo(Dormitory o) {
+        int res = this.grade.compareTo(o.grade);
+        if (res != 0) {
+            return res;
+        }
+        res = this.buildingNo.compareTo(o.buildingNo);
+        return res != 0 ? res : this.roomNo.compareTo(o.roomNo);
     }
 
 }

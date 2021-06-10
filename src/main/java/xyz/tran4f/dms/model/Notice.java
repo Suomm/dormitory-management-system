@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package xyz.tran4f.dms.pojo;
+package xyz.tran4f.dms.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModel;
@@ -32,9 +32,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 /**
- * <p>
  * 封装公告信息的实体类。
- * </p>
  *
  * @author 王帅
  * @since 1.0
