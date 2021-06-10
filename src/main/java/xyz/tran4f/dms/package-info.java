@@ -15,9 +15,7 @@
  */
 
 /**
- * <p>
  * 天津师范大学权益保障部宿舍管理系统（Dormitory Management System Application）程序包。
- * </p>
  *
  * @author 王帅
  * @since 1.0

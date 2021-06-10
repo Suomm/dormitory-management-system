@@ -15,9 +15,20 @@
  */
 
 /**
- * 应用程序的 Service 层。
+ * 提供包含项目中公共常量的类。该类仅封装一些常用的统一常量，方便后期维护。
+ * 应该满足以下模板样式：
+ *
+ * <blockquote><pre>
+ *     public final class ConfigConsts {
+ *
+ *         private ConfigConsts() {}
+ *
+ *         public static final ... // Constants
+ *
+ *     }
+ * </pre></blockquote>
  *
  * @author 王帅
  * @since 1.0
  */
-package xyz.tran4f.dms.service;
+package xyz.tran4f.dms.constant;

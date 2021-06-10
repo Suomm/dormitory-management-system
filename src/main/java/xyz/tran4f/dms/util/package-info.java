@@ -15,9 +15,9 @@
  */
 
 /**
- * 应用程序的 Service 层。
+ * 提供程序所使用到的工具类。
  *
  * @author 王帅
  * @since 1.0
  */
-package xyz.tran4f.dms.service;
+package xyz.tran4f.dms.util;

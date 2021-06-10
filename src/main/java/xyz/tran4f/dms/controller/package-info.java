@@ -15,9 +15,7 @@
  */
 
 /**
- * <p>
  * 应用程序的 Controller 层。
- * </p>
  *
  * @author 王帅
  * @since 1.0
