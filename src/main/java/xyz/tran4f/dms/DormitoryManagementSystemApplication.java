@@ -24,9 +24,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 
 /**
- * <p>
  * Spring Boot 应用程序启动类。
- * </p>
  *
  * @author 王帅
  * @since 1.0
