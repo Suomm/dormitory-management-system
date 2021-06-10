@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package xyz.tran4f.dms.repository;
+package xyz.tran4f.dms.component;
 
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -22,13 +22,11 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.stereotype.Service;
 import xyz.tran4f.dms.mapper.UserMapper;
-import xyz.tran4f.dms.pojo.User;
-import xyz.tran4f.dms.utils.I18nUtils;
+import xyz.tran4f.dms.model.User;
+import xyz.tran4f.dms.util.I18nUtils;
 
 /**
- * <p>
  * Spring Security 框架 UserDetailsManager 接口的实现类，实现有关用户的相关操作。
- * </p>
  *
  * @author 王帅
  * @since 1.0
@@ -45,9 +43,7 @@ public class UserDetailsManagerImpl implements UserDetailsManager {
     }
 
     /**
-     * <p>
      * 从数据库中查找对象。
-     * </p>
      *
      * @param username 用户名（学号）
      * @return 带有用户信息的{@code UserDetails}对象
@@ -64,17 +60,35 @@ public class UserDetailsManagerImpl implements UserDetailsManager {
         return user.setAuthorities(AuthorityUtils.createAuthorityList(user.getRole()));
     }
 
-    @Override
-    public void createUser(UserDetails user) {
-        throw new UnsupportedOperationException();
-    }
-
+    /**
+     * 更新用户的状态（解除或锁定用户）。
+     *
+     * @param user 封装的用户状态信息
+     */
     @Override
     public void updateUser(UserDetails user) {
         User u = new User();
         u.setId(user.getUsername());
         u.setAccountNonLocked(user.isAccountNonLocked());
         userMapper.updateById(u);
+    }
+
+    /**
+     * 判断用户是否存在。
+     *
+     * @param username 用户名（学号）
+     * @return {@code true} 用户存在，{@code false} 用户不存在
+     */
+    @Override
+    public boolean userExists(String username) {
+        return userMapper.selectById(username) != null;
+    }
+
+    // Unsupported Operation
+
+    @Override
+    public void createUser(UserDetails user) {
+        throw new UnsupportedOperationException();
     }
 
     @Override
@@ -85,11 +99,6 @@ public class UserDetailsManagerImpl implements UserDetailsManager {
     @Override
     public void changePassword(String oldPassword, String newPassword) {
         throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public boolean userExists(String username) {
-        return userMapper.selectById(username) != null;
     }
 
 }

@@ -14,19 +14,17 @@
  * limitations under the License.
  */
 
-package xyz.tran4f.dms.repository;
+package xyz.tran4f.dms.component;
 
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-import xyz.tran4f.dms.attribute.RedisAttribute;
-import xyz.tran4f.dms.utils.CaptchaUtils;
+import xyz.tran4f.dms.constant.RedisConsts;
+import xyz.tran4f.dms.util.CaptchaUtils;
 
 /**
- * <p>
  * 在项目启动时，向 Redis 缓存中存入数据，并每隔一段时间更新其中内容。
- * </p>
  *
  * @author 王帅
  * @since 1.0
@@ -46,13 +44,11 @@ public class RedisInitializingParams implements InitializingBean {
     }
 
     /**
-     * <p>
      * 定时任务：每晚十二点整更新缓存中的部门邀请码。
-     * </p>
      */
     @Scheduled(cron = "0 0 0 */1 * ?")
     public void setCaptcha() {
-        redisTemplate.opsForValue().set(RedisAttribute.KEY_CAPTCHA, CaptchaUtils.getCode(6));
+        redisTemplate.opsForValue().set(RedisConsts.KEY_CAPTCHA, CaptchaUtils.getCode(6));
     }
 
 }

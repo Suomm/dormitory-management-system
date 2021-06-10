@@ -14,22 +14,20 @@
  * limitations under the License.
  */
 
-package xyz.tran4f.dms.repository;
+package xyz.tran4f.dms.component;
 
 import org.apache.ibatis.cache.Cache;
 import org.springframework.data.redis.connection.RedisServerCommands;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.util.CollectionUtils;
-import xyz.tran4f.dms.utils.SpringUtils;
+import xyz.tran4f.dms.util.SpringUtils;
 
 import java.util.Set;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 /**
- * <p>
  * 配置 MyBatis-Plus 使用 Redis 作为二级缓存。
- * </p>
  *
  * @author 王帅
  * @since 1.0
