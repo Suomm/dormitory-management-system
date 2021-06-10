@@ -23,10 +23,8 @@ import org.jetbrains.annotations.Contract;
 import java.util.Objects;
 
 /**
- * <p>
  * 运行时异常的消息回显，是所有需要回显给用户的异常信息的父类。该异常会被全局异常解析器解析，
  * 回显错误的详细信息。如需使用 i18n 国际化消息，详细消息可使用国际化信息配置文件中的键值。
- * </p>
  *
  * @author 王帅
  * @since 1.0
