@@ -16,23 +16,23 @@
 
 package xyz.tran4f.dms.validation;
 
-import xyz.tran4f.dms.attribute.RegexAttribute;
+import xyz.tran4f.dms.constant.RegexConsts;
 import xyz.tran4f.dms.validation.constraints.Grade;
 
+import java.util.regex.Pattern;
+
 /**
- * <p>
  * 用于校验年级是否符合要求。
- * </p>
  *
  * @author 王帅
  * @since 1.0
- * @see RegexAttribute#GRADE
+ * @see RegexConsts#GRADE
  */
 public class GradeValidator extends AbstractPatternConstraintValidator<Grade> {
 
     @Override
-    public String regex() {
-        return RegexAttribute.GRADE;
+    public Pattern regex() {
+        return RegexConsts.GRADE;
     }
 
 }

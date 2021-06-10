@@ -16,23 +16,23 @@
 
 package xyz.tran4f.dms.validation;
 
-import xyz.tran4f.dms.attribute.RegexAttribute;
+import xyz.tran4f.dms.constant.RegexConsts;
 import xyz.tran4f.dms.validation.constraints.Room;
 
+import java.util.regex.Pattern;
+
 /**
- * <p>
  * 用于校验房间号是否符合要求。
- * </p>
  *
  * @author 王帅
  * @since 1.0
- * @see RegexAttribute#ROOM
+ * @see RegexConsts#ROOM
  */
 public class RoomValidator extends AbstractPatternConstraintValidator<Room> {
 
     @Override
-    public String regex() {
-        return RegexAttribute.ROOM;
+    public Pattern regex() {
+        return RegexConsts.ROOM;
     }
 
 }

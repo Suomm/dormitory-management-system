@@ -23,9 +23,7 @@ import javax.validation.ConstraintValidatorContext;
 import java.util.stream.IntStream;
 
 /**
- * <p>
  * 用于校验 {@code Integer} 表示的类型是否符合要求。
- * </p>
  *
  * @author 王帅
  * @since 1.0

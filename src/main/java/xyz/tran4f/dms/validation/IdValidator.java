@@ -16,23 +16,23 @@
 
 package xyz.tran4f.dms.validation;
 
-import xyz.tran4f.dms.attribute.RegexAttribute;
+import xyz.tran4f.dms.constant.RegexConsts;
 import xyz.tran4f.dms.validation.constraints.Id;
 
+import java.util.regex.Pattern;
+
 /**
- * <p>
  * 用于校验学号是否符合要求。
- * </p>
  *
  * @author 王帅
  * @since 1.0
- * @see RegexAttribute#ID
+ * @see RegexConsts#ID
  */
 public class IdValidator extends AbstractPatternConstraintValidator<Id> {
 
     @Override
-    public String regex() {
-        return RegexAttribute.ID;
+    public Pattern regex() {
+        return RegexConsts.ID;
     }
 
 }

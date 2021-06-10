@@ -16,23 +16,23 @@
 
 package xyz.tran4f.dms.validation;
 
-import xyz.tran4f.dms.attribute.RegexAttribute;
+import xyz.tran4f.dms.constant.RegexConsts;
 import xyz.tran4f.dms.validation.constraints.Password;
 
+import java.util.regex.Pattern;
+
 /**
- * <p>
  * 用于校验密码是否符合要求。
- * </p>
  *
  * @author 王帅
  * @since 1.0
- * @see RegexAttribute#PASSWORD
+ * @see RegexConsts#PASSWORD
  */
 public class PasswordValidator extends AbstractPatternConstraintValidator<Password> {
 
     @Override
-    public String regex() {
-        return RegexAttribute.PASSWORD;
+    public Pattern regex() {
+        return RegexConsts.PASSWORD;
     }
 
 }
