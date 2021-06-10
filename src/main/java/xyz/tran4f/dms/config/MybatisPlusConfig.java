@@ -23,9 +23,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
- * <p>
  * MyBatis-Plus 配置类。
- * <p/>
  *
  * @author 王帅
  * @since 1.0
@@ -34,9 +32,7 @@ import org.springframework.context.annotation.Configuration;
 public class MybatisPlusConfig {
 
     /**
-     * <p>
      * 添加 MyBatis-Plus 的分页插件。
-     * </p>
      */
     @Bean
     public MybatisPlusInterceptor mybatisPlusInterceptor() {
@@ -46,9 +42,7 @@ public class MybatisPlusConfig {
     }
 
     /**
-     * <p>
      * 设置 MybatisConfiguration#useDeprecatedExecutor = false 避免缓存出现问题。
-     * </p>
      */
     @Bean
     @SuppressWarnings("deprecation")

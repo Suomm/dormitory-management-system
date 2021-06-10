@@ -24,9 +24,7 @@ import javax.validation.Validation;
 import javax.validation.Validator;
 
 /**
- * <p>
  * 数据校验配置类。
- * </p>
  *
  * @author 王帅
  * @since 1.0
@@ -35,10 +33,8 @@ import javax.validation.Validator;
 public class ValidatorConfig {
 
     /**
-     * <p>
      * 默认会校验完所有属性，然后将错误信息一起返回，但很多时候不需要这样，
      * 一个校验失败了，其它就不必校验了。
-     * </p>
      */
     @Bean
     public Validator validator() {

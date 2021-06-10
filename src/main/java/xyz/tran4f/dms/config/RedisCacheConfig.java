@@ -27,9 +27,7 @@ import org.springframework.data.redis.serializer.RedisSerializationContext;
 import org.springframework.data.redis.serializer.RedisSerializer;
 
 /**
- * <p>
  * Redis 缓存配置类。
- * </p>
  *
  * @author 王帅
  * @since 1.0

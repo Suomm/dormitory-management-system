@@ -24,7 +24,6 @@ import org.springframework.http.converter.ResourceHttpMessageConverter;
 import org.springframework.security.web.session.HttpSessionEventPublisher;
 import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
-import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 import org.springframework.web.servlet.i18n.SessionLocaleResolver;
@@ -33,9 +32,7 @@ import java.util.List;
 import java.util.Locale;
 
 /**
- * <p>
  * Spring MVC 配置类。
- * </p>
  *
  * @author 王帅
  * @since 1.0
@@ -44,10 +41,8 @@ import java.util.Locale;
 public class WebApplicationConfig implements WebMvcConfigurer {
 
     /**
-     * <p>
      * Spring security 中配置 {@link HttpSessionEventPublisher} 防用户重复登录，
      * 解决设置最大登录用户数量后注销不了的问题。
-     * </p>
      */
     @Bean
     public ServletListenerRegistrationBean<HttpSessionEventPublisher> listenerRegister() {
@@ -59,10 +54,8 @@ public class WebApplicationConfig implements WebMvcConfigurer {
     // 国际化的有关配置
 
     /**
-     * <p>
      * 通过{@link SessionLocaleResolver}检验用户会话中预置的属性来解析区域。
      * 如果该会话属性不存在，它会根据 accept-language HTTP头部确定默认区域。
-     * </p>
      */
     @Bean
     public LocaleResolver localeResolver() {
@@ -72,11 +65,9 @@ public class WebApplicationConfig implements WebMvcConfigurer {
     }
 
     /**
-     * <p>
      * 如果想要用户能改变 {@link java.util.Locale}, 我们需要配置 {@link LocaleChangeInterceptor}。
      * 这个拦截器将检查传入的请求，如果请求中有 {@code local} 的参数，如 {@code http://localhost:8080/test?local=zh_CN}，
      * 则该拦截器将改变当前用户的 {@link java.util.Locale}。
-     * </p>
      */
     @Bean
     public LocaleChangeInterceptor localeChangeInterceptor() {
@@ -87,14 +78,6 @@ public class WebApplicationConfig implements WebMvcConfigurer {
     public void addInterceptors(InterceptorRegistry registry) {
         // 注册 LocaleChangeInterceptor 拦截器
         registry.addInterceptor(localeChangeInterceptor());
-    }
-
-    @Override
-    public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        // 静态资源映射，直接访问对应资源
-        registry.addResourceHandler("/user/**").addResourceLocations("/page/user/");
-        registry.addResourceHandler("/edit/**").addResourceLocations("/page/edit/");
-        registry.addResourceHandler("/admin/**").addResourceLocations("/page/admin/");
     }
 
     @Override

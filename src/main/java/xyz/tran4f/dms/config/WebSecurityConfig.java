@@ -25,7 +25,6 @@ import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -33,15 +32,13 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl;
 import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
-import xyz.tran4f.dms.handler.AjaxAuthenticationFailureHandler;
-import xyz.tran4f.dms.handler.AuthenticationExpiredHandler;
+import xyz.tran4f.dms.event.AjaxAuthenticationFailureHandler;
+import xyz.tran4f.dms.event.AuthenticationExpiredHandler;
 
 import javax.sql.DataSource;
 
 /**
- * <p>
  * Spring Security 配置类。
- * </p>
  *
  * @author 王帅
  * @since 1.0
@@ -62,8 +59,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     public PersistentTokenRepository persistentTokenRepository() {
         JdbcTokenRepositoryImpl jdbcTokenRepository = new JdbcTokenRepositoryImpl();
         jdbcTokenRepository.setDataSource(dataSource);
-        // 启动时创建一张表，这个方法到第二次启动时必须注释掉，因为已经创建了一张表
-        // setCreateTableOnStartup(true);
+        /// 启动时创建一张表，这个方法到第二次启动时必须注释掉，因为已经创建了一张表
+        // jdbcTokenRepository.setCreateTableOnStartup(true);
         return jdbcTokenRepository;
     }
 
@@ -80,9 +77,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     /**
-     * <p>
      * 解决 {@code UsernameNotFoundException} 不显示问题。
-     * </p>
      */
     @Bean
     public AuthenticationProvider authenticationProvider() {
@@ -91,12 +86,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         daoAuthenticationProvider.setPasswordEncoder(passwordEncoder());
         daoAuthenticationProvider.setHideUserNotFoundExceptions(false);
         return daoAuthenticationProvider;
-    }
-
-    @Override
-    public void configure(WebSecurity web) {
-        // 前端资源过滤
-        web.ignoring().antMatchers("/css/**", "/images/**", "/js/**", "/lib/**");
     }
 
     @Override
@@ -126,8 +115,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http.authorizeRequests()
                 // Swagger2 文档只能 ROOT 权限用户访问
                 .antMatchers("/swagger-ui.html", "/v2/api-docs").hasRole("ROOT")
-                // 拒绝所有 /page/** 的请求
-                .antMatchers("/page/**").denyAll()
                 // 放行登陆之前的页面与请求
                 .antMatchers("/login.html", "/register.html", "/user/register",
                         "/forget-password.html", "/user/forget-password/*",

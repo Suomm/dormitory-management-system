@@ -28,12 +28,10 @@ import org.springframework.messaging.converter.MappingJackson2MessageConverter;
 import org.springframework.messaging.handler.annotation.support.DefaultMessageHandlerMethodFactory;
 import org.springframework.messaging.handler.annotation.support.MessageHandlerMethodFactory;
 
-import static xyz.tran4f.dms.attribute.RabbitAttribute.*;
+import static xyz.tran4f.dms.constant.RabbitConsts.*;
 
 /**
- * <p>
  * 消息队列 Rabbit MQ 配置类。
- * </p>
  *
  * @author 王帅
  * @since 1.0
