@@ -19,9 +19,7 @@ package xyz.tran4f.dms.exception;
 import org.jetbrains.annotations.Contract;
 
 /**
- * <p>
  * 更改账户邮箱或密码时，原邮箱或密码错误抛出异常。
- * </p>
  *
  * @author 王帅
  * @since 1.0
@@ -31,9 +29,7 @@ public class BadCredentialException extends AbstractMessageException {
     private static final long serialVersionUID = -8340470497161439206L;
 
     /**
-     * <p>
      * 用指定的详细消息构建一个 {@code BadCredentialException} 实例。
-     * </p>
      *
      * @param message 需要回显的消息信息
      */

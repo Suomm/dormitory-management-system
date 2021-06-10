@@ -38,17 +38,13 @@ public abstract class AbstractMessageException extends RuntimeException {
     private static final long serialVersionUID = 8747711960406241674L;
 
     /**
-     * <p>
      * 将为消息中的参数填充的参数数组，如果没有，则为 {@code null}。
-     * </p>
      */
     private Object[] args;
 
     /**
-     * <p>
      * 用指定的详细消息构造一个新的运行时异常。其中的详细消息用于回显到前端界面，
      * 详细消息的内容不应该为 {@code null}。
-     * </p>
      *
      * @param message 需要回显的消息信息
      * @param args 使用国际化消息时可设定的参数

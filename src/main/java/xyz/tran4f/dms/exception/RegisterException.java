@@ -19,9 +19,7 @@ package xyz.tran4f.dms.exception;
 import org.jetbrains.annotations.Contract;
 
 /**
- * <p>
  * 重复注册用户时产生的异常。
- * </p>
  *
  * @author 王帅
  * @since 1.0
@@ -31,9 +29,7 @@ public class RegisterException extends AbstractMessageException {
     private static final long serialVersionUID = 6354950372852467340L;
 
     /**
-     * <p>
      * 用指定的详细消息构建一个 {@code RegisterException} 实例。
-     * </p>
      *
      * @param message 需要回显的消息信息
      */

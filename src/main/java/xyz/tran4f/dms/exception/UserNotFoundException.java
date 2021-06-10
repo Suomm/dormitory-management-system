@@ -19,9 +19,7 @@ package xyz.tran4f.dms.exception;
 import org.jetbrains.annotations.Contract;
 
 /**
- * <p>
  * 数据库中没有用户信息时抛出此异常。
- * </p>
  *
  * @author 王帅
  * @since 1.0
@@ -31,9 +29,7 @@ public class UserNotFoundException extends AbstractMessageException {
     private static final long serialVersionUID = -8639444066340783164L;
 
     /**
-     * <p>
      * 用指定的详细消息构建一个 {@code UserNotFoundException} 实例。
-     * </p>
      *
      * @param message 需要回显的消息信息
      * @param args 使用国际化消息时可设定的参数
