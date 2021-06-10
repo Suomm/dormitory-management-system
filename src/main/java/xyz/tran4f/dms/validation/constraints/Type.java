@@ -29,9 +29,7 @@ import static java.lang.annotation.ElementType.*;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
- * <p>
  * 校验 {@code Integer} 所表示的类型取值。
- * </p>
  *
  * @author 王帅
  * @since 1.0
@@ -55,7 +53,7 @@ public @interface Type {
     @Target({ METHOD, FIELD, ANNOTATION_TYPE, CONSTRUCTOR, PARAMETER, TYPE_USE })
     @Retention(RUNTIME)
     @Documented
-    public @interface List {
+    @interface List {
         Type[] value();
     }
 

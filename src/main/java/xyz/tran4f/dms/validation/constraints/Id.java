@@ -29,9 +29,7 @@ import static java.lang.annotation.ElementType.*;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
- * <p>
  * 校验天津师范大学化学学院的学生学号。
- * </p>
  *
  * @author 王帅
  * @since 1.0
@@ -53,7 +51,7 @@ public @interface Id {
     @Target({ METHOD, FIELD, ANNOTATION_TYPE, CONSTRUCTOR, PARAMETER, TYPE_USE })
     @Retention(RUNTIME)
     @Documented
-    public @interface List {
+    @interface List {
         Id[] value();
     }
 

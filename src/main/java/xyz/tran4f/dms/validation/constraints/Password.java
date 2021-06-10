@@ -29,9 +29,7 @@ import static java.lang.annotation.ElementType.*;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
- * <p>
  * 校验账户密码。
- * </p>
  *
  * @author 王帅
  * @since 1.0
@@ -53,7 +51,7 @@ public @interface Password {
     @Target({ METHOD, FIELD, ANNOTATION_TYPE, CONSTRUCTOR, PARAMETER, TYPE_USE })
     @Retention(RUNTIME)
     @Documented
-    public @interface List {
+    @interface List {
         Password[] value();
     }
 
