@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package xyz.tran4f.dms.utils;
+package xyz.tran4f.dms.util;
 
 import lombok.Cleanup;
 import org.apache.poi.xwpf.usermodel.ParagraphAlignment;
@@ -27,9 +27,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 
 /**
- * <p>
  * 提供 Word 2007 级以上版本的相关操作。
- * </p>
  *
  * @author 王帅
  * @since 1.0
@@ -40,9 +38,7 @@ public final class WordUtils {
     }
 
     /**
-     * <p>
      * 生成一个新闻稿文档。
-     * </p>
      *
      * @param filename 文件名称
      * @param title 文档标题

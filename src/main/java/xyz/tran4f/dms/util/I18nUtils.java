@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package xyz.tran4f.dms.utils;
+package xyz.tran4f.dms.util;
 
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -25,10 +25,8 @@ import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Component;
 
 /**
- * <p>
  * 获取 i18n 国际化消息的工具类。使用时通过 Spring 依赖注入即可。
  * 消息内容详见：{@code resources/messages.properties} 国际化配置文件。
- * </p>
  *
  * @author 王帅
  * @since 1.0
@@ -45,10 +43,8 @@ public class I18nUtils {
     }
 
     /**
-     * <p>
      * 根据所给键的值获取 {@code i18n/messages} 国际化配置文件所对应的消息。其中，区域信息通过
      * {@link LocaleContextHolder#getLocale()} 方法获得。
-     * </p>
      *
      * @param key 国际化消息的键值
      * @return 匹配到的国际化信息

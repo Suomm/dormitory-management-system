@@ -14,29 +14,23 @@
  * limitations under the License.
  */
 
-package xyz.tran4f.dms.utils;
+package xyz.tran4f.dms.util;
 
 import org.jetbrains.annotations.Contract;
 
 /**
- * <p>
  * 处理字符串类型数据的工具类。
- * </p>
  *
  * @author 王帅
  * @since 1.0
  */
 public final class StringUtils {
 
-    static final String EMPTY = "";
-
     private StringUtils() {
     }
 
     /**
-     * <p>
      * 判断一个字符串是否为空白（若果参数为 {@code null} 则返回 {@code false}）。
-     * </p>
      *
      * @param value 需要判断的值
      * @return 是否为空或者空字符串

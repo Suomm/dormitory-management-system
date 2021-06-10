@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package xyz.tran4f.dms.utils;
+package xyz.tran4f.dms.util;
 
 import com.alibaba.excel.EasyExcel;
 import com.alibaba.excel.ExcelWriter;
@@ -43,8 +43,8 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import xyz.tran4f.dms.handler.ColorCellWriteHandler;
-import xyz.tran4f.dms.pojo.Note;
+import xyz.tran4f.dms.event.ColorCellWriteHandler;
+import xyz.tran4f.dms.model.Dormitory;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -53,9 +53,7 @@ import java.io.IOException;
 import java.util.Collection;
 
 /**
- * <p>
  * 提供对 Excel 2007 及以后文档的相关操作。
- * </p>
  *
  * @author 王帅
  * @since 1.0
@@ -70,19 +68,19 @@ public final class ExcelUtils {
     private ExcelUtils() {
     }
 
+    // ===== 模板文件位置 =====
+
     private static final File TEMPLATE_NOTES = new File("./portfolio/templet/化学学院宿舍卫生检查表样表.xlsx");
     private static final File TEMPLATE_CHART = new File("./portfolio/templet/新闻稿表格样式.xlsx");
 
     /**
-     * <p>
      * 根据模板填充查宿成绩记录。
-     * </p>
      *
      * @param filename 文件名称
      * @param data 要进行填充的数据
      */
     public static void writeWithTemplate(String filename, Object data) {
-        EasyExcel.write(filename, Note.class)
+        EasyExcel.write(filename, Dormitory.class)
                 // 优差宿舍成绩背景色处理
                 .registerWriteHandler(new ColorCellWriteHandler())
                 .withTemplate(TEMPLATE_NOTES)
@@ -91,9 +89,7 @@ public final class ExcelUtils {
     }
 
     /**
-     * <p>
      * 根据模板填充新闻稿表格。
-     * </p>
      *
      * @param filename 文件名称
      * @param first 优秀宿舍信息
@@ -108,31 +104,17 @@ public final class ExcelUtils {
         excelWriter.fill(new FillWrapper("last", last), writeSheet);
     }
 
-    /**
-     * <p>
-     * 新闻稿表格表头的颜色。
-     * </p>
-     */
+    /** 新闻稿表格表头的颜色。 */
     private static final Color HEADER   = new DeviceRgb(68,114,196);
 
-    /**
-     * <p>
-     * 新闻稿表格奇数行的颜色（不包括表头）。
-     * </p>
-     */
+    /** 新闻稿表格奇数行的颜色（不包括表头）。 */
     private static final Color ODD_ROW  = new DeviceRgb(217,225,242);
 
-    /**
-     * <p>
-     * 新闻稿表格偶数行的颜色。
-     * </p>
-     */
+    /** 新闻稿表格偶数行的颜色。 */
     private static final Color EVEN_ROW = new DeviceRgb(180,198,231);
 
     /**
-     * <p>
      * 使用优差宿的信息，生成新闻稿所需要的图片内容。
-     * </p>
      *
      * @param imageFile 图片的路径
      * @param clean 优秀宿舍信息
@@ -150,9 +132,7 @@ public final class ExcelUtils {
     }
 
     /**
-     * <p>
      * 将新闻稿表格 Excel 文件转成 PDF 文件。
-     * </p>
      *
      * @param excelFile 输入 Excel 文件路径
      * @param pdfFile 输出 PDF 文件路径
@@ -202,9 +182,7 @@ public final class ExcelUtils {
     }
 
     /**
-     * <p>
      * 将 PDF 文档渲染成一张图片。
-     * </p>
      *
      * @param pdfFile 输入 PDF 文档路径
      * @param imageFile 输出 PNG 图片路径
@@ -236,9 +214,7 @@ public final class ExcelUtils {
     }
 
     /**
-     * <p>
      * 创建 PDF 文件中表格元素中的单元格。
-     * </p>
      */
     private static Cell createPdfCell(String text, int colspan, float borderWidth, Color bgColor, float colWidth) {
         Cell pdfCell = new Cell(1, colspan);
@@ -252,18 +228,14 @@ public final class ExcelUtils {
     }
 
     /**
-     * <p>
      * 创建 PDF 文档表格元素中的表格体。
-     * </p>
      */
     private static Cell createPdfBody(String text, boolean isOdd, float colWidth) {
         return createPdfCell(text, 1, 1f, isOdd ? ODD_ROW : EVEN_ROW, colWidth);
     }
 
     /**
-     * <p>
      * 创建 PDF 文档表格元素中的表头。
-     * </p>
      */
     private static Cell createPdfHeader(String text, float colWidth) throws IOException {
         Cell pdfCell = createPdfCell(text, 2, 3f, HEADER, colWidth);
@@ -274,12 +246,10 @@ public final class ExcelUtils {
     }
 
     /**
-     * <p>
      * 创建 PDF 文档表格元素中的空单元格。
-     * </p>
      */
     private static Cell fillEmptyCell(boolean isOdd, float colWidth) {
-        return createPdfBody(StringUtils.EMPTY, isOdd, colWidth);
+        return createPdfBody("", isOdd, colWidth);
     }
 
 }

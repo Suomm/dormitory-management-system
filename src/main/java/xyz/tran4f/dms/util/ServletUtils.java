@@ -14,19 +14,17 @@
  * limitations under the License.
  */
 
-package xyz.tran4f.dms.utils;
+package xyz.tran4f.dms.util;
 
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
-import xyz.tran4f.dms.pojo.User;
+import xyz.tran4f.dms.model.User;
 
 import javax.servlet.http.HttpServletRequest;
 
 /**
- * <p>
  * 与 Servlet 相关的工具类。
- * </p>
  *
  * @author 王帅
  * @since 1.0
@@ -41,12 +39,11 @@ public final class ServletUtils {
     }
 
     /**
-     * <p>
      * 用户登陆成功之后获取用户信息。具体参考以下代码：
+     *
      * <blockquote><pre>
      *      SecurityContextHolder.getContext().getAuthentication().getPrincipal();
      * </pre></blockquote>
-     * </p>
      *
      * @return 用户信息
      */
@@ -55,15 +52,14 @@ public final class ServletUtils {
     }
 
     /**
-     * <p>
      * 获取浏览器地址栏的根目录。满足：{@code http://localhost/dms} 样式。
      * 具体参考以下代码：
+     *
      * <blockquote><pre>
      *     request.getScheme() + "://" +
      *     request.getServerName() +
      *     request.getContextPath()
      * </pre></blockquote>
-     * </p>
      *
      * @return 浏览器地址栏根目录
      */

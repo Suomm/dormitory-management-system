@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package xyz.tran4f.dms.utils;
+package xyz.tran4f.dms.util;
 
 import java.time.Instant;
 import java.time.LocalDate;
@@ -24,9 +24,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 
 /**
- * <p>
  * 处理日期的工具类。
- * </p>
  *
  * @author 王帅
  * @since 1.0
@@ -36,14 +34,17 @@ public final class DateUtils {
     private DateUtils() {
     }
 
-    private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+    /** 时区的偏移量 */
     private static final ZoneOffset OFFSET = ZoneOffset.of("+8");
+
+    /** 一周时间的毫秒数总和 */
     private static final long MILLISECOND = 1000 * 60 * 60 * 24 * 7;
 
+    /** 日期的格式化字符串 */
+    private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
     /**
-     * <p>
      * 按照<b>yyyy-MM-dd</b>的格式格式化日期。
-     * </p>
      *
      * @return 日期格式化字符串
      */
@@ -51,14 +52,18 @@ public final class DateUtils {
         return FORMATTER.format(LocalDate.now());
     }
 
+    /**
+     * 将毫秒数转化为 {@code yyyy-MM-dd} 格式的字符串。
+     *
+     * @param epochMilli 毫秒数
+     * @return 格式化的日期
+     */
     public static String format(long epochMilli) {
         return LocalDateTime.ofInstant(Instant.ofEpochMilli(epochMilli), OFFSET).format(FORMATTER);
     }
 
     /**
-     * <p>
      * 截取当前年份的前两位数。
-     * </p>
      *
      * @return 世纪数减一
      */
@@ -66,10 +71,22 @@ public final class DateUtils {
         return Integer.toString(LocalDate.now().getYear()).substring(0, 2);
     }
 
+    /**
+     * 将 {@code yyyy-MM-dd} 类型的日期字符串转换为毫秒数。
+     *
+     * @param text 格式化的日期
+     * @return 日期对应的毫秒数
+     */
     public static long parse(CharSequence text) {
         return FORMATTER.parse(text, LocalDate::from).atStartOfDay().toInstant(OFFSET).toEpochMilli();
     }
 
+    /**
+     * 计算并返回当前周在本学期的周次。
+     *
+     * @param begin 学期开始日期
+     * @return 当前周周次
+     */
     public static int weekOfSemester(long begin) {
         long now = System.currentTimeMillis();
         Calendar calendar = Calendar.getInstance();

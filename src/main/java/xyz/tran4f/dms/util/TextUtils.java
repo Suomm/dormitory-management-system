@@ -14,14 +14,12 @@
  * limitations under the License.
  */
 
-package xyz.tran4f.dms.utils;
+package xyz.tran4f.dms.util;
 
 import org.jetbrains.annotations.Contract;
 
 /**
- * <p>
  * 文本相关操作的工具类。
- * </p>
  *
  * @author 王帅
  * @since 1.0
@@ -31,17 +29,11 @@ public final class TextUtils {
     private TextUtils() {
     }
 
-    /**
-     * <p>
-     * 汉字数字字符。
-     * </p>
-     */
+    /** 汉字数字字符。 */
     private static final char[] NUMBERS = {'零', '一', '二', '三', '四', '五', '六', '七', '八', '九'};
 
     /**
-     * <p>
      * 将一百以内的数字转换为汉字形式。
-     * </p>
      *
      * @param number 数字
      * @return 如果参数 {@code number > 100} 则返回 {@code null}

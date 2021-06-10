@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package xyz.tran4f.dms.utils;
+package xyz.tran4f.dms.util;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import lombok.SneakyThrows;
@@ -23,9 +23,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
 /**
- * <p>
  * Wrapper 条件构造工具类。
- * </p>
  *
  * @author 王帅
  * @since 1.0
@@ -36,9 +34,7 @@ public final class WrapperUtils {
     }
 
     /**
-     * <p>
      * 通过对象的属性值构建查询条件。
-     * </p>
      *
      * @param value 对象
      * @param <T> 类型
@@ -71,9 +67,7 @@ public final class WrapperUtils {
     }
 
     /**
-     * <p>
      * 将字符串的首字母转大写。
-     * </p>
      *
      * @param str 需要转换的字符串
      * @return 转换后的字符串

@@ -14,16 +14,14 @@
  * limitations under the License.
  */
 
-package xyz.tran4f.dms.utils;
+package xyz.tran4f.dms.util;
 
 import org.springframework.util.DigestUtils;
 
 import java.nio.charset.StandardCharsets;
 
 /**
- * <p>
  * 有关 MD5 加密的相关工具。
- * </p>
  *
  * @author 王帅
  * @since 1.0
@@ -35,9 +33,7 @@ public final class MD5Utils {
     }
 
     /**
-     * <p>
      * 将指定字符串进行 MD5 加密。
-     * </p>
      *
      * @param raw 未加密的字符串
      * @return MD5 加密之后的字符串
@@ -47,9 +43,7 @@ public final class MD5Utils {
     }
 
     /**
-     * <p>
      * 判断明文与密文是否一致（忽略大小写）。
-     * </p>
      *
      * @param raw 未加密的字符串
      * @param encoded 加密过的字符串

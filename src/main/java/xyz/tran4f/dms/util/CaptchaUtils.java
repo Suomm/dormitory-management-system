@@ -14,17 +14,16 @@
  * limitations under the License.
  */
 
-package xyz.tran4f.dms.utils;
+package xyz.tran4f.dms.util;
 
+import org.jetbrains.annotations.Contract;
 import xyz.tran4f.dms.exception.InvalidOrOverdueException;
-import xyz.tran4f.dms.pojo.Captcha;
+import xyz.tran4f.dms.model.Captcha;
 
 import java.util.Random;
 
 /**
- * <p>
  * 验证码相关操作的工具类，包括生成和校验验证码。
- * </p>
  *
  * @author 王帅
  * @since 1.0
@@ -50,9 +49,7 @@ public final class CaptchaUtils {
     };
 
     /**
-     * <p>
      * 所需字符数组的长度，用于生成随机数的边界。
-     * </p>
      */
     private static final int LENGTH = CHARS.length;
 
@@ -60,27 +57,36 @@ public final class CaptchaUtils {
     }
 
     /**
-     * <p>
      * 根据指定的长度生成一个随机包含数字、小写字母、大写字母的验证码，并保存
      * 该验证码的过期时间。
-     * </p>
      *
      * @param length 验证码的长度
      * @param time 验证码过期时间
      * @return 验证码封装类
      */
+    @Contract(pure = true)
     public static Captcha getCaptcha(int length, long time) {
         return new Captcha(getCode(length), System.currentTimeMillis() + time);
     }
 
     /**
-     * <p>
+     * 根据所给的验证码内容，生成一个当前时间的验证码。
+     *
+     * @param code 验证码
+     * @return 标记当前时间的验证码
+     */
+    @Contract(pure = true)
+    public static Captcha getCaptcha(String code) {
+        return new Captcha(code, System.currentTimeMillis());
+    }
+
+    /**
      * 根据指定的长度生成一个随机包含数字、小写字母、大写字母的验证码。
-     * </p>
      *
      * @param length 验证码的长度
      * @return 生成的验证码
      */
+    @Contract(pure = true)
     public static String getCode(int length) {
         // 随机数生成器，用于取出字符数组中的元素
         Random random = new Random();
@@ -92,9 +98,7 @@ public final class CaptchaUtils {
     }
 
     /**
-     * <p>
      * 检查之前生成的验证码与用户输入的验证码是否相同。
-     * </p>
      *
      * @param before 之前保存的验证码
      * @param after 之后要比对的验证码
@@ -107,5 +111,6 @@ public final class CaptchaUtils {
             throw new InvalidOrOverdueException("CaptchaUtils.incorrectKey");
         }
     }
+
 
 }

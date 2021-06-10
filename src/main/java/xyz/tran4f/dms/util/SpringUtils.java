@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package xyz.tran4f.dms.utils;
+package xyz.tran4f.dms.util;
 
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.BeansException;
@@ -23,9 +23,7 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Component;
 
 /**
- * <p>
  * Spring 的工具类，用于获取 Ioc 容器中的 Bean 对象。
- * </p>
  *
  * @author 王帅
  * @since 1.0
@@ -41,9 +39,7 @@ public class SpringUtils implements ApplicationContextAware {
     }
 
     /**
-     * <p>
      * 根据名称获取 Spring Ioc 容器中的 Bean 对象。
-     * </p>
      *
      * @param name 名称
      * @param requiredType 类型

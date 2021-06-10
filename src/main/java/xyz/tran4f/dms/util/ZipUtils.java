@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package xyz.tran4f.dms.utils;
+package xyz.tran4f.dms.util;
 
 import lombok.Cleanup;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
@@ -24,11 +24,10 @@ import org.apache.commons.compress.utils.IOUtils;
 import java.io.*;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Objects;
 
 /**
- * <p>
  * 生成 ZIP 压缩文件的工具类。
- * </p>
  *
  * @author 王帅
  * @since 1.0
@@ -39,9 +38,7 @@ public final class ZipUtils {
     }
 
     /**
-     * <p>
      * 生成一个压缩文件，并向其中添加需要压缩的文件。
-     * </p>
      *
      * @param filename 生成的压缩文件名
      * @param resources 要进行压缩的资源
@@ -52,9 +49,7 @@ public final class ZipUtils {
     }
 
     /**
-     * <p>
      * 生成一个压缩文件，并向其中添加需要压缩的文件。
-     * </p>
      *
      * @param filename 生成的压缩文件名
      * @param resources 要进行压缩的资源
@@ -75,7 +70,7 @@ public final class ZipUtils {
     private static void copy(File source, ZipArchiveOutputStream out, String base) throws IOException {
         // 递归方式寻找文件
         if (source.isDirectory()) {
-            for (File listFile : source.listFiles()) {
+            for (File listFile : Objects.requireNonNull(source.listFiles())) {
                 copy(listFile, out, base + source.getName() + "/");
             }
         } else {
