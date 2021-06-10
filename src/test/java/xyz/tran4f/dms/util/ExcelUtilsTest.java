@@ -14,19 +14,17 @@
  * limitations under the License.
  */
 
-package xyz.tran4f.dms.utils;
+package xyz.tran4f.dms.util;
 
 import org.junit.jupiter.api.Test;
-import xyz.tran4f.dms.pojo.Dormitory;
+import xyz.tran4f.dms.model.Dormitory;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * <p>
  * {@link ExcelUtils} 的测试类。
- * </p>
  *
  * @author 王帅
  * @since 1.0
@@ -48,7 +46,7 @@ public class ExcelUtilsTest {
             dormitory.setGrade("202" + i + "级").setRoom(i + "-20" + i);
             dirty.add(dormitory);
         }
-        ExcelUtils.data2Image("D:/test.png", clean, dirty);
+        ExcelUtils.data2Image("D:/Download/Roaming/test.png", clean, dirty);
     }
 
 }

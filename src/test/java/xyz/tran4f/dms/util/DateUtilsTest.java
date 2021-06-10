@@ -14,16 +14,14 @@
  * limitations under the License.
  */
 
-package xyz.tran4f.dms.utils;
+package xyz.tran4f.dms.util;
 
 import org.junit.jupiter.api.Test;
 
 import java.util.Calendar;
 
 /**
- * <p>
  * {@link DateUtils} 的测试类。
- * </p>
  *
  * @author 王帅
  * @since 1.0

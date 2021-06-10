@@ -14,16 +14,14 @@
  * limitations under the License.
  */
 
-package xyz.tran4f.dms.utils;
+package xyz.tran4f.dms.util;
 
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 
 /**
- * <p>
  * {@link ZipUtils} 的测试类。
- * </p>
  *
  * @author 王帅
  * @since 1.0
@@ -33,8 +31,9 @@ public class ZipUtilsTest {
 
     @Test
     public void compress() throws IOException {
-        ZipUtils.compress("D:/Document/1.zip",
-                "D:/Document/其他", "D:/Document/test.html");
+        ZipUtils.compress("D:/Download/Compressed/dms_test.zip",
+                "D:/Download/Compressed/小恐龙公文排版助手1880 EXE版",
+                "D:/Download/Compressed/1-160314143119.rar");
     }
 
 }
