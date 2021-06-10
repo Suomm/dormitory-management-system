@@ -14,54 +14,44 @@
  * limitations under the License.
  */
 
-package xyz.tran4f.dms.attribute;
+package xyz.tran4f.dms.constant;
+
+import java.util.regex.Pattern;
 
 /**
- * <p>
  * 用于数据校验的正则表达式。
- * </p>
  *
  * @author 王帅
  * @since 1.0
  */
-public final class RegexAttribute {
+public final class RegexConsts {
 
-    private RegexAttribute() {
+    private RegexConsts() {
     }
 
     /**
-     * <p>
      * 用于校验天津师范大学化学学院的学生学号。
-     * </p>
      */
-    public static final String ID = "^\\d{2}3007\\d{4}$";
+    public static final Pattern ID = Pattern.compile("^\\d{2}3007\\d{4}$");
 
     /**
-     * <p>
      * 用于校验天机师范大学学生公寓房间号。
-     * </p>
      */
-    public static final String ROOM = "^\\d{1,2}(?:-\\d)?-\\d{3}$";
+    public static final Pattern ROOM = Pattern.compile("^\\d{1,2}(?:-\\d)?-\\d{3}$");
 
     /**
-     * <p>
      * 用于校验所属年级。
-     * </p>
      */
-    public static final String GRADE = "^\\d{4}级$";
+    public static final Pattern GRADE = Pattern.compile("^\\d{4}级$");
 
     /**
-     * <p>
      * 用于校验天津师范大学学生公寓名称。
-     * </p>
      */
-    public static final String BUILDING = "^学生公寓\\d{1,2}号楼$";
+    public static final Pattern BUILDING = Pattern.compile("^学生公寓\\d{1,2}号楼$");
 
     /**
-     * <p>
      * 用于校验密码，六到三十二位非空白。
-     * </p>
      */
-    public static final String PASSWORD = "^[\\S]{6,32}$";
+    public static final Pattern PASSWORD = Pattern.compile("^[\\S]{6,32}$");
 
 }

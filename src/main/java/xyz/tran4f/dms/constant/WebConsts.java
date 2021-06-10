@@ -14,34 +14,28 @@
  * limitations under the License.
  */
 
-package xyz.tran4f.dms.attribute;
+package xyz.tran4f.dms.constant;
 
 /**
- * <p>
- * 管理 WEB 程序中的全局属性。
- * </p>
+ * Web 应用中的全局属性。
  *
  * @author 王帅
  * @since 1.0
  */
-public final class WebAttribute {
+public final class WebConsts {
 
-    private WebAttribute() {
+    private WebConsts() {
     }
 
     /**
-     * <p>
      * 每周查宿任务结束之后，在该目录下生成以任务 ID 为名称的文件夹，用于存放生成的文件。
      * 因此该目录被作为历史记录目录存放每周查宿生成的文件，并在学期结束之后删除这个文件夹
      * 中的所有内容。
-     * </p>
      */
     public static final String WEB_PORTFOLIO_STORES = "./portfolio/stores/";
 
     /**
-     * <p>
      * 每周查宿任务的临时资源目录，存放上传的优差宿舍的图片，该路径会在创建新任务时被删除。
-     * </p>
      */
     public static final String WEB_PORTFOLIO_ASSETS = "./portfolio/assets/";
 
