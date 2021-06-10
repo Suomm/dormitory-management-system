@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package xyz.tran4f.dms.handler;
+package xyz.tran4f.dms.event;
 
 import org.springframework.security.web.session.SessionInformationExpiredEvent;
 import org.springframework.security.web.session.SessionInformationExpiredStrategy;
@@ -23,9 +23,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 /**
- * <p>
  * 用户认证过期之后的操作。
- * </p>
  *
  * @author 王帅
  * @since 1.0

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package xyz.tran4f.dms.handler;
+package xyz.tran4f.dms.event;
 
 import com.alibaba.excel.metadata.CellData;
 import com.alibaba.excel.metadata.Head;
@@ -29,9 +29,7 @@ import org.apache.poi.ss.usermodel.IndexedColors;
 import java.util.List;
 
 /**
- * <p>
  * 填充成绩模板时，根据分数设置单元格背景色。
- * </p>
  *
  * @author 王帅
  * @since 1.0
@@ -68,9 +66,7 @@ public class ColorCellWriteHandler extends AbstractCellWriteHandler {
     }
 
     /**
-     * <p>
      * 设置单元格背景色。
-     * </p>
      *
      * @param writeSheetHolder 用于生成单元格样式
      * @param cell 需要设置样式的单元格

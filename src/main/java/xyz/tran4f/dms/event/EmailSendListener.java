@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package xyz.tran4f.dms.listener;
+package xyz.tran4f.dms.event;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
@@ -22,17 +22,15 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Component;
-import xyz.tran4f.dms.attribute.RabbitAttribute;
-import xyz.tran4f.dms.pojo.Email;
+import xyz.tran4f.dms.constant.RabbitConsts;
+import xyz.tran4f.dms.model.Email;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 
 /**
- * <p>
- * 监听 {@link RabbitAttribute#QUEUE_EMAIL} 消息队列，接收封装有关信息的 {@link Email} 对象，
+ * 监听 {@link RabbitConsts#QUEUE_EMAIL} 消息队列，接收封装有关信息的 {@link Email} 对象，
  * 实现异步发送邮件功能。
- * </p>
  *
  * @author 王帅
  * @since 1.0
@@ -42,9 +40,7 @@ import javax.mail.internet.MimeMessage;
 public class EmailSendListener {
 
     /**
-     * <p>
      * 注入邮件的发送者邮箱地址。
-     * </p>
      */
     @Value("${spring.mail.username}")
     private String from;
@@ -55,7 +51,7 @@ public class EmailSendListener {
         this.javaMailSender = javaMailSender;
     }
 
-    @RabbitListener(queues = {RabbitAttribute.QUEUE_EMAIL})
+    @RabbitListener(queues = {RabbitConsts.QUEUE_EMAIL})
     public void sendEmail(Email email) throws MessagingException {
         MimeMessage message = javaMailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message);

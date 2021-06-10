@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package xyz.tran4f.dms.handler;
+package xyz.tran4f.dms.event;
 
 import org.springframework.context.NoSuchMessageException;
 import org.springframework.http.ResponseEntity;
@@ -23,14 +23,12 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import xyz.tran4f.dms.exception.AbstractMessageException;
-import xyz.tran4f.dms.utils.I18nUtils;
+import xyz.tran4f.dms.util.I18nUtils;
 
 import javax.validation.ConstraintViolationException;
 
 /**
- * <p>
  * 全局异常处理器。
- * </p>
  *
  * @author 王帅
  * @since 1.0
@@ -47,11 +45,9 @@ public class GlobalExceptionHandler {
     }
 
     /**
-     * <p>
      * 处理自定义异常中，将异常的详细信息回显到前端界面。返回 HTTP 400 状态码，
      * 表示请求因出现异常而未被处理，并包含响应文本 responseText 表示异常的详
      * 细消息。
-     * </p>
      *
      * @see AbstractMessageException
      */
@@ -61,9 +57,7 @@ public class GlobalExceptionHandler {
     }
 
     /**
-     * <p>
      * 获取消息的国际化内容。
-     * </p>
      *
      * @param exception 需要回显的详细信息的异常
      * @return 国际化消息
@@ -79,10 +73,8 @@ public class GlobalExceptionHandler {
     }
 
     /**
-     * <p>
      * 通过某种方法绕过了前端的校验，处理校验失败异常。返回 HTTP 400 状态码，表示一个
      * 非法请求。
-     * </p>
      */
     @ExceptionHandler({
             BindException.class,

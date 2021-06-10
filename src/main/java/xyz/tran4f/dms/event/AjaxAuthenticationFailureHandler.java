@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package xyz.tran4f.dms.handler;
+package xyz.tran4f.dms.event;
 
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
@@ -24,20 +24,20 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 /**
- * <p>
  * Ajax 请求登录失败处理。
- * </p>
  *
  * @author 王帅
  * @since 1.0
  */
 public class AjaxAuthenticationFailureHandler implements AuthenticationFailureHandler {
 
+    private static final String DEFAULT_CONTENT_TYPE = "text/html;charset=utf-8";
+
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response,
             AuthenticationException exception) throws IOException {
         // 发送 202 状态码和详细信息
-        response.setContentType("text/html;charset=utf-8");
+        response.setContentType(DEFAULT_CONTENT_TYPE);
         response.setStatus(HttpServletResponse.SC_ACCEPTED);
         response.getWriter().print(exception.getMessage());
     }

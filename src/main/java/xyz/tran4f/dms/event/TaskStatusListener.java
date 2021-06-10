@@ -14,37 +14,31 @@
  * limitations under the License.
  */
 
-package xyz.tran4f.dms.listener;
+package xyz.tran4f.dms.event;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Component;
-import xyz.tran4f.dms.attribute.RabbitAttribute;
-import xyz.tran4f.dms.pojo.Dormitory;
-import xyz.tran4f.dms.pojo.Note;
-import xyz.tran4f.dms.utils.DateUtils;
-import xyz.tran4f.dms.utils.ExcelUtils;
-import xyz.tran4f.dms.utils.RedisUtils;
-import xyz.tran4f.dms.utils.ZipUtils;
+import xyz.tran4f.dms.constant.RabbitConsts;
+import xyz.tran4f.dms.model.Dormitory;
+import xyz.tran4f.dms.util.DateUtils;
+import xyz.tran4f.dms.util.ExcelUtils;
+import xyz.tran4f.dms.util.RedisUtils;
+import xyz.tran4f.dms.util.ZipUtils;
 
 import java.io.File;
 import java.io.IOException;
 import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
-import static xyz.tran4f.dms.attribute.RedisAttribute.*;
-import static xyz.tran4f.dms.attribute.WebAttribute.WEB_PORTFOLIO_ASSETS;
-import static xyz.tran4f.dms.attribute.WebAttribute.WEB_PORTFOLIO_STORES;
+import static xyz.tran4f.dms.constant.RedisConsts.*;
+import static xyz.tran4f.dms.constant.WebConsts.WEB_PORTFOLIO_ASSETS;
+import static xyz.tran4f.dms.constant.WebConsts.WEB_PORTFOLIO_STORES;
 
 /**
- * <p>
- * 2021/1/24
- * </p>
+ * 任务状态监听器。监听消息队列中的任务消息，接受任务完成的消息，并且整理资源。
  *
  * @author 王帅
  * @since 1.0
@@ -55,60 +49,28 @@ public class TaskStatusListener {
 
     // 初始化常量 使用 String#concat 方法代替 “+” 只是为了效率高一些
 
-    /**
-     * <p>
-     * 本周任务的临时资源文件夹中的 ”脏乱宿舍“ 文件夹。
-     * </p>
-     */
+    /** 本周任务的临时资源文件夹中的 ”脏乱宿舍“ 文件夹。 */
     private static final String DIRTY_DIR = WEB_PORTFOLIO_ASSETS.concat("脏乱宿舍");
 
-    /**
-     * <p>
-     * 本周任务的临时资源文件夹中的 ”优秀宿舍“ 文件夹。
-     * </p>
-     */
+    /** 本周任务的临时资源文件夹中的 ”优秀宿舍“ 文件夹。 */
     private static final String CLEAN_DIR = WEB_PORTFOLIO_ASSETS.concat("优秀宿舍");
 
-    /**
-     * <p>
-     * 生成并保存的新闻稿图片名称。
-     * </p>
-     */
+    /** 生成并保存的新闻稿图片名称。 */
     private static final String IMAGE_FILE = WEB_PORTFOLIO_STORES.concat("{0,number,#}/新闻稿图片.png");
 
-    /**
-     * <p>
-     * 生成并保存的宿舍卫生检查表（本科生或研究生）。
-     * </p>
-     */
+    /** 生成并保存的宿舍卫生检查表（本科生或研究生）。 */
     private static final String NOTES_FILE = WEB_PORTFOLIO_STORES.concat("{0,number,#}/化学学院宿舍卫生检查表{1}{2}.xlsx");
 
-    /**
-     * <p>
-     * 生成并保存的化学学院宿舍卫生检查压缩文件。
-     * </p>
-     */
+    /** 生成并保存的化学学院宿舍卫生检查压缩文件。 */
     private static final String CHART_ZIP = WEB_PORTFOLIO_STORES.concat("{0,number,#}/{1}化学学院宿舍卫生检查.zip");
 
-    /**
-     * <p>
-     * 生成并保存的优差宿舍照片压缩文件。
-     * </p>
-     */
+    /** 生成并保存的优差宿舍照片压缩文件。 */
     private static final String PHOTO_ZIP = WEB_PORTFOLIO_STORES.concat("{0,number,#}/优差宿图片.zip");
 
-    /**
-     * <p>
-     * 生成并保存的新闻稿照片和表格压缩文件。
-     * </p>
-     */
+    /** 生成并保存的新闻稿照片和表格压缩文件。 */
     private static final String DRAFT_ZIP = WEB_PORTFOLIO_STORES.concat("{0,number,#}/新闻稿照片和表格.zip");
 
-    /**
-     * <p>
-     * 需要上传到服务器的图片的数量，用于检查上传的图片数量是否正确。
-     * </p>
-     */
+    /** 需要上传到服务器的图片的数量，用于检查上传的图片数量是否正确。 */
     private static final int UPLOAD_IMAGE_COUNT = 3;
 
     // 注入 RedisUtils 依赖
@@ -120,28 +82,28 @@ public class TaskStatusListener {
     }
 
     /**
-     * <p>
      * 监听队列中完成的任务。
-     * </p>
      *
      * @param taskId 任务 ID
      * @throws IOException 发生 IO 异常
      */
-    @RabbitListener(queues = {RabbitAttribute.QUEUE_TASK})
+    @RabbitListener(queues = {RabbitConsts.QUEUE_TASK})
     public void accomplish(Integer taskId) throws IOException {
         // 获取所有的查宿记录信息
-        List<Note> notes = redisUtils.values(KEY_TASK_RECORD);
+        List<Dormitory> dormitories = redisUtils.values(KEY_TASK_RECORD);
         // 需要提示给前端的注意信息
         List<String> message = new ArrayList<>();
         // 删除未打分的宿舍
-        notes.stream()
-                .collect(Collectors.groupingBy(Note::getBuilding))
+        dormitories.stream()
+                .collect(Collectors.groupingBy(Dormitory::getBuilding))
                 .forEach((k, v) -> {
                     if (v.stream().anyMatch(e -> e.getScore() == null)) {
-                        notes.removeAll(v);
+                        dormitories.removeAll(v);
                         message.add(k + "未检查就结束了任务");
                     }
                 });
+        // 生成辅助参数
+        dormitories.forEach(Dormitory::generate);
         // 生成检查时间
         String time = DateUtils.now();
         // 需要打包的文件
@@ -150,7 +112,7 @@ public class TaskStatusListener {
         files.add(CLEAN_DIR);
         // 生成本周化学学院宿舍卫生检查表
         for (Type v : Type.values()) {
-            List<Note> collect = notes.stream()
+            List<Dormitory> collect = dormitories.stream()
                     .filter(e -> e.getType() == v.type)
                     .sorted()
                     .collect(Collectors.toList());
@@ -164,9 +126,9 @@ public class TaskStatusListener {
         List<Dormitory> dirty = redisUtils.values(KEY_DIRTY);
         // 优秀宿舍信息
         List<Dormitory> clean = redisUtils.values(KEY_CLEAN);
-        // 将优秀宿舍和脏乱宿舍按照年级和宿舍号排序
-        dirty.sort(Comparator.comparing(Dormitory::getGrade).thenComparing(Dormitory::getBuildingNo));
-        clean.sort(Comparator.comparing(Dormitory::getGrade).thenComparing(Dormitory::getBuildingNo));
+        // 将优秀宿舍和脏乱宿舍排序
+        dirty.sort(null);
+        clean.sort(null);
         // 分类归纳上传的图片
         copyDirectory(dirty, "脏乱宿舍", message);
         copyDirectory(clean, "优秀宿舍", message);
@@ -183,9 +145,7 @@ public class TaskStatusListener {
     }
 
     /**
-     * <p>
      * 将上传的优差宿舍的照片分类复制到 ”优秀宿舍“ 和 ”脏乱宿舍“ 文件夹中。
-     * </p>
      *
      * @param dormitories 宿舍信息
      * @param name 文件夹名称
@@ -216,9 +176,7 @@ public class TaskStatusListener {
     }
 
     /**
-     * <p>
      * 宿舍类型的枚举类。
-     * </p>
      */
     private enum Type {
 

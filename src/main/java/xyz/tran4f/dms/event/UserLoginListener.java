@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package xyz.tran4f.dms.listener;
+package xyz.tran4f.dms.event;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
@@ -25,18 +25,16 @@ import org.springframework.security.authentication.event.AuthenticationFailureBa
 import org.springframework.security.authentication.event.AuthenticationSuccessEvent;
 import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.stereotype.Component;
-import xyz.tran4f.dms.pojo.User;
-import xyz.tran4f.dms.utils.RedisUtils;
+import xyz.tran4f.dms.model.User;
+import xyz.tran4f.dms.util.RedisUtils;
 
 import java.util.concurrent.TimeUnit;
 
-import static xyz.tran4f.dms.attribute.RabbitAttribute.*;
-import static xyz.tran4f.dms.attribute.RedisAttribute.PREFIX_USER_LOCKED;
+import static xyz.tran4f.dms.constant.RabbitConsts.*;
+import static xyz.tran4f.dms.constant.RedisConsts.PREFIX_USER_LOCKED;
 
 /**
- * <p>
  * 用户登陆的监听。
- * </p>
  *
  * @author 王帅
  * @since 1.0
@@ -62,9 +60,7 @@ public class UserLoginListener {
     }
 
     /**
-     * <p>
      * 用户名密码错误的事件监听。
-     * </p>
      */
     @EventListener
     public void badCredentials(AuthenticationFailureBadCredentialsEvent event) {
@@ -91,9 +87,7 @@ public class UserLoginListener {
     }
 
     /**
-     * <p>
      * 登陆成功监听。
-     * </p>
      */
     @EventListener
     public void success(AuthenticationSuccessEvent event) {
@@ -107,9 +101,7 @@ public class UserLoginListener {
     }
 
     /**
-     * <p>
      * 设置用户状态是否锁定。
-     * </p>
      *
      * @param username 用户名（学号）
      * @param nonLock  {@code false} 锁定用户，{@code true} 解锁用户
@@ -121,9 +113,7 @@ public class UserLoginListener {
     }
 
     /**
-     * <p>
      * 监听队列消息，实现解锁用户。
-     * </p>
      *
      * @param username 用户名（学号）
      */
