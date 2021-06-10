@@ -24,20 +24,18 @@ import io.swagger.annotations.*;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import xyz.tran4f.dms.attribute.RedisAttribute;
-import xyz.tran4f.dms.pojo.User;
+import xyz.tran4f.dms.constant.RedisConsts;
+import xyz.tran4f.dms.model.User;
 import xyz.tran4f.dms.service.UserService;
-import xyz.tran4f.dms.utils.ServletUtils;
-import xyz.tran4f.dms.utils.WrapperUtils;
+import xyz.tran4f.dms.util.ServletUtils;
+import xyz.tran4f.dms.util.WrapperUtils;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
 import java.util.List;
 
 /**
- * <p>
  * 管理员模块的具体业务流程控制。
- * </p>
  *
  * @author 王帅
  * @since 1.0
@@ -50,22 +48,18 @@ import java.util.List;
 public class ManagerController extends BaseController<UserService> {
 
     /**
-     * <p>
      * 获取部门的邀请码，用于直接注册用户。
-     * </p>
      *
      * @return 部门邀请码
      */
     @GetMapping("captcha")
     @ApiOperation("获取部门邀请码")
     public String captcha() {
-        return redisUtils.get(RedisAttribute.KEY_CAPTCHA);
+        return redisUtils.get(RedisConsts.KEY_CAPTCHA);
     }
 
     /**
-     * <p>
      * 分页显示用户信息，可以设置查询条件。
-     * </p>
      *
      * @param current 当前页
      * @param size 每页显示数量
@@ -95,9 +89,7 @@ public class ManagerController extends BaseController<UserService> {
     }
 
     /**
-     * <p>
      * 保存或更新用户信息。
-     * </p>
      *
      * @param user 用户信息
      * @return {@code true} 更新或保存数据成功，{@code false} 更新或保存数据失败
@@ -114,9 +106,7 @@ public class ManagerController extends BaseController<UserService> {
     }
 
     /**
-     * <p>
      * 根据指定的学号删除一条用户信息。
-     * </p>
      *
      * @param id 学号
      * @return {@code true} 删除用户信息成功，{@code false} 删除用户信息失败
@@ -128,9 +118,7 @@ public class ManagerController extends BaseController<UserService> {
     }
 
     /**
-     * <p>
      * 根据学号批量删除用户信息
-     * </p>
      *
      * @param ids 学号
      * @return {@code true} 删除用户信息成功，{@code false} 删除用户信息失败

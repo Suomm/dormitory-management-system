@@ -16,59 +16,50 @@
 
 package xyz.tran4f.dms.controller;
 
+import com.baomidou.mybatisplus.extension.service.IService;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
-import xyz.tran4f.dms.attribute.RabbitAttribute;
-import xyz.tran4f.dms.pojo.Email;
-import xyz.tran4f.dms.utils.RedisUtils;
+import xyz.tran4f.dms.constant.RabbitConsts;
+import xyz.tran4f.dms.model.Email;
+import xyz.tran4f.dms.util.RedisUtils;
 
 /**
- * <p>
  * 所有业务控制器的父类。它是一个抽象类，只能被继承而不能被初始化，用于定义控制器的一些
  * 基本通用方法。
- * </p>
  *
  * @param <S> 服务层接口
  * @author 王帅
  * @since 1.0
  */
-public abstract class BaseController<S> {
+public abstract class BaseController<S extends IService<?>> {
 
     /**
-     * <p>
      * 引用的服务层接口。
-     * </p>
      */
     @Autowired
     protected S service;
 
     /**
-     * <p>
      * Redis 缓存操作工具类。
-     * </p>
      */
     @Autowired
     protected RedisUtils redisUtils;
 
     /**
-     * <p>
      * Rabbit MQ 消息队列模板。
-     * </p>
      */
     @Autowired
     protected RabbitTemplate rabbitTemplate;
 
     /**
-     * <p>
      * 通过消息队列实现异步发送邮件功能。
-     * </p>
      *
      * @param subject   主题
      * @param text      内容
      * @param to        收件人
      */
     protected final void sendEmail(String subject, String text, String to) {
-        rabbitTemplate.convertAndSend(RabbitAttribute.QUEUE_EMAIL, new Email(subject, text, to));
+        rabbitTemplate.convertAndSend(RabbitConsts.QUEUE_EMAIL, new Email(subject, text, to));
     }
 
 }

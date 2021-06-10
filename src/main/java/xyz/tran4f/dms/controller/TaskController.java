@@ -27,16 +27,15 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import xyz.tran4f.dms.attribute.RabbitAttribute;
-import xyz.tran4f.dms.pojo.Dormitory;
-import xyz.tran4f.dms.pojo.Note;
-import xyz.tran4f.dms.pojo.Response;
-import xyz.tran4f.dms.pojo.Task;
+import xyz.tran4f.dms.constant.RabbitConsts;
+import xyz.tran4f.dms.model.Dormitory;
+import xyz.tran4f.dms.model.Response;
+import xyz.tran4f.dms.model.Task;
 import xyz.tran4f.dms.service.TaskService;
-import xyz.tran4f.dms.utils.DateUtils;
-import xyz.tran4f.dms.utils.ServletUtils;
-import xyz.tran4f.dms.utils.TextUtils;
-import xyz.tran4f.dms.utils.WordUtils;
+import xyz.tran4f.dms.util.DateUtils;
+import xyz.tran4f.dms.util.ServletUtils;
+import xyz.tran4f.dms.util.TextUtils;
+import xyz.tran4f.dms.util.WordUtils;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
@@ -48,14 +47,12 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import static xyz.tran4f.dms.attribute.RedisAttribute.*;
-import static xyz.tran4f.dms.attribute.WebAttribute.WEB_PORTFOLIO_ASSETS;
-import static xyz.tran4f.dms.attribute.WebAttribute.WEB_PORTFOLIO_STORES;
+import static xyz.tran4f.dms.constant.RedisConsts.*;
+import static xyz.tran4f.dms.constant.WebConsts.WEB_PORTFOLIO_ASSETS;
+import static xyz.tran4f.dms.constant.WebConsts.WEB_PORTFOLIO_STORES;
 
 /**
- * <p>
  * 任务模块的具体业务流程控制。
- * </p>
  *
  * @author 王帅
  * @since 1.0
@@ -67,9 +64,7 @@ import static xyz.tran4f.dms.attribute.WebAttribute.WEB_PORTFOLIO_STORES;
 public class TaskController extends BaseController<TaskService> {
 
     /**
-     * <p>
      * 列出所有的任务信息（包括任务菜单）。
-     * </p>
      *
      * @return 可被 Layuimini 解析的数据对象
      */
@@ -87,9 +82,7 @@ public class TaskController extends BaseController<TaskService> {
     }
 
     /**
-     * <p>
      * 根据当前登陆用户的性别信息，展示当前未完成的所有具体任务。
-     * </p>
      *
      * @return 任务列表
      */
@@ -104,9 +97,7 @@ public class TaskController extends BaseController<TaskService> {
     }
 
     /**
-     * <p>
      * 获取上一次制作的新闻稿内容。
-     * </p>
      *
      * @return 新闻稿段落
      */
@@ -117,9 +108,7 @@ public class TaskController extends BaseController<TaskService> {
     }
 
     /**
-     * <p>
      * 设置任务开始日期。<b>注：</b>该日期所在周会被标识为第一周，并且会根据该日期计算查宿周次。
-     * </p>
      *
      * @param date 日期
      */
@@ -132,9 +121,7 @@ public class TaskController extends BaseController<TaskService> {
     }
 
     /**
-     * <p>
      * 获取任务开始日期。<b>注：</b>该日期所在周会被标识为第一周，并且会根据该日期计算查宿周次。
-     * </p>
      *
      * @return 格式化日期字符串
      */
@@ -147,9 +134,7 @@ public class TaskController extends BaseController<TaskService> {
     }
 
     /**
-     * <p>
      * 获取任务完成之后，处理上传图片的警告信息。
-     * </p>
      *
      * @return 警告信息
      */
@@ -160,9 +145,7 @@ public class TaskController extends BaseController<TaskService> {
     }
 
     /**
-     * <p>
      * 保存新闻稿内容，并生成新闻稿文件。
-     * </p>
      *
      * @param contents 段落内容
      * @throws IOException 发生 IO 异常
@@ -180,9 +163,7 @@ public class TaskController extends BaseController<TaskService> {
     }
 
     /**
-     * <p>
      * 根据任务开始日期计算周次并返回结果。
-     * </p>
      *
      * @return 周次
      */
@@ -206,9 +187,7 @@ public class TaskController extends BaseController<TaskService> {
     }
 
     /**
-     * <p>
      * 保存任务信息。
-     * </p>
      *
      * @param buildings 要检查的宿舍楼
      * @return 响应信息
@@ -245,9 +224,7 @@ public class TaskController extends BaseController<TaskService> {
     }
 
     /**
-     * <p>
      * 任务意外结束时回滚任务。
-     * </p>
      *
      * @param taskId 任务 ID
      */
@@ -265,17 +242,15 @@ public class TaskController extends BaseController<TaskService> {
     }
 
     /**
-     * <p>
      * 根据宿舍楼信息获取宿舍保存的成绩。
-     * </p>
      *
      * @param building 宿舍楼
      * @return 成绩信息
      */
     @GetMapping("/scores")
     @ApiOperation("获取宿舍的评分")
-    public List<Note> scores(@NotBlank String building) {
-        List<Note> values = redisUtils.values(KEY_TASK_RECORD);
+    public List<Dormitory> scores(@NotBlank String building) {
+        List<Dormitory> values = redisUtils.values(KEY_TASK_RECORD);
         return values.stream()
                 .filter(e -> building.equals(e.getBuilding()))
                 .sorted()
@@ -283,9 +258,7 @@ public class TaskController extends BaseController<TaskService> {
     }
 
     /**
-     * <p>
      * 删除任务菜单和历史记录。
-     * </p>
      *
      * @param taskId 任务 ID
      */
@@ -304,9 +277,7 @@ public class TaskController extends BaseController<TaskService> {
     }
 
     /**
-     * <p>
      * 删除上次任务的缓存文件。
-     * </p>
      *
      * @since 1.1
      */
@@ -318,9 +289,7 @@ public class TaskController extends BaseController<TaskService> {
     }
 
     /**
-     * <p>
      * 任务完成之后，获取任务的相关完成资料。
-     * </p>
      *
      * @param taskId 任务 ID
      * @return 详细信息
@@ -344,9 +313,7 @@ public class TaskController extends BaseController<TaskService> {
     }
 
     /**
-     * <p>
      * 设置完成一项具体任务。
-     * </p>
      *
      * @param taskId 任务 ID
      * @return {@code true} 操作成功，{@code false} 操作失败
@@ -366,7 +333,7 @@ public class TaskController extends BaseController<TaskService> {
                     .eq(Task::getTaskId, parentId)
                     .set(Task::getComplete, true)
                     .update();
-            rabbitTemplate.convertAndSend(RabbitAttribute.QUEUE_TASK, parentId);
+            rabbitTemplate.convertAndSend(RabbitConsts.QUEUE_TASK, parentId);
         }
         // 更新子任务
         return service.lambdaUpdate()
@@ -376,43 +343,39 @@ public class TaskController extends BaseController<TaskService> {
     }
 
     /**
-     * <p>
      * 记录查宿成绩。
-     * </p>
      *
-     * @param notes 成绩信息
+     * @param dormitories 成绩信息
      */
     @PostMapping("notes")
     @ApiOperation("记录宿舍成绩")
     @Secured({"ROLE_USER", "ROLE_MANAGER","ROLE_ROOT"})
-    public void setNotes(@ApiParam(value = "成绩", required = true) @RequestBody @NotEmpty @Valid List<Note> notes) {
+    public void setNotes(@ApiParam(value = "成绩", required = true) @RequestBody @NotEmpty @Valid List<Dormitory> dormitories) {
         String week = redisUtils.orElseThrow(KEY_ACTIVE_WEEK, "TaskController.incorrectKey");
         // 设置当前时间
         Date date = new Date();
         // 获取所有宿舍的宿舍号
-        Object[] hashKeys = notes.stream().map(Note::getRoom).toArray();
+        Object[] hashKeys = dormitories.stream().map(Dormitory::getRoom).toArray();
         // 删除之前的脏乱（优秀）宿舍信息
         redisUtils.remove(KEY_CLEAN, hashKeys);
         redisUtils.remove(KEY_DIRTY, hashKeys);
         // 更新脏乱（优秀）宿舍信息
-        redisUtils.hash(KEY_CLEAN, notes.stream()
+        redisUtils.hash(KEY_CLEAN, dormitories.stream()
                 .filter(e -> e.getScore() >= 90)
                 .map(e -> Dormitory.builder().grade(e.getGrade()).room(e.getRoom()).build())
                 .collect(Collectors.toMap(Dormitory::getRoom, Function.identity())));
-        redisUtils.hash(KEY_DIRTY, notes.stream()
+        redisUtils.hash(KEY_DIRTY, dormitories.stream()
                 .filter(e -> e.getScore() < 60)
                 .map(e -> Dormitory.builder().grade(e.getGrade()).room(e.getRoom()).build())
                 .collect(Collectors.toMap(Dormitory::getRoom, Function.identity())));
         // 存入更新的数据
-        redisUtils.hash(KEY_TASK_RECORD, notes.stream()
+        redisUtils.hash(KEY_TASK_RECORD, dormitories.stream()
                 .map(e -> e.setDate(date).setWeek(week))
-                .collect(Collectors.toMap(Note::getRoom, Function.identity())));
+                .collect(Collectors.toMap(Dormitory::getRoom, Function.identity())));
     }
 
     /**
-     * <p>
      * 定时清理任务缓存记录文件。
-     * </p>
      */
     @Scheduled(cron = "0 0 0 1 2,8 ?")
     public void clear() {

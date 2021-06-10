@@ -22,19 +22,17 @@ import io.swagger.annotations.ApiParam;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import xyz.tran4f.dms.pojo.Notice;
-import xyz.tran4f.dms.utils.RedisUtils;
+import xyz.tran4f.dms.model.Notice;
+import xyz.tran4f.dms.util.RedisUtils;
 
 import javax.validation.constraints.NotEmpty;
 import java.util.Date;
 import java.util.List;
 
-import static xyz.tran4f.dms.attribute.RedisAttribute.KEY_NOTICE;
+import static xyz.tran4f.dms.constant.RedisConsts.KEY_NOTICE;
 
 /**
- * <p>
  * 公告模块的具体业务流程控制。
- * </p>
  *
  * @author 王帅
  * @since 1.0
@@ -52,9 +50,7 @@ public class NoticeController {
     }
 
     /**
-     * <p>
      * 获取所有公告内容。
-     * </p>
      *
      * @return 所有公告
      */
@@ -65,9 +61,7 @@ public class NoticeController {
     }
 
     /**
-     * <p>
      * 保存或更新公告信息。
-     * </p>
      *
      * @param notice 公告信息
      * @return 总是 {@code true}
@@ -84,9 +78,7 @@ public class NoticeController {
     }
 
     /**
-     * <p>
      * 批量删除删除公告信息。
-     * </p>
      *
      * @param notice 要删除的公告信息
      * @return 删除的记录条数

@@ -33,17 +33,15 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import springfox.documentation.annotations.ApiIgnore;
-import xyz.tran4f.dms.attribute.WebAttribute;
-import xyz.tran4f.dms.pojo.Response;
+import xyz.tran4f.dms.constant.WebConsts;
+import xyz.tran4f.dms.model.Response;
 
 import javax.validation.constraints.NotNull;
 import java.io.*;
 import java.net.URLEncoder;
 
 /**
- * <p>
  * 文件模块的具体业务流程控制。
- * </p>
  *
  * @author 王帅
  * @since 1.0
@@ -54,9 +52,7 @@ import java.net.URLEncoder;
 public class FileController {
 
     /**
-     * <p>
      * 上传查宿过程中拍摄的图片。
-     * </p>
      *
      * @param file 照片文件
      * @param room 房间号
@@ -73,7 +69,7 @@ public class FileController {
         assert filename != null;
         int begin = filename.lastIndexOf('.');
         filename = room + index + filename.substring(begin);
-        File dest = new File(WebAttribute.WEB_PORTFOLIO_ASSETS + room + "/" + filename);
+        File dest = new File(WebConsts.WEB_PORTFOLIO_ASSETS + room + "/" + filename);
         FileUtils.forceMkdirParent(dest);
         @Cleanup InputStream in = file.getInputStream();
         @Cleanup FileOutputStream fos = new FileOutputStream(dest);
@@ -83,9 +79,7 @@ public class FileController {
     }
 
     /**
-     * <p>
-     * 下载项目下的资源。<b>默认路径：./portfolio/<b/>。
-     * </p>
+     * 下载项目下的资源。<b>默认路径：./portfolio/</b>。
      *
      * @param filename 文件名称
      * @return 文件下载流

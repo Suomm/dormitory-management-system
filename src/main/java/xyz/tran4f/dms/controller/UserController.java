@@ -22,12 +22,12 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import xyz.tran4f.dms.exception.InvalidOrOverdueException;
 import xyz.tran4f.dms.exception.MissingAttributeException;
-import xyz.tran4f.dms.pojo.Captcha;
-import xyz.tran4f.dms.pojo.User;
+import xyz.tran4f.dms.model.Captcha;
+import xyz.tran4f.dms.model.User;
 import xyz.tran4f.dms.service.UserService;
-import xyz.tran4f.dms.utils.CaptchaUtils;
-import xyz.tran4f.dms.utils.MD5Utils;
-import xyz.tran4f.dms.utils.ServletUtils;
+import xyz.tran4f.dms.util.CaptchaUtils;
+import xyz.tran4f.dms.util.MD5Utils;
+import xyz.tran4f.dms.util.ServletUtils;
 import xyz.tran4f.dms.validation.constraints.Id;
 import xyz.tran4f.dms.validation.constraints.Password;
 
@@ -36,12 +36,10 @@ import javax.validation.constraints.NotBlank;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
-import static xyz.tran4f.dms.attribute.RedisAttribute.*;
+import static xyz.tran4f.dms.constant.RedisConsts.*;
 
 /**
- * <p>
  * 用户模块的具体业务流程控制。
- * </p>
  *
  * @author 王帅
  * @since 1.0
@@ -54,18 +52,14 @@ import static xyz.tran4f.dms.attribute.RedisAttribute.*;
 public class UserController extends BaseController<UserService> {
 
     /**
-     * <p>
      * 找回密码时，生成数字签名所需要的分隔符。
-     * </p>
      */
     private static final String DELIMITER = "$";
 
-    // === 注册用户以及忘记密码之后重置密码请求操作 ===
+    // ===== 注册用户以及忘记密码之后重置密码请求操作 =====
 
     /**
-     * <p>
      * 处理用户注册请求，将新用户信息写入数据库。
-     * </p>
      *
      * @param user 通过表单封装的对象
      * @param emailCode 邮箱验证码
@@ -81,7 +75,7 @@ public class UserController extends BaseController<UserService> {
         // 获取缓存中的验证码对象
         Captcha captcha = redisUtils.get(key);
         // 校验邮箱验证码
-        CaptchaUtils.checkCaptcha(captcha, Captcha.defaultCaptcha(emailCode));
+        CaptchaUtils.checkCaptcha(captcha, CaptchaUtils.getCaptcha(emailCode));
         // 检验部门的邀请码是否正确
         if (!validateCode.equals(redisUtils.get(KEY_CAPTCHA))) {
             throw new InvalidOrOverdueException("UserController.noPermission");
@@ -96,9 +90,7 @@ public class UserController extends BaseController<UserService> {
     }
 
     /**
-     * <p>
      * 忘记密码的操作，由用户输入学号后，后台发送验证链接到邮箱。
-     * </p>
      *
      * @param id 学号
      */
@@ -127,9 +119,7 @@ public class UserController extends BaseController<UserService> {
     }
 
     /**
-     * <p>
      * 解析发送到用户邮箱的找回密码链接，返回重置密码的界面。
-     * </p>
      *
      * @param id 学号
      * @param sid 密匙
@@ -147,9 +137,7 @@ public class UserController extends BaseController<UserService> {
     }
 
     /**
-     * <p>
      * 重置密码操作，将新密码写入数据库，自动重定向到登陆界面。
-     * </p>
      *
      * @param id 学号
      * @param password 重置后的密码
@@ -176,9 +164,7 @@ public class UserController extends BaseController<UserService> {
     // === 获取邮箱验证码请求 ===
 
     /**
-     * <p>
      * 获取邮箱验证码，将数据保存到 Redis 缓存中，并发送邮箱通知用户。
-     * </p>
      *
      * @param id 学号
      * @param email 邮箱
@@ -197,7 +183,7 @@ public class UserController extends BaseController<UserService> {
         redisUtils.set(PREFIX_USER_CAPTCHA.concat(id), code, 10, TimeUnit.MINUTES);
     }
 
-    // === 用户登陆成功之后更改相关信息操作 ===
+    // ===== 用户登陆成功之后更改相关信息操作 =====
 
     @GetMapping("principal")
     public User principal() {
@@ -205,9 +191,7 @@ public class UserController extends BaseController<UserService> {
     }
 
     /**
-     * <p>
      * 更改用户密码。
-     * </p>
      *
      * @param id 学号
      * @param oldPassword 旧密码
@@ -228,9 +212,7 @@ public class UserController extends BaseController<UserService> {
     }
 
     /**
-     * <p>
      * 更改用户邮箱。
-     * </p>
      *
      * @param id 学号
      * @param oldEmail 旧邮箱
@@ -253,7 +235,7 @@ public class UserController extends BaseController<UserService> {
         // 获取缓存中的验证码对象
         Captcha captcha = redisUtils.get(PREFIX_USER_CAPTCHA.concat(id));
         // 校验邮箱验证码
-        CaptchaUtils.checkCaptcha(captcha, Captcha.defaultCaptcha(emailCode));
+        CaptchaUtils.checkCaptcha(captcha, CaptchaUtils.getCaptcha(emailCode));
         // 修改邮箱成功后删除验证码
         if (service.changeEmail(id, oldEmail, newEmail)) {
             redisUtils.delete(PREFIX_USER_CAPTCHA.concat(id));
