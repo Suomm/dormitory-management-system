@@ -19,13 +19,11 @@ package xyz.tran4f.dms.mapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.CacheNamespace;
 import org.springframework.stereotype.Repository;
-import xyz.tran4f.dms.pojo.User;
-import xyz.tran4f.dms.repository.MybatisRedisCache;
+import xyz.tran4f.dms.model.User;
+import xyz.tran4f.dms.component.MybatisRedisCache;
 
 /**
- * <p>
  * 对用户数据库进行操作的 Mapper 接口。
- * </p>
  *
  * @author 王帅
  * @since 1.0
