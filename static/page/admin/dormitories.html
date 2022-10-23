@@ -1,0 +1,117 @@
+<!--
+  ~ Copyright (C) 2020-2022 the original author or authors.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<div class="layuimini-container layuimini-page-anim">
+    <div class="layuimini-main">
+        <fieldset class="table-search-fieldset">
+            <legend>搜索信息</legend>
+            <div style="margin: 10px 10px 10px 10px">
+                <form class="layui-form layui-form-pane" action="">
+                    <div class="layui-form-item">
+						<div class="layui-inline">
+						    <label class="layui-form-label">宿舍楼</label>
+						    <div class="layui-input-inline">
+						        <input type="text" name="building" autocomplete="off" class="layui-input">
+						    </div>
+						</div>
+						<div class="layui-inline">
+						    <label class="layui-form-label">房间号</label>
+						    <div class="layui-input-inline">
+						        <input type="text" name="room" autocomplete="off" class="layui-input">
+						    </div>
+						</div>
+						<div class="layui-inline">
+						    <label class="layui-form-label">年级</label>
+						    <div class="layui-input-inline">
+						        <input type="text" name="grade" autocomplete="off" class="layui-input">
+						    </div>
+						</div>
+						<div class="layui-inline">
+							<label class="layui-form-label">类型</label>
+							<div class="layui-input-inline">
+								<select name="category">
+								  <option value="">请选择类型</option>
+								  <option value="1">男生宿舍</option>
+								  <option value="0">女生宿舍</option>
+								</select>     
+							</div>
+						</div>
+						<div class="layui-inline">
+							<label class="layui-form-label">类别</label>
+							<div class="layui-input-inline">
+								<select name="type">
+								  <option value="">请选择类别</option>
+								  <option value="1">本科生</option>
+								  <option value="0">研究生</option>
+								</select>     
+							</div>
+						</div>
+                        <div class="layui-inline">
+                            <button type="submit" class="layui-btn layui-btn-primary"  lay-submit lay-filter="data-search-btn"><i class="layui-icon"></i> 搜 索</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </fieldset>
+        <table class="layui-hide" id="currentTableId" lay-filter="currentTableFilter"></table>
+        <script type="text/html" id="currentTableBar">
+            <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="edit">编辑</a>
+            <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="delete">删除</a>
+        </script>
+    </div>
+</div>
+<script>
+    layui.use('template', function () {
+        var template = layui.template;
+        template.render({
+            url: '/dormitory/page',
+            cols: [[
+                {type: "checkbox", width: 50, fixed: 'left'},
+                {field: 'building', width: 150, title: '宿舍楼', align: 'center', sort: true, fixed: 'left'},
+                {field: 'grade', title: '年级', align: 'center', sort: true},
+                {field: 'room', minWidth: 100, title: '房间号', align: 'center', sort: true},
+				{field: 'category', minWidth: 100, templet: function(dormitory) {
+					if (dormitory.category === 0) return '女生宿舍'; else return '男生宿舍';
+				}, title: '类型', align: 'center', sort: true},
+                {field: 'type', title: '类别', templet: function(dormitory) {
+					if (dormitory.type === 1) return '本科生'; else return '研究生';
+				}, align: 'center', sort: true},
+                {title: '操作', minWidth: 130, toolbar: '#currentTableBar', align: "center"}
+            ]]
+        });
+		template.binding({
+			url: 'edit/dormitory.html',
+			add: '添加宿舍',
+			edit: '编辑宿舍',
+			remove: function (data) {
+				return {
+					url: '/dormitory/delete/' + data.room,
+				};
+			},
+			removeAll: function (data) {
+				var rooms = [];
+				data.forEach(function(value, index, array) {
+					rooms.push(value.room);
+				});
+				return {
+					data: JSON.stringify(rooms),
+					url: '/dormitory/deleteBatch',
+				};
+			}
+		});
+		template.search();
+	});
+</script>

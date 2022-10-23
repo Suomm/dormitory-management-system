@@ -1,0 +1,45 @@
+<!--
+  ~ Copyright (C) 2020-2022 the original author or authors.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<div class="layuimini-main">
+	<div class="layui-form layuimini-form" lay-filter="example" style="margin-left: -90px;">
+		<input type="hidden" name="date">
+		<div class="layui-form-item">
+			<label class="layui-form-label required">标题：</label>
+			<div class="layui-input-block">
+				<input type="text" name="title" lay-verify="required" lay-reqtext="请输入标题" placeholder="请输入标题" autocomplete="off" class="layui-input">
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label required">内容：</label>
+			<div class="layui-input-block">
+				<textarea name="content" lay-verify="required" lay-reqtext="请输入内容" placeholder="请输入内容" class="layui-textarea"></textarea>
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<div class="layui-input-block">
+			<button class="layui-btn layui-btn layui-btn-normal" lay-submit lay-filter="saveBtn">确认保存</button>
+		</div>
+		</div>
+	</div>
+</div>
+<script>
+	layui.use('template', function() {
+		var layer = layui.layer,
+			template = layui.template;
+		template.save('/notice/save', layer.index);
+	});
+</script>

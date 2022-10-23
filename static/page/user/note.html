@@ -1,0 +1,218 @@
+<!--
+  ~ Copyright (C) 2020-2022 the original author or authors.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<link rel="stylesheet" href="js/lay-module/step-lay/step.css" media="all">
+<div class="layuimini-container layuimini-page-anim">
+    <div class="layuimini-main">
+        <div class="layui-fluid" style="padding: 0;">
+            <div class="layui-card">
+                <div class="layui-card-body">
+                    <div class="layui-carousel" id="stepForm" lay-filter="stepForm" style="margin: 0 auto;">
+                        <div id="carousel" carousel-item></div>
+                    </div>
+                    <hr>
+                    <div style="color: #666;margin-top: 30px;margin-bottom: 40px;padding-left: 30px;">
+                        <h3>说明</h3><br>
+                        <h4>宿舍打分</h4>
+                        <p>可根据对应的房间号为宿舍进行打分，并附带相应的描述信息。打过分数之后务必要点击“提交成绩”按钮保存成绩，
+                            第一次提交成绩之后再次检查成绩，如果没有成绩的改动可以不点击“提交成绩”按钮，直接返回任务列表。</p>
+                        <br><h4>图片上传</h4>
+                        <p>脏乱（优秀）宿舍需要按要求上传三张图片，可在任务结束之前反复上传，上传成功后会显示图片的标号。
+                            建议先使用手机自带相机拍摄，在检查完宿舍核对成绩时再进行图片的上传，尽量做到所有图片一次性全部上传。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+<script type="text/javascript">
+    layui.use(['form', 'step', 'upload'], function () {
+        var $ = layui.$,
+            step = layui.step,
+            form = layui.form,
+            layer = layui.layer,
+            upload = layui.upload;
+
+        $(document).ready(function () {
+            var i = window.location.href.indexOf('?') + 1;
+            if (i === 1) {
+                layer.msg('链接缺少参数', {icon: 5, shift: 6});
+                window.location.href = '/#/user/release.html';
+                return;
+            }
+            var param = {}
+            var v = window.location.href.substring(i).split('=');
+            param[v[0]] = decodeURI(v[1]);
+            if (!param.building) {
+                layer.msg('链接缺少参数', {icon: 5, shift: 6});
+                window.location.href = '/#/user/release.html';
+                return;
+            }
+            $.get("/task/scores?building=" + param.building, function (notes) {
+                if (notes.length === 0) {
+                    layer.msg('任务中不包含该宿舍楼', {icon: 5, shift: 6});
+                    window.location.href = '/#/user/release.html';
+                    return;
+                }
+                var v = $('#carousel');
+                notes.forEach(function (e, i) {
+                    v.append(`<div class="layui-form" style="margin-top: 50px;">
+                        <input type="hidden" name="building" value="${e.building}">
+                        <input type="hidden" name="grade" value="${e.grade}">
+                        <input type="hidden" name="room" value="${e.room}">
+                        <input type="hidden" name="type" value="${e.type}">
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">房间号：</label>
+                            <div class="layui-input-block">
+                                <div class="layui-form-mid layui-word-aux">${e.room}</div>
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">分数：</label>
+                            <div class="layui-input-block">
+                                <input type="number" placeholder="请填写入分数" name="score" value="${e.score == null ? '' : e.score}" class="layui-input" lay-verify="integer" required>
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">备注：</label>
+                            <div class="layui-input-block">
+                                <textarea placeholder="备注说明" name="details" value="${e.details}" class="layui-textarea">${e.details == null ? '' : e.details}</textarea>
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">图片上传：</label>
+                            <div class="layui-input-block">
+                                <div class="layui-btn-container">
+                                    <button class="layui-btn layui-btn-sm upload" lay-data="{url: '/upload/${e.room}/(1)', accept: 'images', size: 50 * 1024}">门牌</button>
+                                    <button class="layui-btn layui-btn-sm upload" lay-data="{url: '/upload/${e.room}/(2)', accept: 'images', size: 50 * 1024}">全景</button>
+                                    <button class="layui-btn layui-btn-sm upload" lay-data="{url: '/upload/${e.room}/(3)', accept: 'images', size: 50 * 1024}">局部</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <div class="layui-input-block">
+                                ${i == 0 ? '' : '<button type="button" class="layui-btn layui-btn-primary pre">上一步</button>'}
+                                <button class="layui-btn" lay-submit lay-filter="formStep">
+                                    ${i == notes.length - 1 ? '完成' : '下一步'}
+                                </button>
+                            </div>
+                        </div>
+                    </div>`);
+                });
+                v.append(`<div><div style="text-align: center;margin-top: 50px;">
+                        <i class="layui-icon layui-circle"
+                           style="color: white;font-size:30px;font-weight:bold;background: #52C41A;padding: 20px;line-height: 80px;">&#xe605;</i>
+                        <div style="font-size: 24px;color: #333;font-weight: 500;margin-top: 30px;">
+                            任务完成
+                        </div>
+                        <div style="font-size: 14px;color: #666;margin-top: 20px;">如果您修改了宿舍成绩，请务必点击提交成绩保存查宿记录</div>
+                    </div>
+                    <div class="layui-btn-container" style="text-align: center;margin-top: 50px;">
+                        <button class="layui-btn next">再次核查</button>
+                        <button class="layui-btn layui-btn-normal" id="submit">提交成绩</button>
+                        <button class="layui-btn layui-btn-primary" layuimini-content-href="user/release.html">返回列表</button>
+                    </div></div>`);
+
+                // 初始化表单与校验
+                form.render();
+                form.verify({
+                    integer: [
+                        /^\-?\d+$/,
+                        '分数必须整数哦'
+                    ]
+                });
+
+                step.render({
+                    elem: '#stepForm',
+                    filter: 'stepForm',
+                    width: '100%', //设置容器宽度
+                    stepWidth: '750px',
+                    height: '450px',
+                    stepItems: []
+                });
+
+                var datas = [];
+
+                form.on('submit(formStep)', function (data) {
+                    var score = data.field.score;
+                    if (score > 100 || score < 0) {
+                        layer.msg('分数要在0-100之间哦', {icon: 5, shift: 6});
+                        return false;
+                    }
+                    if ((score != 0 && score != 59) && (score < 59 || score > 90 || score % 5 != 0)) {
+                        layer.confirm('所给分数不恰当，是否重新打分？', {
+                            btn: ['确定','继续']
+                        }, function(index){
+                            layer.close(index);
+                        }, function(){
+                            datas.push(data.field);
+                            step.next('#stepForm');
+                        });
+                    } else {
+                        datas.push(data.field);
+                        step.next('#stepForm');
+                    }
+                    return false;
+                });
+
+                upload.render({
+                    elem: '.upload',
+                    before: function(obj){
+                        layer.load(); // 上传 loading
+                    },
+                    done: function(res, index, upload){
+                        $(this.item).text(res.msg);
+                        layer.closeAll('loading'); // 关闭 loading
+                        layer.msg("上传成功", {icon: 1});
+                    },
+                    error: function(index, upload){
+                        layer.closeAll('loading'); // 关闭 loading
+                        layer.confirm('上传失败，是否重新上传', function(index) {
+                            upload();
+                            layer.close(index);
+                        });
+                    }
+                });
+
+                $('.pre').click(function () {
+                    datas.pop();
+                    step.pre('#stepForm');
+                });
+
+                $('.next').click(function () {
+                    datas = [];
+                    step.next('#stepForm');
+                });
+
+                $('#submit').click(function () {
+                    layer.load();
+                    $.ajax({
+                        type: 'post',
+                        url: '/task/notes',
+                        data: JSON.stringify(datas),
+                        contentType: 'application/json',
+                        success: function () {
+                            layer.closeAll('loading');
+                            layer.msg("提交成功", {icon: 1});
+                            window.location.href = '/#/user/release.html';
+                        }
+                    });
+                });
+            });
+        });
+    });
+</script>

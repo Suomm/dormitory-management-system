@@ -1,9 +1,12 @@
 ### Default Ignore ###
 target/
-portfolio/
 
 ### application.yml ###
-src/main/resources/*.yml
+config/application-*.yml
+
+### Compressed JS/CSS File ###
+*.min.js
+*.min.css
 
 ### IntelliJ IDEA ###
 .idea

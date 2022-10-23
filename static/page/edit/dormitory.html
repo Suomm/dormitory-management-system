@@ -1,0 +1,68 @@
+<!--
+  ~ Copyright (C) 2020-2022 the original author or authors.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<div class="layuimini-main">
+	<div class="layui-form layuimini-form" lay-filter="example" style="margin-left: -80px;">
+		<div class="layui-form-item">
+			<label class="layui-form-label required">宿舍楼：</label>
+			<div class="layui-input-block">
+				<input type="text" name="building" lay-verify="required|building" lay-reqtext="请输入宿舍楼" placeholder="请输入宿舍楼" autocomplete="off" class="layui-input">
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label required">房间号：</label>
+			<div class="layui-input-block">
+				<input type="text" name="room" lay-verify="required" lay-reqtext="请输入房间号" placeholder="请输入房间号" autocomplete="off" class="layui-input">
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label required">年级：</label>
+			<div class="layui-input-block">
+				<input type="text" name="grade" lay-verify="required|grade" lay-reqtext="请输入年级" placeholder="请输入年级" autocomplete="off" class="layui-input">
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label required">类别：</label>
+			<div class="layui-input-block">
+				<select name="type">
+				  <option value="1" selected>本科生</option>
+				  <option value="0">研究生</option>
+				</select>     
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label required">类型：</label>
+			<div class="layui-input-block">
+				<select name="category">
+				  <option value="1" selected>男生宿舍</option>
+				  <option value="0">女生宿舍</option>
+				</select>     
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<div class="layui-input-block">
+			<button class="layui-btn layui-btn layui-btn-normal" lay-submit lay-filter="saveBtn">确认保存</button>
+		</div>
+		</div>
+	</div>
+</div>
+<script>
+	layui.use('template', function() {
+		var template = layui.template;
+		template.verify();
+		template.save('/dormitory/save');
+	});
+</script>

@@ -1,0 +1,75 @@
+<!--
+  ~ Copyright (C) 2020-2022 the original author or authors.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<div class="layuimini-main">
+	<div class="layui-form layuimini-form" lay-filter="example" style="margin-left: -90px;">
+		<input type="hidden" name="password" value="123456">
+		<div class="layui-form-item">
+			<label class="layui-form-label required">学号：</label>
+			<div class="layui-input-block">
+				<input type="text" name="id" lay-verify="required|id" lay-reqtext="请输入学号" placeholder="请输入学号" autocomplete="off"
+				 class="layui-input">
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label required">姓名：</label>
+			<div class="layui-input-block">
+				<input type="text" name="name" lay-verify="required" lay-reqtext="请输入姓名" placeholder="请输入姓名" autocomplete="off"
+				 class="layui-input">
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label required">性别：</label>
+			<div class="layui-input-block">
+				<input type="radio" name="gender" value="1" title="男" checked>
+				<input type="radio" name="gender" value="0" title="女">
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label required">邮箱：</label>
+			<div class="layui-input-block">
+				<input type="email" name="email" lay-verify="required|email" lay-reqtext="请输入邮箱" placeholder="请输入邮箱" autocomplete="off"
+				 class="layui-input">
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<label class="layui-form-label required">角色：</label>
+			<div class="layui-input-block">
+				<select name="role">
+					<option value="ROLE_USER" selected>常驻志愿者</option>
+					<option value="ROLE_GUEST">流动志愿者</option>
+					<option value="ROLE_MANAGER">部门管理员</option>
+				</select>
+			</div>
+		</div>
+		<div class="layui-form-item">
+			<div class="layui-input-block">
+				<button class="layui-btn layui-btn layui-btn-normal" lay-submit lay-filter="saveBtn">确认保存</button>
+			</div>
+		</div>
+	</div>
+</div>
+<script>
+	layui.use('template', function() {
+		var $ = layui.jquery,
+			layer = layui.layer,
+			template = layui.template;
+		// 表单的校验
+		template.verify();
+		template.save('/manager/save', layer.index);
+		$('input[name="password"]').val('123456');
+	});
+</script>

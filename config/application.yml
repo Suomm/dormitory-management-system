@@ -1,0 +1,84 @@
+server:
+  port: 8888
+  compression:
+    enabled: true
+swagger:
+  enabled: true
+  contact:
+    email: suomm.macher@foxmail.com
+    name: 王帅
+    url: https://github.com/Suomm
+  title: 天津师范大学权益保障部宿舍管理系统
+  version: 1.2-GA
+  license: Apache License, Version 2.0
+  licenseUrl: https://www.apache.org/licenses/LICENSE-2.0.html
+  description: 用于前后端分离测试
+  base-package: cn.edu.tjnu.hxxy.dms.controller
+  apply-default-response-messages: false
+  global-response-message.get:
+    - { code: 200, message: "服务器处理请求成功" }
+    - { code: 400, message: "服务器处理请求失败" }
+    - { code: 500, message: "服务器内部产生异常" }
+  global-response-message.put:
+    - { code: 200, message: "服务器处理请求成功" }
+    - { code: 400, message: "服务器处理请求失败" }
+    - { code: 500, message: "服务器内部产生异常" }
+  global-response-message.post:
+    - { code: 200, message: "服务器处理请求成功" }
+    - { code: 400, message: "服务器处理请求失败" }
+    - { code: 500, message: "服务器内部产生异常" }
+  global-response-message.delete:
+    - { code: 200, message: "服务器处理请求成功" }
+    - { code: 400, message: "服务器处理请求失败" }
+    - { code: 500, message: "服务器内部产生异常" }
+spring:
+  profiles:
+    active: dev
+  servlet:
+    multipart:
+      max-file-size: 50MB
+      max-request-size: 100MB
+  datasource:
+    url: jdbc:mysql://localhost:3306/dms?characterEncoding=utf-8&serverTimezone=UTC
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: root
+    password: root
+    druid:
+      test-while-idle: true
+      validation-query: SELECT 1
+  rabbitmq:
+    port: 5672
+    username: guest
+    password: guest
+    host: localhost
+    virtual-host: /
+    listener:
+      simple:
+        acknowledge-mode: none
+      direct:
+        acknowledge-mode: none
+  redis:
+    port: 6379
+    host: localhost
+  mail:
+    port: 465
+    host: smtp.qq.com
+    username: suomm.macher@foxmail.com
+    password: smtp_service_password
+    properties:
+      mail:
+        smtp:
+          auth: true
+          ssl:
+            enable: true
+          starttls:
+            enable: true
+            required: true
+          socketFactory:
+            class: javax.net.ssl.SSLSocketFactory
+mybatis-plus:
+  configuration:
+    cache-enabled: true
+    call-setters-on-nulls: true
+    map-underscore-to-camel-case: true
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl

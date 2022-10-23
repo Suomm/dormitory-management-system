@@ -1,0 +1,181 @@
+<!--
+  ~ Copyright (C) 2020-2022 the original author or authors.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<div class="layuimini-container layuimini-page-anim">
+	<div class="layuimini-main">
+		<blockquote class="layui-elem-quote layui-text">
+			每周查宿任务管理，在发布任务之前请确保已点击“设置”按钮设置了开学日期，然后点击“发布”按钮选择所需要
+			检查的宿舍楼即可添加任务。
+		</blockquote>
+		<table id="currentTableId" class="layui-table" lay-filter="currentTableFilter"></table>
+		<script type="text/html" id="toolbarImpl">
+			<div class="layui-btn-container">
+				<button class="layui-btn layui-btn-sm" lay-event="expand">展开</button>
+				<button class="layui-btn layui-btn-sm" lay-event="fold">折叠</button>
+				<button class="layui-btn layui-btn-sm" lay-event="set">设置</button>
+				<button class="layui-btn layui-btn-sm" lay-event="add">发布</button>
+			</div>
+		</script>
+		<script type="text/html" id="currentTableBar">
+			{{# if(d.parentId === -1){ }}
+				<a class="layui-btn layui-btn-xs layui-btn-primary" lay-event="details">详情</a>
+				<a class="layui-btn layui-btn-xs layui-btn-danger" lay-event="delete">删除</a>
+			{{# }else{ }}
+				<a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="reset">重置</a>
+			{{# } }}
+		</script>
+	</div>
+</div>
+<script type="text/javascript">
+	layui.use(['treetable', 'template'], function() {
+		var $ = layui.jquery,
+				layer = layui.layer,
+				table = layui.table,
+				treetable = layui.treetable,
+				template = layui.template;
+
+		parent.reloadTable = function () {
+			layer.load();
+			treetable.render({
+				treeColIndex: 1,
+				treeSpid: -1,
+				treeIdName: 'taskId',
+				treePidName: 'parentId',
+				toolbar: '#toolbarImpl',
+				elem: '#currentTableId',
+				url: '/task/list',
+				page: false,
+				cols: [[
+					{type: 'numbers'},
+					{field: 'name', minWidth: 200, title: '周次/宿舍楼'},
+					{minWidth: 100, align: 'center', templet: function(task) {
+							if (task.complete) {
+								return '<span class="layui-badge layui-bg-green">完成</span>';
+							} else {
+								return '<span class="layui-badge layui-bg-red">未完成</span>';
+							}
+						}, title: '进度'},
+					{field: 'grade', minWidth: 100, align: 'center', title: '年级'},
+					{field: 'total', minWidth: 80, align: 'center', title: '房间数'},
+					{minWidth: 100, align: 'center', templet: function(task) {
+							if (task.menu) return '';
+							if (task.category === 0) {
+								return '女生宿舍';
+							} else {
+								return '男生宿舍';
+							}
+						}, title: '类型'},
+					{minWidth: 100, align: 'center', templet: function(task) {
+							if (task.menu) return '';
+							if (task.type === 1) {
+								return '本科生';
+							} else {
+								return '研究生';
+							}
+						}, title: '类别'},
+					{templet: '#currentTableBar', width: 200, align: 'center', title: '操作'}
+				]],
+				done: function() {
+					treetable.foldAll('#currentTableId');
+					layer.closeAll('loading');
+				}
+			});
+		};
+		parent.reloadTable();
+
+		// 渲染表格
+		table.on('toolbar(currentTableFilter)', function(obj) {
+			var checkStatus = table.checkStatus(obj.config.id),
+					data = checkStatus.data; //获取选中的数据
+			switch (obj.event) {
+				case 'expand':
+					treetable.expandAll('#currentTableId');
+					break;
+				case 'fold':
+					treetable.foldAll('#currentTableId');
+					break;
+				case 'set':
+					template.show('edit/setting.html', '设置任务');
+					break;
+				case 'add':
+					$.get("/task/get/week", function (rep) {
+						if (rep.code === -1) {
+							layer.msg(rep.msg, {icon: 5, shift: 6});
+						} else {
+							template.show('edit/task.html', '添加任务');
+							$('#week').append('当前周次：第' + rep.msg + '周');
+						}
+					});
+					break;
+			};
+		});
+
+		//监听工具条
+		table.on('tool(currentTableFilter)', function(obj) {
+			if (obj.event === 'delete') {
+				layer.confirm('真的删除么', function(index) {
+					layer.load();
+					$.ajax({
+						type: 'delete',
+						url: '/task/delete/' + obj.data.id,
+						success: function (status) {
+							layer.closeAll('loading');
+							layer.msg("操作成功", {icon: 1});
+							parent.reloadTable();
+						}
+					});
+					layer.close(index);
+				});
+			} else if (obj.event === 'details') {
+				layer.load();
+				$.get("/task/details/" + obj.data.id, function (rep) {
+					if (rep.code === -1) {
+						layer.msg(rep.msg, {icon: 5, shift: 6});
+					} else {
+						template.show('admin/templet.html', '任务详情');
+						$.get("/task/get/warns/" + obj.data.id, function (warns) {
+							if (warns.length > 0)
+								$('#warnings').removeClass('layui-hide');
+							var m = $('#message');
+							warns.forEach(function (v, i) {
+								m.append(`(${i + 1}) ${v}<br>`);
+							});
+						});
+						var $list = $('#list');
+						rep.data.forEach(function (v) {
+							$list.append(`<a href="/download?filename=${v}" class="layui-btn">${v.substring(v.lastIndexOf('/') + 1)}</a>`)
+						});
+					}
+					layer.closeAll('loading');
+				});
+			} else if (obj.event === 'reset') {
+				layer.confirm('真的重置么', function(index) {
+					layer.load();
+					$.ajax({
+						type: 'PUT',
+						url: '/task/rollback/' + obj.data.id,
+						success: function (status) {
+							layer.closeAll('loading');
+							layer.msg("操作成功", {icon: 1});
+							parent.reloadTable();
+						}
+					});
+					layer.close(index);
+				});
+			}
+		});
+	});
+</script>
